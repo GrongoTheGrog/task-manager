@@ -6,12 +6,12 @@ const router = express.Router();
 
 
 router.post('/login', async (req, res) => {
-    const {username, password} = req.body;
+    const {username, password, email} = req.body;
 
-    if (!username || !password) return res.status(400).json({"error": "Missing username or password."});
+    if (!username || !password || !email) return res.status(400).json({"error": "Missing username, password or email."});
 
     try{
-        const matching = await User.findOne({username}).exec();
+        const matching = await User.findOne({username, email}).exec();
         if (!matching) return res.status(404).json({"error": "Username not found."});
 
         const cryptPassword = await bcrypt.compare(password, matching.password);
@@ -20,22 +20,25 @@ router.post('/login', async (req, res) => {
         const roles = matching.roles;
 
         const accessToken = jwt.sign(
-            {username, roles},
+            {username, roles: roles},
             process.env.ACCESS_TOKEN_SECRET,
             {expiresIn: '240s'}
         )
 
         const refreshToken = jwt.sign(
-            {username, roles},
+            {username, roles: roles},
             process.env.REFRESH_TOKEN_SECRET,
             {expiresIn: '15d'}
         )
 
-        const update = await User.findOneAndUpdate({username}, {refreshToken}).exec();
+        const update = await User.findOneAndUpdate({username}, {refreshToken}).select('username teams email profilePicture').exec();
 
         res.cookie('jwtRefresh', refreshToken, {maxAge: 15 * 24 * 60 * 60 * 1000, secure: false, httpOnly: true});
         
-        res.json(accessToken);
+        res.json({
+            accessToken,
+            user: update
+        });
 
     }catch (err) {
         res.status(500).json({"error": err.message});

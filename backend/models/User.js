@@ -22,8 +22,17 @@ const User = new Schema({
         Admin: Number
     },
 
-    refreshToken: String
-})
+    refreshToken: String,
+
+    email: {
+        type: String, 
+        require: true
+    },
+
+    teams: [{type: mongoose.Schema.Types.ObjectId, ref: "Team"}],
+
+    profilePicture: String
+});
 
 
 module.exports = mongoose.model('User', User);
