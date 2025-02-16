@@ -1,0 +1,138 @@
+@keyframes main-animation {
+    from {transform:  translate(5%, 0);}
+    to {transform: translate(0, 0)}
+}
+
+.home-main-container{
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    animation: main-animation 1s ease;
+}
+
+
+.span-home-main-outer{
+    background: linear-gradient(135deg, var(--primary), #a2c9f5);
+    background-clip: text;
+    color: transparent;
+
+    font-weight: bold;
+    font-size: 35px;
+    text-align: center;
+}
+
+.home-cards-container{
+    width: 60vw;
+    min-width: 800px;
+    display: flex;
+    gap: 30px;
+}
+
+.home-card{
+    flex: 1;
+    background-color: var(--neutral);
+    border-radius: 20px;
+    transition: flex 0.3s ease;
+    gap: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 20px;
+    box-sizing: border-box;
+    min-height: 300px;;
+    height: fit-content;
+}
+
+.home-card:hover{
+    background-color: var(--neutral);
+    border-radius: 20px;
+}
+
+
+.home-card-title{
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.loading{
+    justify-self: center;
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 60px;
+}
+
+@keyframes loading {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+.loading-container-home-card{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: loading 1.5s infinite linear;
+}
+
+.home-inner-card{
+    background-color: var(--neutral2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    flex-wrap: wrap;
+    word-break: normal;
+    cursor: pointer;
+}
+
+.title-inner-card-task{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+
+.tasks-description-card{
+    margin-top: 10px;
+}
+
+
+.tags-container-tasks-home{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.tag-card-tasks-home{
+    padding: 3px 5px;
+    font-size: 14px;
+    background-color: var(--yellow);
+    color: #2D3436;
+    border-radius: 5px;
+}
+
+.link-card{
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.link-card:hover{
+    text-decoration: underline;
+}
+
+.dead-line-card-home{
+    margin-top: 8px;
+    font-size: 14px;
+    padding: 3px 5px;
+    background-color: var(--accent);
+    border-radius: 5px;
+    color: white;
+    width: fit-content;
+}

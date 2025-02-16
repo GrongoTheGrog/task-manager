@@ -1,0 +1,26 @@
+header{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 55px;
+    background-color: var(--neutral);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    font-family: roboto;
+    align-items: center;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.left-header{
+    display: flex;
+    padding: 0 60px;
+}
+
+.header-title{
+    font-size: 24px;
+    font-weight: bold;
+}
+
