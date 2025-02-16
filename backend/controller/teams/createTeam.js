@@ -6,11 +6,15 @@ const createTeam = async (req, res) => {
     console.log(req.user);
 
     if (!name) return res.status(400).json({"error": "Missing name."});
-    
-    const team = await Team.create({name, description});
 
-    const matching = await User.findOneAndUpdate({username: req.user}, { $push: {teams: team._id}}, {returnDocument: "after"}).exec();
-    res.json(matching);
+    const matching = await User.findOne({username: req.user}).exec();
+    
+    const team = await Team.create({name, description, members: matching._id});
+
+    matching.teams.push(team.id);
+    await matching.save();
+
+    res.json(team);
 }
 
 module.exports = createTeam;

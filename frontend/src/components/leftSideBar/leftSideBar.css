@@ -29,9 +29,9 @@
     gap: 15px;
 }
 
-.link-left-nav:hover{
+.link-left-nav:hover, .link-left-nav.active{
     color: white;
-    background: linear-gradient(135deg, var(--primary), #3986df);
+    background: linear-gradient(135deg, var(--primary), #8dbff8);
     
 }
 
@@ -45,15 +45,21 @@
     color: var(--font-color);
     padding: 10px;
     border-radius: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    cursor: pointer;
 
 }
 
-.nav-label-left-main:hover{
-    background: linear-gradient(135deg, var(--primary), #3986df);
-    color: white;
-    cursor: pointer;
 
+.nav-label-left-main:hover{
+    background: linear-gradient(135deg, var(--primary), #8dbff8);
+    color: white;
+
+}
+
+.nav-label-left-main.active{
+    background: linear-gradient(135deg, var(--primary), #8dbff8);
+    color: white;
 }
 
 

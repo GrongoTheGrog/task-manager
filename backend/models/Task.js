@@ -28,7 +28,6 @@ const Task = new mongoose.Schema({
 
     team: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: "Team"
     },
 
@@ -37,7 +36,12 @@ const Task = new mongoose.Schema({
     done: {
         type: Boolean,
         default: false
-    }
+    },
+
+    to: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 })
 
 module.exports = mongoose.model('Task', Task);

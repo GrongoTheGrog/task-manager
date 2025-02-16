@@ -22,13 +22,13 @@ router.post('/login', async (req, res) => {
         const accessToken = jwt.sign(
             {username, roles: roles},
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn: '240s'}
+            {expiresIn: '120s'}
         )
 
         const refreshToken = jwt.sign(
             {username, roles: roles},
             process.env.REFRESH_TOKEN_SECRET,
-            {expiresIn: '15d'}
+            {expiresIn: '30d'}
         )
 
         const update = await User.findOneAndUpdate({username}, {refreshToken}).select('username teams email profilePicture').exec();

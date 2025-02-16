@@ -70,6 +70,7 @@ export function SiteDefinitions({children}){
         fetch.interceptors.request.use(
             function (config) {
                 if (accessToken) {
+                    const accessToken = localStorage.getItem('jwtAccess') || 0;
                     config.headers.Authorization = `Bearer ${accessToken}`;
                 }
                 return config;
@@ -84,6 +85,8 @@ export function SiteDefinitions({children}){
                 if (error.response?.status === 401) {
                     try {
                         const { data } = await fetch.get('/refresh');
+
+                        console.log(data)
 
                         localStorage.setItem('jwtAccess', data.token);
                         changeUser(data.user)

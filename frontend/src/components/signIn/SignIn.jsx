@@ -17,7 +17,6 @@ export function SignIn(){
     const definitions = useSiteDefinitions();
 
     const api = definitions.api.data;
-    console.log(api);
 
     const navigator = useNavigate();
 
@@ -45,13 +44,10 @@ export function SignIn(){
                     email: email
                 });
 
-                if (response.statusMessage !== 'OK') {
-                    return setError(response.data);
-                }
 
                 navigator('/logIn');
             }catch(err) {
-                return setError(err.response.data.error || err.message);
+                return setError(err.message);
             }
 
         }

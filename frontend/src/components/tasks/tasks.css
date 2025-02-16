@@ -1,0 +1,64 @@
+@keyframes loadTasks {
+    from{transform: translate(0, 5%);}
+    to{transform: translate(0, 0);}
+}
+
+.tasks-container-tasks{
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    animation: loadTasks 0.5s ease;
+    width: 60vw;
+}
+
+.tasks-title-tasks{
+    background: linear-gradient(135deg, var(--primary), #8dbff8);
+    background-clip: text;
+    color: transparent;
+
+    font-size: 40px;
+    align-self: center;
+    font-weight: bold;
+}
+
+.section-tasks-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 20vw;
+    min-width: 180px;
+    background-color: var(--neutral);
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    height: fit-content;
+}
+
+.tasks-flex{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.all-cards-task-container{
+    display: flex;
+    gap: 30px;
+}
+
+.create-task-container{
+    background-color: var(--neutral2);
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.title-section{
+    font-size: 30px;
+    color: var(--primary);
+    text-align: center;
+    text-decoration: none;
+}

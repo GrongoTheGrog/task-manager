@@ -11,12 +11,13 @@ const createTask = async (req, res) => {
         date,
         deadline,
         team,
-        tags
+        tags,
+        to
     } = req.body;
 
     console.log(req.body);
 
-    if (!description || !name || !team) return res.status(400).json({"error": "Description, name and team required"});
+    if (!description || !name) return res.status(400).json({"error": "Description, name and team required"});
 
     const userId = await User.findOne({username: req.user}).select('_id');
 
@@ -27,10 +28,11 @@ const createTask = async (req, res) => {
         deadline,
         author: userId._id,
         team,
-        tags: tags
-    })
+        tags: tags,
+        to
+    });
 
-    res.json(JSON.stringify(task));
+    res.json(task);
 }
 
 module.exports = createTask;

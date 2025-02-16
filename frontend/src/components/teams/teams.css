@@ -1,0 +1,114 @@
+@keyframes loadTeams {
+    from{transform: translate(0, 5%);}
+    to{transform: translate(0, 0);}
+}
+
+.teams-container-main{
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+    width: 70vw;
+    justify-content: center;
+    align-items: center;
+    animation: loadTeams 0.5s ease;
+}
+
+.title-main-teams{
+    background: linear-gradient(135deg, var(--primary), #8dbff8);
+    background-clip: text;
+    color: transparent;
+
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.teams-container-teams{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 20px;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+@media (max-width: 600px) {
+    .teams-container-teams {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
+@media (min-width: 600px), (max-width: 1300px) {
+    .teams-container-teams {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    }
+}
+
+@media (min-width: 1300px) {
+    .teams-container-teams {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
+}
+
+.team-card-teams-container, .create-team-teams{
+    aspect-ratio: 1;
+    background-color: var(--neutral);
+    border-radius: 15px;
+    
+}
+
+.team-card-teams-container{
+    text-decoration: none;
+    color: var(--font-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    word-break: keep-all;
+    word-wrap: break-word;
+    
+}
+
+.create-team-teams{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    background-color: var(--neutral);
+    
+}
+
+.create-team-teams > i{
+    font-size: 80px;
+    transition: all 0.2s ease;
+}
+
+.create-team-teams:hover > i{
+    font-size: 85px;
+}
+
+.create-team-teams:hover{
+    background-color: var(--neutral2);
+}
+
+.title-team-teams{
+    font-size: 25px;
+    color: var(--primary);
+}
+
+.description-team-teams{
+    font-size: 16px;
+    max-height: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; 
+    -webkit-box-orient: vertical;
+    line-clamp: 5;
+    overflow: hidden;
+    flex: 1;
+    margin-top: 5px;
+}

@@ -7,19 +7,20 @@ import { use, useEffect } from 'react';
 import { SignIn } from '../signIn/SignIn';
 import { LogIn } from '../logIn/LogIn';
 import { LeftSideBar } from '../leftSideBar/leftSideBar';
+import { Home } from '../home/home';
+import { Teams } from '../teams/teams';
+import { Tasks } from '../tasks/tasks';
 
 function App() {
   const navigator = useNavigate();
 
   const definitions = useSiteDefinitions();
   const {api, socket, theme} = definitions;
-  console.log(definitions)
   const user = definitions.user;
 
   useEffect(() => {
-    if (!user.data) return navigator('/signIn');
-    console.log(user.data)
-  }, [user.data])
+    localStorage.setItem("lastVisitedPage", window.location.pathname);
+  }, [window.location.pathname]);
 
 
   useEffect(() => {
@@ -27,6 +28,10 @@ function App() {
       async function getUser() {
         try{
           const response = await api.data.get('/refresh');
+
+          localStorage.setItem('jwtAccess', response.data.token);
+          definitions.user.change(response.data.user);
+          navigator(localStorage.getItem('lastVisitedPage') || '/')
         }catch(err){
           definitions.user.change(null);
           navigator('/logIn');
@@ -36,7 +41,9 @@ function App() {
     }
   }, [api.data])
 
-  const resultLoad = !api || !socket || !theme;
+  console.log(definitions.error.data)
+
+  const resultLoad = !api.data || !socket.data || !theme.data;
 
   return (
     <>
@@ -51,9 +58,11 @@ function App() {
 
 
         <Routes>
-          <Route path='/' element={<h1>home page</h1>}/>
+          <Route path='/' element={<Home />}/>
           <Route path='/signIn' element={<SignIn />}/>
           <Route path='/logIn' element={<LogIn />}/>
+          <Route path='/teams' element={<Teams />}/>
+          <Route path='/tasks' element={<Tasks />}/>
         </Routes>
       </main>
       }

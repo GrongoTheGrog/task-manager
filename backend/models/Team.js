@@ -7,7 +7,12 @@ const Team = new mongoose.Schema({
         required: true
     },
 
-    description: String
+    description: String,
+
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 })
 
 module.exports = mongoose.model('Team', Team);
