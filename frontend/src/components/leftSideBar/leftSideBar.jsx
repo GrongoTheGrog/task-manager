@@ -36,10 +36,10 @@ export function LeftSideBar(){
             iconClass: 'material-icons'
         },
         {
-            label: 'My Goals', 
+            label: 'Calendar', 
             cl: 'link-left-nav', 
-            to: '/stats',
-            icon: 'query_stats',
+            to: '/calendar',
+            icon: 'calendar_month',
             iconClass: 'material-icons'
         }
     ]

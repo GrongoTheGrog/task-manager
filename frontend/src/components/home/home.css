@@ -113,8 +113,8 @@
 .tag-card-tasks-home{
     padding: 3px 5px;
     font-size: 14px;
-    background-color: var(--yellow);
-    color: #2D3436;
+    background-color: var(--secondary);
+    color: white;
     border-radius: 5px;
 }
 

@@ -10,6 +10,7 @@ import { LeftSideBar } from '../leftSideBar/leftSideBar';
 import { Home } from '../home/home';
 import { Teams } from '../teams/teams';
 import { Tasks } from '../tasks/tasks';
+import { Calendar } from '../calendar/calendar';
 
 function App() {
   const navigator = useNavigate();
@@ -34,6 +35,7 @@ function App() {
           navigator(localStorage.getItem('lastVisitedPage') || '/')
         }catch(err){
           definitions.user.change(null);
+          definitions.error.change('Session expired.')
           navigator('/logIn');
         }
       };
@@ -41,7 +43,6 @@ function App() {
     }
   }, [api.data])
 
-  console.log(definitions.error.data)
 
   const resultLoad = !api.data || !socket.data || !theme.data;
 
@@ -63,6 +64,7 @@ function App() {
           <Route path='/logIn' element={<LogIn />}/>
           <Route path='/teams' element={<Teams />}/>
           <Route path='/tasks' element={<Tasks />}/>
+          <Route path='/calendar' element={<Calendar />}/>
         </Routes>
       </main>
       }
