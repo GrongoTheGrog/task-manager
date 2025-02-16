@@ -10,7 +10,6 @@ const getTasksAuthor = async (req, res) => {
 
     const tasks = await Task.find({$or: [{author: user._id}, {to: user._id}]}).populate('team author').exec();
 
-
     res.json([...tasks]);
 }
 
