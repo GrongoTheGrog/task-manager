@@ -1,0 +1,364 @@
+.outer-container-create-task-page{
+    min-width: 600px;
+    width: 44vw;
+    background-color: var(--neutral);
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-create-task{
+    background-color: var(--neutral2);
+    border: none;
+    outline: none;
+    color: var(--font-color);
+    font-size: 16px;
+    padding: 10px 30px;
+    border-radius: 10px;
+}
+
+.input-create-task::placeholder{
+    color: var(--font-color);
+    font-size: 16px;
+}
+
+
+.main-section-create-task{
+    display: flex;
+    gap: 10px;
+    height: 100%;
+}
+
+.main-section-create-task > .basic{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 55%;
+}
+
+.basic-together{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.basic-together.description{
+    height: 100%;
+}
+
+.basic-together > .description{
+    height: 100%;
+    min-height: 100px;
+    font-family: roboto;
+    padding: 10px 30px 10px 30px;
+    background-color: var(--neutral2);
+    color: var(--font-color);
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    outline: none;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.basic-together > .description::-webkit-scrollbar{
+    width: 8px;
+    background-color: var(--neutral2);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    
+}
+
+.basic-together > .description::-webkit-scrollbar-thumb{
+    background-color: var(--font-color);
+    border-radius: 10px;
+    border: 2px solid var(--neutral2);
+    cursor: pointer;
+
+}
+
+.basic-together > .description::placeholder{
+    color: var(--font-color);
+    font-size: 16px;
+
+}
+
+label{
+    color: var(--primary);
+    font-size: 20px;    
+    text-align: center;
+}
+
+.main-section-create-task > .specific{
+    flex: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.deadline-displayer{
+    padding: 10px;
+    background-color: var(--accent);
+    padding-left: 20px;
+    box-sizing: border-box;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.tag-container-create-task{
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    justify-content: center;
+    gap: 15px;
+}
+
+.to-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.to-tag{
+    display: flex;
+    align-items: ce;
+    justify-content: center;
+    gap: 5px;
+    background-color: var(--neutral2);
+    padding: 3px 8px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.to-tag.active{
+    background-color: var(--secondary);
+    color: white;
+}
+
+.tags-outer-container-simple{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.create-tag-create-task{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    justify-content: center;
+}
+
+.tag-create-task, .create-tag-create-task{
+    background-color: var(--purple);
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+}
+
+
+.create-tag-create-task > input{
+    font-size: 16px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    min-width: 80px;
+    max-width: 120px;
+}
+
+.tags-two{
+    display: flex;
+}
+
+.button-container{
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.button-assign{
+    background-color: var(--secondary);
+    color: white;
+    font-size: 18px;
+    padding: 8px 80px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+
+
+
+
+/*date picker */
+
+.date-picker-container{
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--neutral2);
+    padding: 10px;
+    border-radius: 10px;
+    gap: 5px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.date-picker-container.picking{
+    font-size: 16px;
+}
+
+.date-picker-container.picking:hover{
+    cursor: pointer;
+}
+
+.date-picker-container > .info{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date-picker-container > .info > .buttons{
+    display: flex;
+    gap: 10px;
+}
+
+
+.date-picker-container > .info > .buttons > button{
+    background-color: var(--primary);
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 2px;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+}
+
+.date-picker-container > .info > .buttons > button > i{
+    font-size: 10px;
+}
+
+.date-picker-container > .info > .current{
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.calendar-container-picker{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 3px;
+}
+
+.calendar-container-picker > .day{
+    aspect-ratio: 1;
+    background-color: var(--neutral);
+    border-radius: 3px;
+    color: var(--primary);
+    font-size: 11px;
+    box-sizing: border-box;
+    padding: 3px;
+    cursor: pointer;
+}
+
+.calendar-container-picker > .day:hover{
+    filter: brightness(1.3);
+}
+
+.calendar-container-picker > .day.not{
+    filter: opacity(0.7);
+}
+
+.calendar-icon-date-picker{
+    padding-left: 10px;
+}
+
+
+
+
+
+
+/*time picker */
+
+
+.time-container-picker{
+    width: 200px;
+    display: flex;
+    background-color: var(--neutral2);
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 10px;
+    gap: 5px;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+
+.absolute-time{
+    position: absolute;
+    padding: 10px 10px;
+    background-color: var(--neutral2);
+    bottom: -5px;
+    right: 50%;
+    transform: translate(50%, 100%);
+    box-sizing: border-box;
+    border-radius: 10px;
+    cursor: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.complete-time{
+    height: 100px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding: 10px;
+}
+
+
+.complete-time::-webkit-scrollbar{
+    width: 8px;
+    background-color: var(--neutral2);
+
+}
+
+.complete-time::-webkit-scrollbar-thumb{
+    background-color: var(--font-color);
+    border-radius: 4px;
+    border: 3px solid var(--neutral2);
+    cursor: pointer;
+}
+
+.option-time{
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+
+.option-time:hover{
+    background-color: var(--neutral);
+}

@@ -23,34 +23,16 @@ export function Tasks(){
 
 
                 response.data.forEach(task => {
-                    if (!teams[`${task.team?.name || 'Your own tasks'}`]){
-                        teams[`${task.team?.name || 'Your own tasks'}`] = [task];
-                    }else{
-                        teams[`${task.team?.name || 'Your own tasks'}`].push(task)
+                    if (!teams[`${task.team?._id || 'Your own tasks'}`]){
+                        teams[`${task.team?._id || 'Your own tasks'}`] = [];
                     }
+                    teams[`${task.team?._id || 'Your own tasks'}`].push(task)
                 });
 
                 console.log(teams)
 
-                const components = [];
-
-                for(let key in teams){
-                    components.push(
-                        <div className='section-tasks-container'>
-                            <Link className='title-section' to={`/teams/${teams[key][0].teams}`}>{key}</Link>
-
-                            <div className='tasks-flex'>
-                                {key === 'Your own tasks' ? <CreateTask /> : null}
-                                {teams[key].map(task => {
-                                    return <TaskCard card={task}/>
-                                })}
-                            </div>
-
-                        </div>
-                    )
-                }
+                setTasks(() => teams);
                 
-                setTasks(() => components);
             }catch(err){
                 definitions.error.change(err?.data?.error || err.message)
             }
@@ -64,14 +46,60 @@ export function Tasks(){
                 Tasks
             </span>
 
-            <div className='all-cards-task-container'>
-                {tasks ? tasks : <Loading />}
-            </div>
+                {!tasks && <Loading />}
+
+                <div className='all-cards-task-container'>
+                    <div className='container-tasks1 cont'>
+                    </div>
+                    <div className='container-tasks2 cont'>
+                    </div>
+                    <div className='container-tasks3 cont'>
+                    </div>
+                </div>
+
+                {tasks && Object.keys(tasks).map(key => {
+                    return <RenderTasks team={tasks[key]} keyCont={key}/>
+                })}
         </section>
     )
 }
 
+function RenderTasks({team, keyCont}){
 
+        useEffect(() => {
+            const conts = document.querySelectorAll('.container-tasks1, .container-tasks2, .container-tasks3');
+            console.log(conts[0].offsetHeight);
+            console.log(conts[1].offsetHeight);
+            console.log(conts[2].offsetHeight);
+    
+            let min = conts[0];
+
+    
+            conts.forEach(cont => {
+                if (cont.offsetHeight < min.offsetHeight) min = cont;
+            })
+
+    
+            min.appendChild(document.getElementById(keyCont))
+        }, [])
+
+        const teamName = team[0]?.team?.name || "Your own tasks";
+
+        return (
+            <div className='section-tasks-container' id={keyCont}>
+                <Link className='title-section' to={`/teams/${teamName}`}>{teamName}</Link>
+
+
+                <div className='tasks-flex'>
+                    {keyCont === 'Your own tasks' ? <CreateTask /> : null}
+                    {team.map(task => {
+                        return <TaskCard card={task}/>
+                    })}
+                </div>
+
+            </div>
+    )
+}
 
 function TaskCard({card}){
     return (
@@ -101,7 +129,7 @@ function TaskCard({card}){
 
 function CreateTask(){
     return (
-        <Link className='create-task-container' to={'/'}>
+        <Link className='create-task-container' to={'/createTasks/undefined'}>
             <i className={'material-icons loading'}>
                 add
             </i>
