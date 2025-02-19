@@ -16,9 +16,52 @@ export function CreateTask(){
     const [teamData, setTeamData] = useState();
     const [selectedDate, setSelectedDate] = useState();
     const [selectedHour, setSelectedHour] = useState();
+    const [tags, setTags] = useState();
+    const [to, setTo] = useState();
+
 
     const params = useParams();
     const team = params.team;
+    
+
+    
+    async function CreateTaskApi(event){
+        event.preventDefault();
+
+        const {year, month, day} = selectedDate;
+        const {hour, minutes} = selectedHour;
+
+        const data = new FormData(event.target);
+        const name = data.get('name');
+        const description = data.get('description');
+        const date = new Date(year, month, day, hour, minutes)
+        const toArray = [];
+
+
+        for(let key in to){
+            if (to[key]) toArray.push(key);
+        }
+
+
+        if (!name || !description) return definitions.error.change('Both name and description are required.');
+
+
+        try{
+            const create = definitions.api.data.post('http://localhost:9000/createtask', {
+                name,
+                description, 
+                tags,
+                to: toArray,
+                deadline: date
+            })
+
+            window.history.back();
+        }catch(err){
+            definitions.error.change(err?.data.error || err.message);
+        }
+        
+
+    }
 
     useEffect(() => {
         if (team !== 'undefined'){
@@ -27,8 +70,7 @@ export function CreateTask(){
                     const response = await definitions.api.data.post('http://localhost:9000/getOneTeam', {
                         id: team
                     });
-                    
-                    console.log(response.data)
+
                     setTeamData(() => response.data);
                 }catch(err){
                     definitions.error.change(err?.data?.error || err.message);
@@ -39,7 +81,8 @@ export function CreateTask(){
     }, [])
 
 
-    return  teamData || team === 'undefined' ? <form className='outer-container-create-task-page'>
+    return  teamData || team === 'undefined' ? 
+        <form className='outer-container-create-task-page' onSubmit={CreateTaskApi}>
 
             <label style={{textAlign: 'center', fontSize: '28px', marginBottom: '10px'}}>
                 {teamData?.name || 'Your own tasks'}
@@ -49,13 +92,23 @@ export function CreateTask(){
                 <div className='basic'>
                     <div className='basic-together'>
                         <label htmlFor='name'>Name:</label>
-                        <input className='input-create-task name' placeholder='E.g. new feature'/>
+                        <input className='input-create-task name' placeholder='E.g. new feature' name='name'/>
                     </div>
 
                     <div className='basic-together description'>
                         <label htmlFor='name'>Description:</label>
-                        <textarea className='description' placeholder='E.g. add new feature'/>
+                        <textarea className='description' placeholder='E.g. add new feature' name='description'/>
                     </div>
+
+                    {teamData &&
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+                        <label>
+                            Who is making that task?
+                        </label>
+                        <To team={teamData} change={setTo}>
+                        </To>
+                    </div>
+                }
                 </div>
 
                 <div className='specific'>
@@ -69,22 +122,22 @@ export function CreateTask(){
                         {selectedHour.hour}:{selectedHour.minutes}, {selectedDate.month + 1}/{selectedDate.day}/{selectedDate.year}
                     </span> :
                     null}
+
+                    <div className='tags-outer-container-simple'>
+                        <label>Create tags</label>
+                        <Tags change={setTags}/>
+                    </div>
+                    
                 </div>
             </div>
 
-            {teamData && 
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-                    <label>
-                        Who is making that task?
-                    </label>
-                    <To team={teamData}>
-                    </To>
-                </div>
-            }
 
-            <Tags>
+            <div className='button-container'>
+                <button className='button-assign'>
+                    Assign Task
+                </button>
+            </div>
 
-            </Tags>
 
         </form> : <Loading />
 }
@@ -309,34 +362,39 @@ function TimePicker({change}){
 }
 
 
-function To({team}){
+function To({team, change}){
 
     const [to, setTo] = useState({});
     let list = team.members;
     list = list.sort((a, b) => {
-        const aif = to[a.username] ? 1 : 0;
-        const bif = to[b.username] ? 1 : 0;
+        const aif = to[a._id] ? 1 : 0;
+        const bif = to[b._id] ? 1 : 0;
 
         return bif - aif;
     } );
 
 
     function clickMemberTag(member, chosen){
-        return function(){setTo(prev => {
-            return {
-            ...prev,
-            [member.username]: chosen ? false : true
-        }})}
+        return function(){
+            setTo(prev => {
+                return {
+                    ...prev,
+                    [member._id]: chosen ? false : true
+                }
+            })
+        }
     }
 
-    console.log(to);
+    useEffect(() => {
+        change(() => to);
+    }, [to]);
+
     
     
     return (
         <div className='to-container'>
             {list.map(member => {
-                const chosen = to[member.username] === true ? true : false;
-                console.log(chosen)
+                const chosen = to[member._id] === true ? true : false;
 
                 return (
                     <div className={`to-tag ${chosen && 'active'}`} onClick={clickMemberTag(member, chosen)}>
@@ -354,17 +412,90 @@ function To({team}){
 
 
 
-function Tags(){
+function Tags({change}){
 
-    const [tags, setTags] = useState();
+    const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        change(() => tags);
+    }, [tags])
 
     return (
         <div className='tag-container-create-task'>
-            
+            {tags.map((tag, index) => {
+                return (
+                    <Tag tag={tag} change={setTags}/>
+                )
+            })}
+
+            <CreateTag change={setTags}/>
         </div>
     )
 }
 
-function Tag(){
 
+function CreateTag({change}){
+
+    const [add, setAdd] = useState(false);
+
+    function createTag(event){
+        setAdd(() => false);
+        if (!event.target.value) {
+            return;
+        }else{
+            change(prev => ([
+                ...prev, 
+                event.target.value
+            ]))
+        }
+    }
+
+
+    function createTagKey(event){
+        if (event.key === 'Enter'){
+            setAdd(() => false);
+            if (!event.target.value) {
+                return;
+            }else{
+                change(prev => ([
+                    ...prev, 
+                    event.target.value
+                ]))
+            }
+        }
+    }
+    
+    return !add ?
+        <div className='create-tag-create-task' onClick={() => setAdd(prev => !prev)}>
+            Create Tag
+            <i className='material-icons'>add</i>
+        </div> :
+
+        <div className='create-tag-create-task' onClick={() => setAdd(prev => !prev)}>
+            <input autoFocus onBlur={createTag} onKeyDown={createTagKey}>
+
+            </input>
+        </div>
+    
+}
+
+function Tag({tag, change}){
+    
+    const [name, setName] = useState();
+
+    function deleteTag(){
+        change(prev => {
+            const list = prev.filter(name => name !== tag);
+            return list;
+        })
+    }
+
+    return (
+        <div className='tag-create-task' onClick={deleteTag}>
+            {tag}
+            <i className='material-icons'>
+                close
+            </i>
+        </div>
+    )
 }

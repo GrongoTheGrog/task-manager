@@ -31,6 +31,7 @@
     word-wrap: break-word;
     word-break: break-all;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .team-card-teams-container, .create-team-teams{
