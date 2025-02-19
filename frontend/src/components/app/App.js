@@ -11,6 +11,7 @@ import { Home } from '../home/home';
 import { Teams } from '../teams/teams';
 import { Tasks } from '../tasks/tasks';
 import { Calendar } from '../calendar/calendar';
+import { CreateTask } from '../createTask/createTask';
 
 function App() {
   const navigator = useNavigate();
@@ -65,6 +66,7 @@ function App() {
           <Route path='/teams' element={<Teams />}/>
           <Route path='/tasks' element={<Tasks />}/>
           <Route path='/calendar' element={<Calendar />}/>
+          <Route path='/createTasks/:team' element={<CreateTask />}/>
         </Routes>
       </main>
       }
