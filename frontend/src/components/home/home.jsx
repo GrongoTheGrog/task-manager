@@ -131,11 +131,15 @@ function CardTeam({card}){
 
 export function remainingTime(time){
 
-    let days = Math.floor(time / (1000 * 60 * 60 * 24));
-    let hours = Math.floor(time / (1000 * 60 * 60) % 24);
-    let minutes = Math.floor(time / (1000 * 60) % 60);
-    let seconds = Math.floor(time / 1000 % 60);
+    let realTime = time;
+    if (time < 0){
+        realTime = -1 * time;
+    }
+    let days = Math.floor(realTime / (1000 * 60 * 60 * 24));
+    let hours = Math.floor(realTime / (1000 * 60 * 60) % 24);
+    let minutes = Math.floor(realTime / (1000 * 60) % 60);
+    let seconds = Math.floor(realTime / 1000 % 60);
 
 
-    return `${days ? days + 'd' : ''} ${hours ? hours + 'h' : ''} ${minutes ? minutes + 'm' : ''}`
+    return `${days ? days + 'd' : ''} ${hours ? hours + 'h' : ''} ${minutes ? minutes + 'm' : ''} ${time < 0 ? 'ago' : ''}`
 }

@@ -12,6 +12,7 @@ import { Teams } from '../teams/teams';
 import { Tasks } from '../tasks/tasks';
 import { Calendar } from '../calendar/calendar';
 import { CreateTask } from '../createTask/createTask';
+import { OneTeam } from '../teams/teams';
 
 function App() {
   const navigator = useNavigate();
@@ -63,7 +64,9 @@ function App() {
           <Route path='/' element={<Home />}/>
           <Route path='/signIn' element={<SignIn />}/>
           <Route path='/logIn' element={<LogIn />}/>
-          <Route path='/teams' element={<Teams />}/>
+          <Route path='/teams' element={<Teams />}>
+            <Route path=':team' element={<OneTeam />}/>
+          </Route>
           <Route path='/tasks' element={<Tasks />}/>
           <Route path='/calendar' element={<Calendar />}/>
           <Route path='/createTasks/:team' element={<CreateTask />}/>

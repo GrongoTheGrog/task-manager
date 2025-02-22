@@ -1,133 +1,323 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import './teams.css';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import { Loading } from '../home/home';
-import { Link } from 'react-router-dom';
-import { sub } from 'date-fns';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { remainingTime } from '../home/home';
+
+
+//utils
+import { transformDay, transformMonth } from '../../utils/time';
 
 export function Teams(){
 
     const definitions = useSiteDefinitions();
-
+    const [tasks, setTasks] = useState();
+    const [teamTasks, setTeamTasks] = useState([]);
     const [teams, setTeams] = useState();
-    const [create, setCreate] = useState(false);
-    const [createdTeam, setCreatedTeam] = useState('') 
+    const [createedTeam, setCreatedTeam] = useState()
+    const navigator = useNavigate();
+    const params = useParams()
+
+
+
+    const curTeam = teams?.find(team => team._id === params.team) || null; 
 
     useEffect(() => {
         const getData = async () => {
-            try{
-                const teams = await definitions.api.data.get('http://localhost:9000/getteam');
+                try{
+                    const tasks = await definitions.api.data.post('http://localhost:9000/gettasksauthor');
+                    const teams = await definitions.api.data.get('http://localhost:9000/getteam');
 
-                setTeams(teams.data);
-                console.log(teams.data)
-            } catch(err){
-                definitions.error.change(err.data.error || err.message);
-            }
-        }
+
+                    setTasks(() => tasks.data);
+                    setTeams(() => teams.data);
+
+                    createedTeam && navigator('/teams/' + createedTeam?._id);
+
+                }catch(err){
+                    definitions.error.change(err?.data?.error || err.message);
+                }
+        }   
         getData();
-    }, [createdTeam])
+    }, [createedTeam]);
 
+    useEffect(() => {
+        if (!tasks) return;
 
-
-    return(
-        <section className='teams-container-main'>
-            <span className='title-main-teams'>Teams</span>
-
-
-            {create && <CreateTeam setCreate={setCreate} setCreatedTeam={setCreatedTeam}/>}
-
-            <div className='teams-container-teams'>
-                <div to='/' className='create-team-teams' onClick={() => setCreate(() => true)}>
-                    <i className={'material-icons loading'}>
-                        add
-                    </i>
-                </div>
-                {!teams ? <Loading /> : teams.map(team => <TeamsCard card={team}/>)}
-            </div>
-        </section>
-    )
-}
-
-function TeamsCard({card}){
+        const array = tasks?.filter(task => {
+            if (curTeam) {
+                return task?.team?._id === curTeam?._id;
+            }else{
+                return !task.team;
+            }
+        });
     
-    return (
-        <Link className='team-card-teams-container' to={`/team/${card._id}`}>
-            <span className='title-team-teams'>
-                {card.name}
-            </span>
 
-            <span className='description-team-teams'>
-                {card.description}
-            </span>
+        setTeamTasks(() => array)
+    }, [curTeam, tasks])
 
-            <span style={{color: 'var(--secondary)'}}>Members: <strong>{card.members.length}</strong></span>
-        </Link>
-    )
+    return tasks && teams ?
+
+        <section className='teams-main-container'>
+            <TeamsNav teams={teams} create={setCreatedTeam} curTeam={curTeam}/>
+
+            <OneTeam tasks={teamTasks} team={curTeam}/>
+        </section> :
+
+        <Loading/>
 }
 
-function CreateTeam({setCreate, setCreatedTeam}){
 
-    const [description, setDescription] = useState('');
-    const [name, setName] = useState('');
 
+
+
+
+function TeamsNav({teams, create, curTeam}){
+
+    const navigator = useNavigate();
+    const params = useParams();
+
+
+    const [creating, setCreating] = useState();
     const definitions = useSiteDefinitions();
+
+    function click(value, path){
+        return function() {
+            navigator(path);
+        }
+    }
 
     async function submit(event){
         event.preventDefault();
         const data = new FormData(event.target);
         const name = data.get('name');
         const description = data.get('description');
-        
-        if(!name || !description){
-            return definitions.error.change('Both name and description required.');
-        }
+
+        if (!name || !description) return definitions.error.change('Both name and description required.');
 
         try{
-            const createdTeam = await definitions.api.data.post('http://localhost:9000/createteam', {
-                name,
-                description
-            });
+            const newTeam = await definitions.api.data.post('http://localhost:9000/createteam', 
+                {name, 
+                description}
+            );
 
-            setCreatedTeam(() => createdTeam);
-            setCreate(() => false)
+
+            create(() => newTeam.data);
+            setCreating(() => false)
         }catch(err){
-            definitions.error.change(err?.data?.error || err.message);
+            definitions.error.change(err?.data?.error || err.message)
         }
     }
 
-    return (
-        <form className='create-team-container' onSubmit={submit}>
-            <span className='title-create-team'>Create your own new team</span>
-            <input 
-                placeholder='Name' 
-                className='input-create-team' 
-                name='name'
-                value={name}
-                onChange={(event) => setName(() => event.target.value)}
 
-                ></input>
-            <textarea 
-                className='description-create-team' 
-                name='description' 
-                placeholder='Description'
-                value={description}
-                onChange={(event) => setDescription(() => event.target.value)}
-                ></textarea>
 
-            <div className='buttons'>
-                <button type='button' className='delete' onClick={() => {
-                    setDescription(() => '');
-                    setName(() => '');
-                    setCreate(() => null)
-                }}>
-                    <i className='material-icons'>delete</i>
-                </button>
+    return(
+        <div className='teams-navbar-container'>
+            {creating ? (
+                <form className='create-task-form' onSubmit={submit}>
+                    <labe>
+                        Name:
+                    </labe>
 
-                <button className='send'>
-                    <i className='material-icons'>add_circle</i>
-                </button>
+                    <input name='name' placeholder='e.g: backend team' autoFocus>
+                    </input>
+
+                    <labe>
+                        Description:
+                    </labe>
+
+                    <textarea name='description' placeholder='e.g: backend managment' className='scrollbar'>
+                    </textarea>
+
+
+                    <div className='buttons'>
+
+                        <button className='delete' onClick={() => setCreating(() => false)} type='button'>
+                            <i className='material-icons'>
+                                delete
+                            </i>
+                        </button>
+
+                        <button className='create'>
+                            <i className='material-icons'>
+                                add
+                            </i>
+                        </button>
+                    </div>
+                </form>
+            ) : (
+                <div className='create-team-teams card-teams-nav' onClick={() => setCreating(() => true)}>
+                    <i className='material-icons'>
+                        add
+                    </i>
+                </div>
+
+            )}
+
+            <div className={`card-teams-nav ${!curTeam && 'active'}`} onClick={click(null, '/teams/myOwn')}>
+                <span>
+                    My own tasks
+                </span>
             </div>
-            
-        </form>
+
+            {teams.map((team, index) => {
+
+                const cl = team._id === curTeam?._id ? ' active' : ''
+
+
+                return (
+                    <div className={'card-teams-nav' + cl} onClick={click(team, `/teams/${team._id}`)} key={index}>
+                        <span>{team.name}</span>
+                    </div>
+                )
+            })}
+        </div>
     )
+}
+
+export function OneTeam({tasks, team}){
+
+
+
+    const todayTasks = [];
+    const overdueTasks = [];
+    const upcomingTasks = [];
+    const today = new Date().getDate();
+    const todayWeek = new Date().getDay();
+    const month = new Date().getMonth();
+    const year = new Date().getFullYear();
+
+
+    tasks.forEach(task => {
+        const taskDate = new Date(task.deadline);
+        if (taskDate.getDate() === today &&
+            taskDate.getMonth() === month &&
+            taskDate.getFullYear() === year    
+        ) {
+            todayTasks.push(task);
+        };
+
+        if (new Date(task.deadline).getTime() - new Date().getTime() <= 0){
+            overdueTasks.push(task);
+        }
+
+        const diff = (new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24);
+        console.log(diff)
+        if (diff < 3 && diff > 0){
+            upcomingTasks.push(task);
+        } 
+    });
+
+
+    console.log(upcomingTasks)
+
+
+    return (
+        <div className='outer-mid-team-container'>
+            <span className='title'>
+                {team?.name || 'Your Own Tasks'}
+                <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
+                    <i className='material-icons'>
+                        add
+                    </i>
+                    create task
+                </Link>
+            </span>
+
+            <div className='mid-team-main-information-container'>
+                <div className='mid-div-section'>
+                    <div className='info-today-display-team'>
+                        <div className='today-day'>
+                            <span className='today'>{transformDay(todayWeek)}</span>
+                        </div>
+
+                        <span>
+                            {transformMonth(month)}, {today}
+                        </span>
+
+                        <span className='task'>
+                            {todayTasks.length ? 
+                            `You have ${todayTasks.length} tasks assigned for today.` :
+                            "No tasks assigned for today."}
+                        </span>
+
+                        {overdueTasks.length ? <span className='task overdue'>
+                            You have {overdueTasks.length} overdue tasks.
+                        </span> : null}
+                    </div>
+
+
+                    <TaskSection mode='normal' tasks={todayTasks} title='Today'/> 
+                
+
+
+                </div>
+
+                <div className='mid-div-section'>
+                    <TaskSection mode='normal' tasks={upcomingTasks} title={'Upcoming tasks (3 days)'}/> 
+                </div>
+
+                <div className='mid-div-section'>
+                    <TaskSection mode='overdue' tasks={overdueTasks} title={'Overdue tasks'}/> 
+                </div>
+            </div>
+
+
+            aa
+        </div>
+    )
+}
+
+
+function TaskSection({mode, tasks, title}){
+    //mode => 'overdue' || 'normal' || 'done';
+
+
+    const color = mode === 'normal' ? 'var(--primary)' : mode === 'done' ? 'var(--secondary)' : 'var(--accent)'
+
+    return(
+        <div className='task-section scrollbar'>
+            <span style={{color}}>{title}</span>
+
+            {tasks.length ? <div className='tasks-section-inner-flex'>
+
+
+            {tasks.map((task, index) => {
+                const expired = new Date() - new Date(task.deadline) > 0 ? true : false;
+
+
+                return (
+                    <div className='inner-card-task-team' key={task._id}>
+                        {expired ? 
+                            <div className='expired'>Expired</div> :
+                            null}
+
+                        <span style={{fontSize: '20px', fontWeight: 'bold', color}}>
+                            {task.name}
+                        </span>
+            
+                        <span className='tasks-description-card'>
+                            {task.description}
+                        </span>
+            
+                        <div className='tags-container-tasks-home'>
+                            {task.tags && task.tags.map((tag, index) => {
+                                return <span className='tag-card-tasks-home' key={index}>{tag} </span>
+                            })}
+                        </div>
+            
+                        {task.deadline && <div className='dead-line-card-home'>
+                            <strong>Deadline:</strong> {remainingTime(new Date(task.deadline).getTime() - new Date().getTime())}
+                        </div>}
+                    </div>
+                )
+            })}
+            </div> : 
+            <div className='no-task-container'>
+                <span>No tasks</span>
+            </div>
+            }
+        </div>  )
+    
 }

@@ -35,6 +35,7 @@ export function CreateTask(){
         const name = data.get('name');
         const description = data.get('description');
         const date = new Date(year, month, day, hour, minutes)
+        if (new Date() - date > 0) return definitions.error.change('Select an available time.')
         const toArray = [];
 
 
@@ -52,7 +53,8 @@ export function CreateTask(){
                 description, 
                 tags,
                 to: toArray,
-                deadline: date
+                deadline: date,
+                team
             })
 
             window.history.back();

@@ -86,7 +86,6 @@ export function SiteDefinitions({children}){
                     try {
                         const { data } = await fetch.get('/refresh');
 
-                        console.log(data)
 
                         localStorage.setItem('jwtAccess', data.token);
                         changeUser(data.user)
