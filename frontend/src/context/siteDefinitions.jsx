@@ -19,6 +19,8 @@ export function SiteDefinitions({children}){
 
     const [error, setError] = useState(null);
 
+    const [blanket, setBlanket] = useState(false);
+
     const errorTimeout = useRef();
 
     const changeError = (err) => {
@@ -76,12 +78,13 @@ export function SiteDefinitions({children}){
                 return config;
             }, 
             function (error) {
-                Promise.reject(error);
+                return Promise.reject(error);
             }
         );
 
         fetch.interceptors.response.use(
-            (response) => response, async (error) => {
+            (response) => response, 
+            async (error) => {
                 if (error.response?.status === 401) {
                     try {
                         const { data } = await fetch.get('/refresh');
@@ -126,7 +129,8 @@ export function SiteDefinitions({children}){
         socket: { data: socket, change: setSocket },
         user: { data: user, change: changeUser},
         error: { data: error, change: changeError },
-        api: { data: api, change: changeError}
+        api: { data: api, change: changeError},
+        blanket: { data: blanket, change: setBlanket}
     }
 
     return (

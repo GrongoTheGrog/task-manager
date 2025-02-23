@@ -160,6 +160,7 @@ label{
 
 .tag-create-task, .create-tag-create-task{
     background-color: var(--purple);
+    color: white;
     padding: 3px 8px;
     border-radius: 20px;
     display: flex;
@@ -196,6 +197,7 @@ label{
     padding: 8px 80px;
     border-radius: 10px;
     cursor: pointer;
+    border: none;
 }
 
 

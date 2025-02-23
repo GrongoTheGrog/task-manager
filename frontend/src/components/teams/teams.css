@@ -2,12 +2,17 @@
 
 .teams-main-container{
     display: grid;
-    grid-template-columns: 4fr 17fr 4fr;
+    grid-template-columns: 180px 23fr;
     width: 100%;
     padding: 10px 40px;
     min-width: 800px;
     gap: 40px;
-    min-width: 1200px
+    min-width: 1200px;
+    transition: grid-template-columns 10s ease;
+}
+
+.teams-main-container:has(.members-outer-container){
+    grid-template-columns: 180px 19fr 4fr;
 }
 
 
@@ -19,8 +24,9 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 100%;
+    width: 100%;
     overflow: hidden;
+    box-sizing: border-box;
 }   
 
 .card-teams-nav{
@@ -70,7 +76,7 @@
     background-color: var(--neutral);
     padding: 15px;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 15px;
     gap: 4px;
 }
 
@@ -152,19 +158,56 @@
     font-weight: bold;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: end;
 }
 
-.outer-mid-team-container > span > .link{
+.outer-mid-team-container > span > .info{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.outer-mid-team-container > span > .info > span{
+    font-size: 15px;
+    word-wrap: break-word;
+    width: 500px;
+}
+
+.outer-mid-team-container > span > .buttons > .link{
     color: var(--font-color);
     text-decoration: none;
-    font-size: 20px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     gap: 10px;
     border-radius: 5px;
-    padding: 10px 20px;
+    padding: 10px 15px;
     background-color: var(--neutral);
+    height: fit-content;
+}
+
+.outer-mid-team-container > span > .buttons{
+    display: flex;
+    height: 100%;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.outer-mid-team-container > span > .buttons > .delete{
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    background-color: var(--accent);
+    cursor: pointer;
+    height: fit-content;
 }
 
 .outer-mid-team-container > span > .link:hover{
@@ -180,11 +223,11 @@
 
 .mid-div-section{
     flex: 1;
-    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
 }
 
 .info-today-display-team{
@@ -229,16 +272,16 @@
     gap: 10px;
     border-radius: 10px;
     background-color: var(--neutral);
-    max-width: 100%;
     box-sizing: border-box;
     overflow: auto;
     height: 100%;
+    flex-basis: 100%;
 }
 
 .task-section > span{
     text-align: center;
     color: var(--primary);
-    font-size: 25px;
+    font-size: 22px;
     margin-bottom: 20px;
 }
 
@@ -246,12 +289,11 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-
 }
 
 .no-task-container{
     color: var(--accent);
-    font-size: 20px;
+    font-size: 18px;
     height: 100%;
     border-radius: 10px;
     padding: 15px;
@@ -271,25 +313,33 @@
     background-color: var(--neutral2);
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     width: 100%;
     border-radius: 10px;
     padding: 10px 10px;
     box-sizing: border-box;
     overflow: hidden;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .title-inner-card-task-team{
-    display: flex;
-    justify-content: space-between;
+    display: block;
     width: 100%;
-    align-items: center;
+    text-wrap: wrap;
+    word-break: break-word;
+    overflow: hidden;
 }
 
 
 .tasks-description-card{
+    display: block;
+    width: 100%;
     margin-top: 10px;
+    text-wrap: wrap;
+    word-break: break-word;
+
+    overflow: hidden;
 }
 
 
@@ -302,7 +352,7 @@
 
 .tag-card-tasks-home{
     padding: 3px 5px;
-    font-size: 14px;
+    font-size: 12px;
     background-color: var(--purple);
     color: white;
     border-radius: 5px;
@@ -312,6 +362,147 @@
     padding: 3px 10px;
     border-radius: 4px;
     background-color: var(--accent);
+    color: white;
     width: fit-content;
     margin-bottom: 8px;
  }
+
+ .to-container-teams{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+ }
+
+ .to-card-teams{
+    display: flex;
+    color: white;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    background-color: var(--secondary);
+    padding: 2px 6px;
+    border-radius: 1000px;
+ }
+
+ .to-card-teams > i{
+    font-size: 20px;
+ }
+
+
+
+
+ /*MEMBERS*/
+
+
+.members-outer-container{
+    background-color: var(--neutral);
+    padding: 15px;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-bottom: 35px;
+    width: 100%;
+}
+
+.role-container-members{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.top-member-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    gap: 10px;
+    color: var(--primary);
+}
+
+.role-title-members{
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.member-members-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.member-card{
+    padding: 3px 10px;
+    background-color: var(--neutral2);
+    border-radius: 4px;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.member-card > .name{
+    font-size: 12px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    text-overflow: ellipsis;
+    width: 100%;
+    word-break: break-word;
+}
+
+
+
+
+/*blanket delete*/
+
+.deleting-container-team{
+    z-index: 1001;
+    position: fixed;
+    background-color: var(--neutral);
+
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    right: 50%;
+    bottom: 50%;
+    transform: translate(50%, 50%);
+    border-radius: 20px;
+    gap: 10px;
+}
+
+.deleting-container-team > input{
+    padding: 5px 20px;
+    background-color: var(--neutral2);
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    color: var(--font-color);
+    font-size: 15px;
+}
+
+.deleting-container-team > label{
+    color: var(--accent);   
+}
+
+.deleting-container-team > .buttons{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.deleting-container-team > .buttons > button{
+    background-color: var(--neutral2);
+    color: var(--font-color);
+    border: none;
+    outline: none;
+    padding: 8px 40px;
+    border-radius: 5px;
+    cursor: pointer;
+}

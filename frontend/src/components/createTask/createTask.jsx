@@ -37,6 +37,7 @@ export function CreateTask(){
         const date = new Date(year, month, day, hour, minutes)
         if (new Date() - date > 0) return definitions.error.change('Select an available time.')
         const toArray = [];
+        
 
 
         for(let key in to){
@@ -48,13 +49,13 @@ export function CreateTask(){
 
 
         try{
-            const create = definitions.api.data.post('http://localhost:9000/createtask', {
+            const create = await definitions.api.data.post('http://localhost:9000/createtask', {
                 name,
                 description, 
                 tags,
                 to: toArray,
                 deadline: date,
-                team
+                ...(team !== 'myOwn' && team ? {team} : {})
             })
 
             window.history.back();
@@ -365,15 +366,16 @@ function TimePicker({change}){
 
 
 function To({team, change}){
-
     const [to, setTo] = useState({});
     let list = team.members;
     list = list.sort((a, b) => {
-        const aif = to[a._id] ? 1 : 0;
-        const bif = to[b._id] ? 1 : 0;
+        const aif = to[a.user._id] ? 1 : 0;
+        const bif = to[b.user._id] ? 1 : 0;
 
         return bif - aif;
     } );
+
+    console.log(list)
 
 
     function clickMemberTag(member, chosen){
@@ -381,7 +383,7 @@ function To({team, change}){
             setTo(prev => {
                 return {
                     ...prev,
-                    [member._id]: chosen ? false : true
+                    [member.user._id]: chosen ? false : true
                 }
             })
         }
@@ -396,11 +398,11 @@ function To({team, change}){
     return (
         <div className='to-container'>
             {list.map(member => {
-                const chosen = to[member._id] === true ? true : false;
+                const chosen = to[member.user._id] === true ? true : false;
 
                 return (
                     <div className={`to-tag ${chosen && 'active'}`} onClick={clickMemberTag(member, chosen)}>
-                        <span>{member.username}</span>
+                        <span>{member.user.username}</span>
 
                         <i className='material-icons'>
                             {chosen ? 'person_remove' : 'person_add'}

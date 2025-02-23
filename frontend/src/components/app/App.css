@@ -21,6 +21,7 @@ main{
   transform: translate(0, 100%);
   transition: transform 0.8s ease;
   font-size: 16px;
+  z-index: 1001;
 }
 
 .active{
@@ -33,4 +34,16 @@ main{
   word-wrap: break-word;
   display: block;
   
+}
+
+
+.blanket-opacity{
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: black;
+  opacity: 0.7;
+  z-index: 1000;
 }

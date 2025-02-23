@@ -5,21 +5,25 @@
     --secondary: #7ED321;
     --accent: #FF6B6B;
     --yellow: #f3d31f;
-    --purple: #800080;
-    --neutral: #F0F0F0;
-    --neutral2: #e2e2e2;
+    --purple: #a73aa7;
+    --neutral: #e9e9e9;
+    --neutral2: #cfcfcf;
+    --coral: #FFA07A; /* Light Salmon - A soft, warm accent */
+    --light-blue: #40E0D0; /* Turquoise - A fresh, vibrant pop */
 }
 
-body {
+body{
     --font-color: #ECECEC;
     --background: #1A1A1A;
     --primary: #6BA4FF;
-    --secondary: #70bb36;
+    --secondary: #68af32;
     --accent: #FF8E8E;
     --yellow: #FFD700;
     --purple: #9370DB;
     --neutral: #2D2D2D;
     --neutral2: #424549;
+    --coral: #FF7F50; /* Coral - A warm, inviting tone */
+    --light-blue: #00CED1; /* Dark Turquoise - A rich, deep teal */
 }
 
 body {
@@ -27,7 +31,7 @@ body {
     background-color: var(--background);
     color: var(--font-color);
     padding-top: 70px;
-    padding-bottom: 50px;
+    padding-bottom: 200px;
 }
 
 
@@ -50,6 +54,6 @@ body:has(.left-sidebar-container-main){
 .task-section.scrollbar::-webkit-scrollbar-thumb{
     border-radius: 5px;
     background-color: var(--neutral2);
-    border: 4px solid var(--neutral);
+    border: 2px solid var(--neutral);
     cursor: pointer;
 }

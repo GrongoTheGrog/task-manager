@@ -24,7 +24,7 @@ export function LeftSideBar(){
         {
             label: 'Teams', 
             cl: 'link-left-nav', 
-            to: '/teams',
+            to: '/teams/myOwn',
             icon: 'groups',
             iconClass: 'material-icons'
         },

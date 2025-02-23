@@ -8,7 +8,7 @@ const getTasksAuthor = async (req, res) => {
 
     const user = await User.findOne({username: req.user}).select('_id').exec();
 
-    const tasks = await Task.find({$or: [{author: user._id}, {to: user._id}]}).populate('team author').exec();
+    const tasks = await Task.find({$or: [{author: user._id}, {to: user._id}]}).populate('team author to').exec();
 
     res.json([...tasks]);
 }

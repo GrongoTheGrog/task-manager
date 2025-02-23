@@ -58,6 +58,14 @@ function App() {
           <LeftSideBar />
         }
 
+        {
+          definitions.blanket.data ? 
+            <div className='blanket-opacity'>
+
+            </div> : 
+            null
+        }
+
 
 
         <Routes>

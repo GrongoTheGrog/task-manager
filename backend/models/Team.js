@@ -10,9 +10,20 @@ const Team = new mongoose.Schema({
     description: String,
 
     members: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+        user: {        
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        role: {
+            type: Map,
+            of: Number
+        }
+    }],
+
+    possibleRoles: {
+        type: Map,
+        of: Number
+    }
 })
 
 module.exports = mongoose.model('Team', Team);

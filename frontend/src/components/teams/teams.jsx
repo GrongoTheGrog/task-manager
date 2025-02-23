@@ -1,13 +1,20 @@
-import { use, useEffect, useState } from 'react';
+import { createContext, memo, use, useContext, useEffect, useState } from 'react';
 import './teams.css';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import { Loading } from '../home/home';
-import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Form, Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { remainingTime } from '../home/home';
-
 
 //utils
 import { transformDay, transformMonth } from '../../utils/time';
+import { sub } from 'date-fns';
+
+
+const Provider = createContext();
+
+function useContextTeam() {
+    return useContext(Provider);
+}
 
 export function Teams(){
 
@@ -15,13 +22,56 @@ export function Teams(){
     const [tasks, setTasks] = useState();
     const [teamTasks, setTeamTasks] = useState([]);
     const [teams, setTeams] = useState();
-    const [createedTeam, setCreatedTeam] = useState()
+    const [createedTeam, setCreatedTeam] = useState();
+    const [deletedTeam, setDeletedTeam] = useState();
+    const [role, setRole] = useState();
     const navigator = useNavigate();
     const params = useParams()
 
-
-
     const curTeam = teams?.find(team => team._id === params.team) || null; 
+
+    
+    /// save highest role 
+    useEffect(() => {
+        if (curTeam){
+            const id = definitions.user.data._id;
+            const member = curTeam.members.find(member => member.user._id === id);
+            const memberRoles = member.role;
+            const possibleRoles = curTeam.possibleRoles;
+
+            const roles = Object.keys(memberRoles)
+            .map(key => {
+                return {
+                    role: key,
+                    value: possibleRoles[key]
+                }
+            })
+            .sort((a, b) => {
+                return b.value - a.value;
+            })
+            
+            setRole(roles[0]);
+
+        }
+    }, [curTeam])
+
+
+    //check role
+    function checkRole(requiredRole){
+        if (!curTeam || !role?.value) return false;
+
+        const possibleRoles = curTeam.possibleRoles;
+        if (role.value >= possibleRoles[requiredRole]){
+            return true;
+        }
+
+        return false;
+    };
+
+
+
+
+
 
     useEffect(() => {
         const getData = async () => {
@@ -33,14 +83,27 @@ export function Teams(){
                     setTasks(() => tasks.data);
                     setTeams(() => teams.data);
 
-                    createedTeam && navigator('/teams/' + createedTeam?._id);
-
                 }catch(err){
                     definitions.error.change(err?.data?.error || err.message);
                 }
         }   
         getData();
+    }, [createedTeam, deletedTeam]);
+
+
+    //change url to created teams tab
+    useEffect(() => {
+        createedTeam &&
+        navigator('/teams/' + createedTeam?._id);
+        setCreatedTeam(() => null);
     }, [createedTeam]);
+
+    //change url to myOwn when deleting team
+    useEffect(() => {
+        deletedTeam && navigator('/teams/myOwn');
+    }, [deletedTeam])
+
+
 
     useEffect(() => {
         if (!tasks) return;
@@ -57,15 +120,30 @@ export function Teams(){
         setTeamTasks(() => array)
     }, [curTeam, tasks])
 
-    return tasks && teams ?
 
-        <section className='teams-main-container'>
-            <TeamsNav teams={teams} create={setCreatedTeam} curTeam={curTeam}/>
+    const context = {
+        role,
+        checkRole
+    }
 
-            <OneTeam tasks={teamTasks} team={curTeam}/>
-        </section> :
+    return (
+        <Provider.Provider value={context}>
+            {tasks && teams ?
 
-        <Loading/>
+                <section className='teams-main-container'>
+                    <TeamsNav teams={teams} create={setCreatedTeam} curTeam={curTeam}/>
+
+                    <OneTeam tasks={teamTasks} team={curTeam} role={role} setDeletedTeam={setDeletedTeam}/>
+
+                    {   curTeam ?
+                        <Members team={curTeam}/>: 
+                        null}
+
+                </section> :
+
+                <Loading/>}
+        </Provider.Provider>
+    )
 }
 
 
@@ -176,7 +254,18 @@ function TeamsNav({teams, create, curTeam}){
     )
 }
 
-export function OneTeam({tasks, team}){
+
+
+
+
+
+
+
+
+
+
+export function OneTeam({tasks, team, setDeletedTeam}){
+
 
 
 
@@ -187,6 +276,15 @@ export function OneTeam({tasks, team}){
     const todayWeek = new Date().getDay();
     const month = new Date().getMonth();
     const year = new Date().getFullYear();
+    const [deleting, setDeleting] = useState(false);
+    const definitions = useSiteDefinitions();
+    const {role, checkRole} = useContextTeam();
+
+
+    function clickDelete(){
+        definitions.blanket.change(prev => !prev);
+        setDeleting(prev => !prev);
+    }
 
 
     tasks.forEach(task => {
@@ -203,26 +301,74 @@ export function OneTeam({tasks, team}){
         }
 
         const diff = (new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24);
-        console.log(diff)
+
         if (diff < 3 && diff > 0){
             upcomingTasks.push(task);
         } 
     });
 
+    function sort(array, greater){
+        array.sort((a, b) => {
+            const diffa = (new Date(a.deadline) - new Date()) / (1000 * 60 * 60 * 24);
+            const diffb = (new Date(b.deadline) - new Date()) / (1000 * 60 * 60 * 24);
+            
+            let result;
+            greater ?
+                result = (diffb < diffa ? 1 : diffa === diffb ? 0 : -1) :
+                result = (diffb > diffa ? 1 : diffa === diffb ? 0 : -1)
 
-    console.log(upcomingTasks)
+            return result;
+        })
+    
+    }
+
+    sort(overdueTasks, false);
+    sort(upcomingTasks, true);
+    sort(todayTasks, true);
+
+
+
+
 
 
     return (
         <div className='outer-mid-team-container'>
             <span className='title'>
-                {team?.name || 'Your Own Tasks'}
-                <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
-                    <i className='material-icons'>
-                        add
-                    </i>
-                    create task
-                </Link>
+                
+
+                {deleting ? 
+                    <Delete click={clickDelete} team={team} deleting={setDeletedTeam}/> :
+                null}
+
+                <div className='info'>
+                    {team?.name || 'Your Own Tasks'}
+                    <span>
+                        {team?.description}
+                    </span>
+                </div>
+
+
+                <div className='buttons'>
+
+
+                    {checkRole('Creator') ? <div className='delete' onClick={clickDelete}>
+                        <i className='material-icons'>
+                            delete
+                        </i>
+                        delete team
+                    </div> : null}
+
+
+
+                    {checkRole('Admin') ? 
+                        <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
+                            <i className='material-icons'>
+                                add
+                            </i>
+                            create task
+                        </Link> : 
+                        null}
+                </div>
             </span>
 
             <div className='mid-team-main-information-container'>
@@ -262,12 +408,20 @@ export function OneTeam({tasks, team}){
                     <TaskSection mode='overdue' tasks={overdueTasks} title={'Overdue tasks'}/> 
                 </div>
             </div>
-
-
-            aa
         </div>
     )
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 function TaskSection({mode, tasks, title}){
@@ -293,7 +447,7 @@ function TaskSection({mode, tasks, title}){
                             <div className='expired'>Expired</div> :
                             null}
 
-                        <span style={{fontSize: '20px', fontWeight: 'bold', color}}>
+                        <span style={{fontSize: '20px', fontWeight: 'bold', color}} className='title-inner-card-task-team'>
                             {task.name}
                         </span>
             
@@ -301,11 +455,27 @@ function TaskSection({mode, tasks, title}){
                             {task.description}
                         </span>
             
-                        <div className='tags-container-tasks-home'>
+                        {task.tags.length ? <div className='tags-container-tasks-home'>
                             {task.tags && task.tags.map((tag, index) => {
                                 return <span className='tag-card-tasks-home' key={index}>{tag} </span>
                             })}
-                        </div>
+                        </div> : null}
+
+                        {task.to.length ? 
+                            <div className='to-container-teams'>
+                                {task.to.map((member, index) => {
+                                    return (
+                                        <div className='to-card-teams' key={index}>
+                                            <i className='material-icons'>
+                                                person
+                                            </i>
+
+                                            <span>{member.username}</span>
+                                        </div>
+                                    )
+                                })}
+                            </div> :
+                            null}
             
                         {task.deadline && <div className='dead-line-card-home'>
                             <strong>Deadline:</strong> {remainingTime(new Date(task.deadline).getTime() - new Date().getTime())}
@@ -320,4 +490,142 @@ function TaskSection({mode, tasks, title}){
             }
         </div>  )
     
+}
+
+
+
+
+
+
+
+
+function Members({team}){
+
+    const possibleRoles = team.possibleRoles;
+    const members = team.members;
+
+
+
+    const objectRoles = new Map();
+
+    members.forEach(member => {
+        const memberRoles = Object.values(member.role);
+        memberRoles.sort((a, b) => {
+            return b - a;
+        });
+
+        for(let key in possibleRoles){
+            if (possibleRoles[key] === memberRoles[0]){
+                if(!objectRoles.get(key)){
+                    objectRoles.set(key, []);
+                }
+
+                const array = objectRoles.get(key);
+                   
+                objectRoles.set(key, [...array, member]);
+                
+            }
+        }
+
+    })
+
+    const elements = Array.from(objectRoles.entries())
+        .sort((a, b) => {
+            const aKey = possibleRoles[a[0]];
+            const bKey = possibleRoles[b[0]];
+            return bKey - aKey;
+        })
+        .map((role, index) => {
+            
+            return (
+                <div className='role-container-members' key={index}>
+                    <span className='role-title-members'>{role[0]}(s)</span>
+
+                    <div className='member-members-flex'>
+                        {role[1].map((member, index) => {
+
+                            return (
+                                <div className='member-card'>
+                                    <span className='name'>{member.user.username}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span>
+                                </div>
+                            )
+                        })}
+
+                    </div>
+                </div>
+            )
+        })
+
+    
+
+    return(
+        <div className='members-outer-container'>
+            <div className='top-member-container'>
+                <i className='material-icons'>
+                    groups
+                </i>
+
+                <span>Members</span>
+            </div>
+
+            <div className='members-container-flex'>
+                {elements}
+            </div>
+        </div>
+    )
+}
+
+
+
+
+
+
+
+function Delete({click, team, deleting}){
+
+    const definitions = useSiteDefinitions();
+
+    async function submit(event){
+        event.preventDefault();
+        const data = new FormData(event.target);
+        const confirm = data.get('confirm');
+        
+        if (!confirm) return definitions.error.change('Insert the name.')
+        
+        if (confirm !== team.name) return definitions.error.change('Name is not macthing.')
+
+        try{
+            const response = await definitions.api.data.post('/deleteteam', {
+                id: team._id
+            });
+            
+
+            deleting(() => response.data);
+            click();
+        }catch(err){
+            definitions.error.change(err.message);
+        }
+    }
+
+    return (
+        <form className='deleting-container-team' onSubmit={submit}>
+            <label>
+                Insert the name of the team to delete:
+            </label>
+
+            <input name='confirm'>
+
+            </input>
+
+            <div className='buttons'>
+                <button type='button' onClick={click}>
+                    Cancel
+                </button>
+
+                <button style={{color: 'white', backgroundColor: 'var(--accent)'}}>    
+                    Delete
+                </button>
+            </div>
+        </form>
+    )
 }

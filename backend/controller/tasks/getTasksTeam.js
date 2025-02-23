@@ -7,7 +7,7 @@ const getTasksTeam = async (req, res) => {
 
     if (!teamId) return res.status(400).json({"error": "Missing id."});
 
-    const tasks = await Task.find({team: teamId}).populate('team author').exec();
+    const tasks = await Task.find({team: teamId}).populate('team author to').exec();
 
     res.json(tasks);
 }
