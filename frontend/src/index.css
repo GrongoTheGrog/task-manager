@@ -12,7 +12,7 @@
     --light-blue: #40E0D0; /* Turquoise - A fresh, vibrant pop */
 }
 
-body{
+body {
     --font-color: #ECECEC;
     --background: #1A1A1A;
     --primary: #6BA4FF;
@@ -55,5 +55,12 @@ body:has(.left-sidebar-container-main){
     border-radius: 5px;
     background-color: var(--neutral2);
     border: 2px solid var(--neutral);
+    cursor: pointer;
+}
+
+.notifications-displayer-container.scrollbar::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background-color: var(--neutral);
+    border: 2px solid var(--neutral2);
     cursor: pointer;
 }

@@ -2,12 +2,11 @@ import { createContext, memo, use, useContext, useEffect, useState } from 'react
 import './teams.css';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import { Loading } from '../home/home';
-import { Form, Link, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { remainingTime } from '../home/home';
 
 //utils
 import { transformDay, transformMonth } from '../../utils/time';
-import { sub } from 'date-fns';
 
 
 const Provider = createContext();
@@ -19,7 +18,7 @@ function useContextTeam() {
 export function Teams(){
 
     const definitions = useSiteDefinitions();
-    const [tasks, setTasks] = useState();
+    const [tasks, setTasks] = useState([]);
     const [teamTasks, setTeamTasks] = useState([]);
     const [teams, setTeams] = useState();
     const [createedTeam, setCreatedTeam] = useState();
@@ -27,9 +26,32 @@ export function Teams(){
     const [role, setRole] = useState();
     const navigator = useNavigate();
     const params = useParams()
+    const [addMember, setAddMember] = useState();
 
     const curTeam = teams?.find(team => team._id === params.team) || null; 
 
+    //listen to create-task
+    useEffect(() => {
+        if (curTeam){
+            const socket = definitions.socket.data;
+
+            socket.emit('join-team', curTeam._id);
+            console.log('join-team');
+
+            const handleNewTask = (task) => {
+                console.log(task.team);
+                console.log(curTeam._id)
+
+
+                setTasks(prev => [...prev, task]);
+                console.log('socket');
+            }
+
+            socket.on('create-task', handleNewTask);
+
+            return () => socket.off('create-task', handleNewTask);
+        }
+    }, [curTeam]);
     
     /// save highest role 
     useEffect(() => {
@@ -52,13 +74,16 @@ export function Teams(){
             
             setRole(roles[0]);
 
+
         }
     }, [curTeam])
 
 
     //check role
-    function checkRole(requiredRole){
-        if (!curTeam || !role?.value) return false;
+    function checkRole(requiredRole, allowedOwnTasks){
+        if (allowedOwnTasks && !curTeam) return true
+
+        if (!role?.value || !curTeam) return false;
 
         const possibleRoles = curTeam.possibleRoles;
         if (role.value >= possibleRoles[requiredRole]){
@@ -69,10 +94,21 @@ export function Teams(){
     };
 
 
+    //listen to added member
+    useEffect(() => {
+        function handleAddedMember(member){
+            setAddMember(() => member);
+            console.log('new member accepted')
+        }
 
 
+        definitions.socket.data.on('added-member', handleAddedMember);
+
+        return () => definitions.socket.data.off('added-member', handleAddedMember);
+    }, [])
 
 
+    //chage tasks and teams when delete and create teams
     useEffect(() => {
         const getData = async () => {
                 try{
@@ -88,7 +124,7 @@ export function Teams(){
                 }
         }   
         getData();
-    }, [createedTeam, deletedTeam]);
+    }, [createedTeam, deletedTeam, definitions.enteringTeam.data]);
 
 
     //change url to created teams tab
@@ -104,13 +140,12 @@ export function Teams(){
     }, [deletedTeam])
 
 
-
+    //team tasks
     useEffect(() => {
         if (!tasks) return;
-
         const array = tasks?.filter(task => {
             if (curTeam) {
-                return task?.team?._id === curTeam?._id;
+                return task?.team?._id === curTeam?._id || task.team === curTeam._id;
             }else{
                 return !task.team;
             }
@@ -125,6 +160,7 @@ export function Teams(){
         role,
         checkRole
     }
+
 
     return (
         <Provider.Provider value={context}>
@@ -162,6 +198,9 @@ function TeamsNav({teams, create, curTeam}){
 
     function click(value, path){
         return function() {
+            if (curTeam){
+                definitions.socket.data.emit('leave-team', curTeam._id);
+            }
             navigator(path);
         }
     }
@@ -360,7 +399,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
 
 
 
-                    {checkRole('Admin') ? 
+                    {checkRole('Admin', true) ? 
                         <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
                             <i className='material-icons'>
                                 add
@@ -503,8 +542,13 @@ function Members({team}){
 
     const possibleRoles = team.possibleRoles;
     const members = team.members;
+    const definitions = useSiteDefinitions();
+    const [addingMember, setAddingMember] = useState(false);
 
-
+    function clickAddMember(){
+        definitions.blanket.change(prev => !prev);
+        setAddingMember(prev => !prev)
+    }
 
     const objectRoles = new Map();
 
@@ -515,7 +559,9 @@ function Members({team}){
         });
 
         for(let key in possibleRoles){
+
             if (possibleRoles[key] === memberRoles[0]){
+
                 if(!objectRoles.get(key)){
                     objectRoles.set(key, []);
                 }
@@ -529,6 +575,7 @@ function Members({team}){
 
     })
 
+
     const elements = Array.from(objectRoles.entries())
         .sort((a, b) => {
             const aKey = possibleRoles[a[0]];
@@ -539,14 +586,22 @@ function Members({team}){
             
             return (
                 <div className='role-container-members' key={index}>
-                    <span className='role-title-members'>{role[0]}(s)</span>
+                    {addingMember ? 
+                    <AddMember toggle={clickAddMember} team={team}/> :
+                    null}
+
+                    <div className='members-header'>
+                        <span className='role-title-members'>{role[0]}(s)</span>
+                    </div>
 
                     <div className='member-members-flex'>
                         {role[1].map((member, index) => {
 
+                            const me = member.user.username === definitions.user.data.username ? 'me' : '';
+
                             return (
-                                <div className='member-card'>
-                                    <span className='name'>{member.user.username}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span>
+                                <div className={'member-card ' + me}>
+                                    <span className={'name '}>{member.user.username}</span>
                                 </div>
                             )
                         })}
@@ -560,12 +615,16 @@ function Members({team}){
 
     return(
         <div className='members-outer-container'>
-            <div className='top-member-container'>
-                <i className='material-icons'>
-                    groups
-                </i>
+            <div className='members-header'>
+                <div className='button-add-member' onClick={clickAddMember}>
+                    <i className='material-icons'>
+                        person_add
+                    </i>
+                </div>
 
-                <span>Members</span>
+                <div className='top-member-container'>
+                    <span>Members</span>
+                </div>
             </div>
 
             <div className='members-container-flex'>
@@ -627,5 +686,118 @@ function Delete({click, team, deleting}){
                 </button>
             </div>
         </form>
+    )
+}
+
+
+function AddMember({toggle, team}){
+
+    const [userInput, setUserInput] = useState();
+    const {error, api, user} = useSiteDefinitions();
+    const [users, setUsers] = useState([]);
+
+
+    async function submit(event) {
+        event.preventDefault();
+
+        const data = new FormData(event.target);
+        const userMeta = data.get('user');
+
+        if (user.data.username === userMeta || user.data.username === userMeta) return error.change('Select an user that is not yourself.');
+
+        for (let c = 0; c < team.members.length; c++){
+            const {user} = team.members[c];
+
+            if(user.username === userMeta || user.email === userMeta) return error.change('Select an user that is not on your team.')
+        }
+
+        if (users.find(user => user.username === userMeta || user.username === userMeta)) {
+            return error.change('User alredy picked.')
+        }
+
+
+        if (!user) return error.change('Enter email or username.');
+
+        try{    
+            const data = await api.data.post('/getUser', {
+                user: userMeta
+            });
+
+            setUsers(prev => [...prev, data.data]);
+            setUserInput(() => '');
+
+        }catch(err){
+            error.change(err?.response.data.error || err.message);
+        }
+    }
+
+
+    async function createReq(){
+        try{   
+            if (users.length < 1) return error.change('Choose an user so you can invite.')
+
+            const requests = await api.data.post('/createreq', {
+                to: users,
+                team: team._id
+            });
+
+            toggle();
+        }catch(err){
+            error.change(err?.response.data.error || err.message);
+        }
+
+    }
+
+
+    return (
+        <div className='adding-member-container'>
+            <span>
+                Enter the email or username:
+            </span> 
+
+            <form className='form-add-member' onSubmit={submit}>
+                <input 
+                placeholder='taskify@gmail.com' 
+                name='user' 
+                value={userInput}
+                onChange={event => setUserInput(() => event.target.value)}
+                >
+
+                </input>
+
+                <button>
+                    <i className='material-icons'>
+                        add
+                    </i>
+                </button>
+            </form>
+
+            <div className='users-adding-member-flex'>
+                {users ? users.map(user => {
+                    return (
+                    <div className='added-user'>
+                        {user.email}
+
+                        <i className='material-icons' onClick={() => setUsers(prev => {
+                            return prev.filter(userState => userState.email !== user.email);
+                        })}>  
+                            close
+                        </i>
+                    </div>
+                    )
+                }) : null}
+            </div>
+
+
+            <div className='buttons'>
+                <button className='cancel-adding-members' onClick={toggle}>
+                    Cancel
+                </button>
+                
+                <button className='invite-members-buttom' style={{backgroundColor: 'var(--secondary)', color: 'white'}} onClick={createReq}>
+                    Invite
+                </button>
+            </div>
+        </div>
     )
 }

@@ -8,9 +8,7 @@ router.get('/refresh', async (req, res) => {
 
     if (!jwtRefresh) return res.status(400).json({"error": "Missing cookies."});
     const matching = await User.findOne({refreshToken: jwtRefresh}).exec();
-    if (!matching) return res.status(404).json({"error": "Unknown token."});
-    console.log(matching.refreshToken);
-    console.log(jwtRefresh);    
+    if (!matching) return res.status(404).json({"error": "Unknown token."});   
 
 
     jwt.verify(

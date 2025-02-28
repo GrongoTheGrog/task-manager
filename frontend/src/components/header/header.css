@@ -12,6 +12,7 @@ header{
     padding: 10px 10px;
     box-sizing: border-box;
     z-index: 1;
+    justify-content: space-between;
 }
 
 .left-header{
@@ -25,3 +26,125 @@ header{
     color: var(--primary);
 }
 
+
+
+/*RIGHT HEADER*/
+
+.right-header{
+    padding: 20px 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+}
+
+.notifications-container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    border-radius: 1000px;
+    padding: 7px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 30px;
+}
+
+.notifications-container:hover{
+    background-color: var(--neutral2);
+}
+
+.notifications-number-displayer{
+    background-color: var(--primary);
+    color: white;
+    aspect-ratio: 1;
+    width: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding: 1px;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+}
+
+.profile-pic-header{
+    object-fit: cover;
+    width: 45px;
+    aspect-ratio: 1;
+    border-radius: 1000px;
+    justify-self: center;
+}
+
+
+
+/* NOTIFICATIONS CONTAINER*/
+
+.notifications-displayer-container{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    bottom: 0px;
+    right: 100%;
+    transform: translate(50%, 100%);
+    width: 250px;
+    justify-content: center;
+    background-color: var(--neutral2);
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    gap: 10px;
+    max-height: 500px;
+    overflow: auto;
+}
+.notifications-displayer-container > span{
+    color: var(--primary);
+    margin-bottom: 5px;
+    font-size: 20px;
+}
+
+.request-card-outer-container > span > span{
+    color: var(--primary);
+}
+
+.request-card-outer-container{
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--font-color);
+    padding: 10px;
+    gap: 8px;
+}
+
+.request-card-outer-container > .buttons{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 14px;
+}
+
+.request-card-outer-container > .buttons > button{
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.request-card-outer-container > .buttons > button:hover{
+    flex: 1.1;
+}
+
+.request-card-outer-container > .buttons > button > i{
+    font-size: 15px;
+    color: var(--font-color);
+}

@@ -2,7 +2,7 @@
 
 .teams-main-container{
     display: grid;
-    grid-template-columns: 180px 23fr;
+    grid-template-columns: 180px 1fr;
     width: 100%;
     padding: 10px 40px;
     min-width: 800px;
@@ -12,7 +12,7 @@
 }
 
 .teams-main-container:has(.members-outer-container){
-    grid-template-columns: 180px 19fr 4fr;
+    grid-template-columns: 180px 19fr 5fr;
 }
 
 
@@ -228,6 +228,11 @@
     gap: 30px;
     max-height: 100%;
     overflow: hidden;
+    transition: flex 0.5s ease;
+}
+
+.mid-div-section:hover{
+    flex: 1.05;
 }
 
 .info-today-display-team{
@@ -391,6 +396,13 @@
 
 
 
+
+
+
+
+
+
+
  /*MEMBERS*/
 
 
@@ -420,6 +432,7 @@
     font-size: 22px;
     gap: 10px;
     color: var(--primary);
+    flex: 8;
 }
 
 .role-title-members{
@@ -435,16 +448,22 @@
 }
 
 .member-card{
-    padding: 3px 10px;
+    padding: 6px 10px;
     background-color: var(--neutral2);
     border-radius: 4px;
     width: 100%;
     overflow: hidden;
     box-sizing: border-box;
 }
+.member-card.me{
+    background-color: var(--primary);
+    color: white;
+    font-weight: bold;
+
+}
 
 .member-card > .name{
-    font-size: 12px;
+    font-size: 14px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -454,6 +473,38 @@
     width: 100%;
     word-break: break-word;
 }
+
+.members-container-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.members-header{
+    display: flex;
+}
+
+.button-add-member{
+    flex: 1;
+    aspect-ratio: 1;
+    padding: 6px;
+    background-color: var(--primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -506,3 +557,110 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/*Adding Member*/
+
+.adding-member-container{
+    position: fixed;
+    bottom: 50%;
+    right: 50%;
+    transform: translate(50%, 50%);
+    background-color: var(--neutral);
+    z-index: 1001;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    color: var(--primary);
+    max-width: 480px;
+    align-items: center;
+}
+
+.adding-member-container > span{
+    font-size: 24px;
+}
+
+.form-add-member{
+    display: flex;
+    gap: 10px;
+}
+
+.form-add-member > input{
+    background-color: var(--neutral2);
+    border: none;
+    font-size: 15px;
+    border-radius: 8px;
+    color: var(--font-color);
+    padding: 4px 25px;
+    outline: none;
+    width: 240px;
+}
+
+.form-add-member > button{
+    background-color: var(--neutral2);
+    border: none;
+    font-size: 15px;
+    border-radius: 8px;
+    color: var(--font-color);
+    outline: none;
+    aspect-ratio: 1;
+    cursor: pointer;
+}
+
+.form-add-member > button > i{
+    color: var(--font-color);
+}
+
+.users-adding-member-flex{
+    display: flex;
+    gap: 20px;
+    padding: 10px 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.added-user{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: var(--neutral2);
+    padding: 2px 10px ;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.added-user > i{
+    cursor: pointer;
+}
+
+.adding-member-container > .buttons{
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    width: 100%;
+}
+
+.adding-member-container > .buttons > button{
+    background-color: var(--neutral2);
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 17px;
+    border-radius: 10px;
+    color: var(--font-color);
+    padding: 4px;
+    cursor: pointer;}
+

@@ -22,6 +22,8 @@ export function CreateTask(){
 
     const params = useParams();
     const team = params.team;
+
+    
     
 
     
@@ -87,7 +89,7 @@ export function CreateTask(){
     return  teamData || team === 'undefined' ? 
         <form className='outer-container-create-task-page' onSubmit={CreateTaskApi}>
 
-            <label style={{textAlign: 'center', fontSize: '28px', marginBottom: '10px'}}>
+            <label style={{fontWeight: 'bold', textAlign: 'center', fontSize: '32px', marginBottom: '10px'}}>
                 {teamData?.name || 'Your own tasks'}
             </label>
 
@@ -136,6 +138,12 @@ export function CreateTask(){
 
 
             <div className='button-container'>
+                <button type='button' className='button-assign' style={{backgroundColor: 'var(--neutral2)', color: 'var(--font-color)'}} onClick={() => {
+                    window.history.back();
+                }}>
+                        Cancel
+                </button>
+
                 <button className='button-assign'>
                     Assign Task
                 </button>

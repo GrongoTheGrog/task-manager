@@ -25,6 +25,7 @@ function App() {
     localStorage.setItem("lastVisitedPage", window.location.pathname);
   }, [window.location.pathname]);
 
+  
 
   useEffect(() => {
     if(api.data){
@@ -46,7 +47,7 @@ function App() {
   }, [api.data])
 
 
-  const resultLoad = !api.data || !socket.data || !theme.data;
+  const resultLoad = !api.data || !theme.data;
 
   return (
     <>

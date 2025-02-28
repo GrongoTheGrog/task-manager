@@ -15,8 +15,6 @@ const getTeams = async (req, res) => {
         })
         .exec();
 
-    console.log(user);
-
 
     res.json(user.teams);
 }

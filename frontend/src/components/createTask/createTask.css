@@ -1,6 +1,6 @@
 .outer-container-create-task-page{
     min-width: 600px;
-    width: 44vw;
+    width: 52vw;
     background-color: var(--neutral);
     padding: 30px;
     box-sizing: border-box;
@@ -110,6 +110,8 @@ label{
     font-size: 16px;
     border-radius: 10px;
     margin-top: 10px;
+    width: 220px;
+    box-sizing: border-box;
 }
 
 .tag-container-create-task{
@@ -186,12 +188,14 @@ label{
 
 .button-container{
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     margin-top: 40px;
+    gap: 20px;
 }
 
 .button-assign{
     background-color: var(--secondary);
+    flex: 1;
     color: white;
     font-size: 18px;
     padding: 8px 80px;
@@ -207,8 +211,9 @@ label{
 /*date picker */
 
 .date-picker-container{
-    width: 200px;
+    width: 220px;
     display: flex;
+    box-sizing: border-box;
     flex-direction: column;
     background-color: var(--neutral2);
     padding: 10px;
@@ -302,7 +307,7 @@ label{
 
 
 .time-container-picker{
-    width: 200px;
+    width: 220px;
     display: flex;
     background-color: var(--neutral2);
     align-items: center;
@@ -314,6 +319,7 @@ label{
     transition: all 0.2s ease;
     position: relative;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 

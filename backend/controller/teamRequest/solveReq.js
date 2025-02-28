@@ -1,27 +1,44 @@
 const TeamRequest = require('../../models/TeamRequest');
 const User = require('../../models/User');
+const io = require('../../server');
 
 const solveReq = async (req, res) => {
     try{
         const {reqId, accept} = req.body;
+        console.log(accept)
 
-        if (!reqId || !accept) return res.status(400).json({error: "Missing solve option or reqId."});
+        if (!reqId || accept === undefined) return res.status(400).json({error: "Missing solve option or reqId."});
 
         if (accept){ 
-            const teamRequest = await TeamRequest.findById(reqId).populate('to').exec();
+            const teamRequest = await TeamRequest.findById(reqId).populate('to team').exec();
+            console.log(teamRequest);
 
-            const teamId = teamRequest.team;
+            const team = teamRequest.team;
             const user = teamRequest.to;
 
-            if (user.teams.includes(teamId)) return res.status(400).json({error: "User alredy in team."});
+            if (user.teams.includes(team._id)) return res.status(409).json({error: "User alredy in team."});
 
-            user.teams.push(teamId);
+
+            team.members.push({
+                user,
+                role: {
+                    Member: 1
+                }
+            })
+
+
+            user.teams.push(team._id);
+            await team.save();
             await user.save();
+
+            io.to(team._id).emit('add-member', user);
+            console.log('add-member emitted')
         }
 
-        const deleteTeam = await TeamRequest.findByIdAndDelete(reqId).exec();
+        const deletedRequest = await TeamRequest.findByIdAndDelete(reqId).exec()
+        console.log()
 
-        res.json(deleteTeam);
+        res.json(deletedRequest);
     }catch(err){
         console.log(err.message);
         return res.status(500).json({error: err.message});

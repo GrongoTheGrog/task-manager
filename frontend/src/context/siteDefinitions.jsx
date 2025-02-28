@@ -21,6 +21,8 @@ export function SiteDefinitions({children}){
 
     const [blanket, setBlanket] = useState(false);
 
+    const [enteringTeam, setEnteringTeam] = useState();
+
     const errorTimeout = useRef();
 
     const changeError = (err) => {
@@ -39,27 +41,8 @@ export function SiteDefinitions({children}){
         setUser(() => user);
     }
 
-
+    //SET THE API AND INTERCEPTORS FOT THE PROJECT
     useEffect(() => {
-        const newSocket = io('http://localhost:9000', {
-            transports: ['websocket'],
-            headers: {
-                type: 'websocket'
-            },
-            withCredentials: true
-        });
-        setSocket(newSocket);
-
-
-        newSocket.on('connect', () => {
-            console.log('connected')
-        });
-
-        newSocket.on('connect_error', (error) => {
-            console.log(error)
-        });
-
-
 
         const fetch = axios.create({
             baseURL: 'http://localhost:9000',
@@ -105,10 +88,40 @@ export function SiteDefinitions({children}){
         )
 
         setApi(() => fetch)
-        return () => newSocket.disconnect();
     }, []);
 
 
+    ///SET THE WEBSOCKET 
+    useEffect(() => {
+        const token = localStorage.getItem('jwtAccess');
+
+        if (user && token) {
+            const newSocket = io('http://localhost:9000', {
+                withCredentials: true,
+                extraHeaders: {
+                    id: user._id
+                }
+            });
+            setSocket(newSocket);
+    
+    
+            newSocket.on('connect', () => {
+                console.log('connected')
+            });
+    
+            newSocket.on('connect_error', (error) => {
+                console.log(error)
+            });
+
+            return () => {
+                newSocket.disconnect();
+            };
+
+        }else{
+            if (socket) socket?.disconnect();
+            setSocket(null);
+        }
+    }, [user, localStorage.getItem('jwtRefresh')]);
 
     const [theme, setTheme] = useState(true);
 
@@ -130,7 +143,8 @@ export function SiteDefinitions({children}){
         user: { data: user, change: changeUser},
         error: { data: error, change: changeError },
         api: { data: api, change: changeError},
-        blanket: { data: blanket, change: setBlanket}
+        blanket: { data: blanket, change: setBlanket},
+        enteringTeam: { data: enteringTeam, change: setEnteringTeam}
     }
 
     return (

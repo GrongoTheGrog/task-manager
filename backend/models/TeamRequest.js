@@ -14,7 +14,7 @@ const TeamRequest = new mongoose.Schema({
     team: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User'
+        ref: 'Team'
     }
 })
 
