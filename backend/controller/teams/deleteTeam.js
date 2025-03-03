@@ -24,7 +24,7 @@ const deleteTeam = async (req, res) => {
 
     if (!user) return res.status(403).json({error: 'User is not on the team.'});
 
-    if (!user.role.get('Creator')) return res.status(403).json({error: 'You are not allowed to delete the team.'})
+    if (!user.role.includes('Creator')) return res.status(403).json({error: 'You are not allowed to delete the team.'})
 
 
     const teamId = teamData._id;

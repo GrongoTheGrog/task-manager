@@ -17,7 +17,29 @@ header{
 
 .left-header{
     display: flex;
-    padding: 0 60px;
+    padding: 0 30px;
+    align-items: center;
+    gap: 60px;
+}
+
+.left-header > .menu{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    aspect-ratio: 1;
+    border-radius: 1000px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.left-header > .menu:hover{
+    background-color: var(--hover);
+}
+
+.left-header > .menu > i{
+    font-size: 30px;
+    pointer-events: none;
 }
 
 .header-title{
@@ -102,11 +124,12 @@ header{
     gap: 10px;
     max-height: 500px;
     overflow: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .notifications-displayer-container > span{
     color: var(--primary);
     margin-bottom: 5px;
-    font-size: 20px;
+    font-size: 22px;
 }
 
 .request-card-outer-container > span > span{
@@ -137,7 +160,7 @@ header{
     box-sizing: border-box;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease;;
 }
 
 .request-card-outer-container > .buttons > button:hover{
@@ -146,5 +169,13 @@ header{
 
 .request-card-outer-container > .buttons > button > i{
     font-size: 15px;
-    color: var(--font-color);
+    color: white;
+}
+
+.notifications-displayer-container > .caught-up{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
 }

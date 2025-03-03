@@ -14,17 +14,12 @@ const createTeam = async (req, res) => {
         description, 
         members: {
             user: matching._id,
-            role: new Map([
-                ['Creator', 100],
-                ['Admin', 76],
-                ['Member', 1]   
-            ])
-        },
-        possibleRoles: new Map([
-            ['Creator', 100],
-            ['Admin', 76],
-            ['Member', 1]
-        ])
+            role: [
+                'Creator',
+                'Admin',
+                'Member'
+            ]
+        }
     });
 
     await team.save();

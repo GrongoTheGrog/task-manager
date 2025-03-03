@@ -1,4 +1,4 @@
-import { createContext, memo, use, useContext, useEffect, useState } from 'react';
+import { createContext, forwardRef, memo, use, useContext, useEffect, useRef, useState } from 'react';
 import './teams.css';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import { Loading } from '../home/home';
@@ -7,6 +7,7 @@ import { remainingTime } from '../home/home';
 
 //utils
 import { transformDay, transformMonth } from '../../utils/time';
+import { set } from 'date-fns';
 
 
 const Provider = createContext();
@@ -18,114 +19,182 @@ function useContextTeam() {
 export function Teams(){
 
     const definitions = useSiteDefinitions();
-    const [tasks, setTasks] = useState([]);
-    const [teamTasks, setTeamTasks] = useState([]);
-    const [teams, setTeams] = useState();
-    const [createedTeam, setCreatedTeam] = useState();
-    const [deletedTeam, setDeletedTeam] = useState();
-    const [role, setRole] = useState();
+
+    //tasks states
+    const [tasks, setTasks] = useState();             //all tasks
+    const [teamTasks, setTeamTasks] = useState([]);     //just the current teamTasks
+
+    //team states
+    const [teams, setTeams] = useState();               //all the user teams
+    const [curTeam, setCurTeam] = useState();           //current team
+    const [members, setMembers] = useState([])          //sorted members list
+    const [createedTeam, setCreatedTeam] = useState();  //to make it fetch again
+    const [deletedTeam, setDeletedTeam] = useState();   //to make it fetch again
+    const [addMember, setAddMember] = useState();       //to make it fetch again
+
+    //authorization
+    const [roles, setRoles] = useState([]);             //roles array ['Creator', 'Member']
+    const [permissions, setPermissions] = useState();   //permissions 
+
+    //navigation
     const navigator = useNavigate();
-    const params = useParams()
-    const [addMember, setAddMember] = useState();
+    const params = useParams()                          // {team: ...}
 
-    const curTeam = teams?.find(team => team._id === params.team) || null; 
 
-    //listen to create-task
+    
+    //save permissions and roles
     useEffect(() => {
         if (curTeam){
+            //create id to look for which member is loged user
+            const id = definitions.user.data._id;
+            //search for user
+            const member = curTeam.members.find(member => member.user._id === id);
+            
+            
+
+            //create a variable for member roles and possible roles
+            const memberRoles = member.role;
+            const possibleRoles = curTeam.possibleRoles;
+
+            //create a new set to store all permissions 
+            const permissions = new Set();
+            
+            //sets, with no duplicates, all the permissions user currently has 
+            memberRoles.forEach(role => {
+                const rolePermitions = possibleRoles[role].permissions;
+                rolePermitions.forEach(permission => {
+                    permissions.add(permission);
+                })
+            })
+            
+            //assign to states
+            setRoles(memberRoles);
+            setPermissions(permissions);
+        }
+    }, [curTeam])
+
+
+    
+    //check if user has required permission (allow if !curTeam and allowedOwnTasks)
+    function checkRole(permission, allowedOwnTasks){
+        
+        if(permissions){//allow when in ownTasks page
+            if (allowedOwnTasks && !curTeam) return true;
+            if (!allowedOwnTasks && !curTeam) return false;
+
+
+            //check if set() permissions has permission
+            if (permissions.has(permission)) return true;
+            return false;
+        }
+    };
+
+
+    //changes the team and tasks when currentTeam changes
+    useEffect(() => {
+        setMembers();
+        if (curTeam){
+
+            //set members
+            async function getMembers() {
+                const members = await definitions.api.data.post('/getsortedmembers', {
+                    teamId: curTeam._id
+                });
+
+                setMembers(members.data);
+            }
+
+            getMembers();
+
+            //get the socket from definitions
             const socket = definitions.socket.data;
 
+            //emits the event for joining the socket room
             socket.emit('join-team', curTeam._id);
-            console.log('join-team');
+
+
+            //listen to new tasks
 
             const handleNewTask = (task) => {
-                console.log(task.team);
-                console.log(curTeam._id)
-
-
-                setTasks(prev => [...prev, task]);
-                console.log('socket');
+                console.log('create task event');
+                setAddMember(task);
             }
 
             socket.on('create-task', handleNewTask);
+            console.log('create task listener')
 
             return () => socket.off('create-task', handleNewTask);
         }
     }, [curTeam]);
     
-    /// save highest role 
-    useEffect(() => {
-        if (curTeam){
-            const id = definitions.user.data._id;
-            const member = curTeam.members.find(member => member.user._id === id);
-            const memberRoles = member.role;
-            const possibleRoles = curTeam.possibleRoles;
-
-            const roles = Object.keys(memberRoles)
-            .map(key => {
-                return {
-                    role: key,
-                    value: possibleRoles[key]
-                }
-            })
-            .sort((a, b) => {
-                return b.value - a.value;
-            })
-            
-            setRole(roles[0]);
-
-
-        }
-    }, [curTeam])
-
-
-    //check role
-    function checkRole(requiredRole, allowedOwnTasks){
-        if (allowedOwnTasks && !curTeam) return true
-
-        if (!role?.value || !curTeam) return false;
-
-        const possibleRoles = curTeam.possibleRoles;
-        if (role.value >= possibleRoles[requiredRole]){
-            return true;
-        }
-
-        return false;
-    };
-
-
+    console.log(teamTasks)
     //listen to added member
     useEffect(() => {
         function handleAddedMember(member){
-            setAddMember(() => member);
+            setAddMember(member);
             console.log('new member accepted')
         }
 
 
-        definitions.socket.data.on('added-member', handleAddedMember);
+        definitions.socket.data.on('add-member', handleAddedMember);
+        definitions.socket.data.on('leave-team', handleAddedMember);
+        console.log('user events')
 
-        return () => definitions.socket.data.off('added-member', handleAddedMember);
-    }, [])
+        return () => {
+            definitions.socket.data.off('add-member', handleAddedMember);
+            definitions.socket.data.off('leave-team', handleAddedMember);
+        }
+    }, [definitions.socket.data])
 
 
     //chage tasks and teams when delete and create teams
     useEffect(() => {
         const getData = async () => {
                 try{
-                    const tasks = await definitions.api.data.post('http://localhost:9000/gettasksauthor');
-                    const teams = await definitions.api.data.get('http://localhost:9000/getteam');
+                    const teamId = params.team || null; 
+                    const tasks = await definitions.api.data.post('/gettasksauthor');
+                    const teams = await definitions.api.data.get('/getteam');
 
-
-                    setTasks(() => tasks.data);
-                    setTeams(() => teams.data);
+                    setTasks(tasks.data);
+                    setTeams(teams.data);
 
                 }catch(err){
                     definitions.error.change(err?.data?.error || err.message);
                 }
         }   
         getData();
-    }, [createedTeam, deletedTeam, definitions.enteringTeam.data]);
+    }, [createedTeam, deletedTeam, addMember, definitions.enteringTeam.data]);
 
+
+    //set current team 
+    useEffect(() => {
+        if(teams){
+            const team = teams.find(team => team._id === params.team);
+            setCurTeam(team);
+        }
+    }, [window.location.pathname, teams])
+
+
+    //set the team quests
+    useEffect(() => {
+        if (tasks){
+            if (curTeam){
+                const teamTasks = tasks.filter(task => task.team._id === curTeam._id);
+                setTeamTasks(teamTasks);
+                return;
+            }
+    
+            const teamTasks = tasks.filter(task => !task.team);
+            setTeamTasks(teamTasks);
+        }
+        if (curTeam){
+            const teamTasks = tasks.filter(task => task.team._id === curTeam._id);
+            setTeamTasks(teamTasks);
+            return;
+        }
+    }, [tasks, curTeam])
+
+    console.log(tasks)
 
     //change url to created teams tab
     useEffect(() => {
@@ -140,36 +209,25 @@ export function Teams(){
     }, [deletedTeam])
 
 
-    //team tasks
-    useEffect(() => {
-        if (!tasks) return;
-        const array = tasks?.filter(task => {
-            if (curTeam) {
-                return task?.team?._id === curTeam?._id || task.team === curTeam._id;
-            }else{
-                return !task.team;
-            }
-        });
-    
-
-        setTeamTasks(() => array)
-    }, [curTeam, tasks])
-
-
+    //create with crucial information for all nested components of teams page
     const context = {
-        role,
-        checkRole
+        members,                    //sorted members list
+        roles,                      //roles is an array ['Admin', 'Member'];
+        checkRole,                  //function that checks if current user has permission
+        setCreatedTeam,             //updates the state when creates team
+        setDeletedTeam              //updates the state when deletes team
     }
+
 
 
     return (
         <Provider.Provider value={context}>
-            {tasks && teams ?
+            {tasks && teams && (members || !curTeam) ?
 
                 <section className='teams-main-container'>
                     <TeamsNav teams={teams} create={setCreatedTeam} curTeam={curTeam}/>
 
-                    <OneTeam tasks={teamTasks} team={curTeam} role={role} setDeletedTeam={setDeletedTeam}/>
+                    <OneTeam tasks={teamTasks} team={curTeam} setDeletedTeam={setDeletedTeam}/>
 
                     {   curTeam ?
                         <Members team={curTeam}/>: 
@@ -184,9 +242,6 @@ export function Teams(){
 
 
 
-
-
-
 function TeamsNav({teams, create, curTeam}){
 
     const navigator = useNavigate();
@@ -196,11 +251,15 @@ function TeamsNav({teams, create, curTeam}){
     const [creating, setCreating] = useState();
     const definitions = useSiteDefinitions();
 
+    //for clicking each team card and navigate
     function click(value, path){
         return function() {
+            //leave room in the websocket, so it doesnt trigger when in other room
             if (curTeam){
-                definitions.socket.data.emit('leave-team', curTeam._id);
+                definitions.socket.data.emit('leave-room', curTeam._id);
             }
+
+            //take user to selected team
             navigator(path);
         }
     }
@@ -297,15 +356,7 @@ function TeamsNav({teams, create, curTeam}){
 
 
 
-
-
-
-
-
-
 export function OneTeam({tasks, team, setDeletedTeam}){
-
-
 
 
     const todayTasks = [];
@@ -317,7 +368,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
     const year = new Date().getFullYear();
     const [deleting, setDeleting] = useState(false);
     const definitions = useSiteDefinitions();
-    const {role, checkRole} = useContextTeam();
+    const {checkRole} = useContextTeam();
 
 
     function clickDelete(){
@@ -390,7 +441,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
                 <div className='buttons'>
 
 
-                    {checkRole('Creator') ? <div className='delete' onClick={clickDelete}>
+                    {checkRole('team:delete', false) ? <div className='delete' onClick={clickDelete}>
                         <i className='material-icons'>
                             delete
                         </i>
@@ -399,7 +450,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
 
 
 
-                    {checkRole('Admin', true) ? 
+                    {checkRole('task:create', true) ? 
                         <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
                             <i className='material-icons'>
                                 add
@@ -450,15 +501,6 @@ export function OneTeam({tasks, team, setDeletedTeam}){
         </div>
     )
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -534,93 +576,137 @@ function TaskSection({mode, tasks, title}){
 
 
 
-
-
-
-
 function Members({team}){
 
+    const {members} = useContextTeam();
+
     const possibleRoles = team.possibleRoles;
-    const members = team.members;
     const definitions = useSiteDefinitions();
+    const [leaving, setLeaving] = useState();
+    const {checkRole, setDeletedTeam} = useContextTeam();
     const [addingMember, setAddingMember] = useState(false);
 
+    //toggles the blanket and the adding member element
     function clickAddMember(){
         definitions.blanket.change(prev => !prev);
         setAddingMember(prev => !prev)
     }
 
-    const objectRoles = new Map();
 
-    members.forEach(member => {
-        const memberRoles = Object.values(member.role);
-        memberRoles.sort((a, b) => {
-            return b - a;
-        });
+    //creates a map for storing the sorted order of each
+    //role due to possible roles level. Also store in it each 
+    //user that has the role as its highest.
+    const objectRoles = {};
 
-        for(let key in possibleRoles){
+    function getHighestRole(member){
+        let currentRole;
 
-            if (possibleRoles[key] === memberRoles[0]){
-
-                if(!objectRoles.get(key)){
-                    objectRoles.set(key, []);
+        member.role.forEach(role => {
+            const level = possibleRoles[role].level;
+            if (level > currentRole?.level || !currentRole){
+                currentRole = {
+                    role,
+                    ...possibleRoles[role]
                 }
-
-                const array = objectRoles.get(key);
-                   
-                objectRoles.set(key, [...array, member]);
-                
             }
+        })
+        return currentRole;
+    }
+
+
+    //sets to objects role
+    members.forEach(member => {
+        const role = getHighestRole(member);
+        if (!objectRoles[role.role]){
+            objectRoles[role.role] = [];
         }
 
-    })
+        objectRoles[role.role].push(member);;
+    });
+
+    const elements = []
+
+    for (let key in objectRoles){
 
 
-    const elements = Array.from(objectRoles.entries())
-        .sort((a, b) => {
-            const aKey = possibleRoles[a[0]];
-            const bKey = possibleRoles[b[0]];
-            return bKey - aKey;
-        })
-        .map((role, index) => {
-            
-            return (
-                <div className='role-container-members' key={index}>
-                    {addingMember ? 
-                    <AddMember toggle={clickAddMember} team={team}/> :
-                    null}
+        elements.push(
 
-                    <div className='members-header'>
-                        <span className='role-title-members'>{role[0]}(s)</span>
-                    </div>
+            <div className='role-container-members'>
+                {addingMember ? 
+                <AddMember toggle={clickAddMember} team={team}/> :
+                null}
 
-                    <div className='member-members-flex'>
-                        {role[1].map((member, index) => {
-
-                            const me = member.user.username === definitions.user.data.username ? 'me' : '';
-
-                            return (
-                                <div className={'member-card ' + me}>
-                                    <span className={'name '}>{member.user.username}</span>
-                                </div>
-                            )
-                        })}
-
-                    </div>
+                <div className='members-header'>
+                    <span className='role-title-members'>{key}(s)</span>
                 </div>
-            )
-        })
+
+                <div className='member-members-flex'>
+                    {objectRoles[key].map((member, index) => {
+
+
+                        const me = member.user.username === definitions.user.data.username ? 'me' : '';
+
+                        return (
+                            <CardMember 
+                                member={member} 
+                                me={me} 
+                                key={index} 
+                                setLeaving={setLeaving}/>
+                        )
+                    })}
+
+                </div>
+
+
+                {leaving ? 
+                    <div className='leaving-container' onClick={(event) => event.stopPropagation()}>
+                        Are you sure you want to leave?
+                        <div className='buttons'>
+                            <button onClick={() => {
+                                setLeaving(() => false);
+                                definitions.blanket.change(() => false);
+                            }}>
+                                Cancel
+                            </button>
+
+                            <button style={{backgroundColor: 'var(--accent)', color: 'white'}} onClick={leaveTeam}>
+                                Leave
+                            </button>
+                        </div>
+                    </div> :
+                    null
+                }
+
+                    </div>
+        )
+    }
+
+    async function leaveTeam(){
+        try{
+            const leftTeam = await definitions.api.data.post('/leaveteam', {
+                id: team._id
+            })
+
+            setDeletedTeam(() => leftTeam.data);
+            setLeaving(() => false);
+            definitions.blanket.change(() => false);
+        }catch(err){
+            definitions.error.change(err?.response?.data?.error || err.message);
+        }
+    }
+
 
     
 
     return(
         <div className='members-outer-container'>
             <div className='members-header'>
+                {checkRole('members:invite') ? 
                 <div className='button-add-member' onClick={clickAddMember}>
                     <i className='material-icons'>
                         person_add
                     </i>
-                </div>
+                </div> : null}
 
                 <div className='top-member-container'>
                     <span>Members</span>
@@ -635,7 +721,108 @@ function Members({team}){
 }
 
 
+function CardMember({member, me, setLeaving}){
 
+    const [display, setDisplay] = useState(false);
+    const [above, setAbove] = useState(false);
+    const container = useRef();
+    const toolbox = useRef();
+
+
+    useEffect(() => {
+        function handleClick(event){
+
+            if (
+            container.current &&
+            toolbox.current &&
+            !container.current?.contains(event.target) && 
+            !toolbox.current?.contains(event.target)){
+                setDisplay(() => false);
+            }
+        }
+
+        document.addEventListener('click', handleClick);
+
+        return () => document.removeEventListener('click', handleClick);
+
+    }, [toolbox.current])
+
+    function click(event){
+        setDisplay(prev => !prev);
+        const windowHeight = window.innerHeight;
+        const isAbove = event.clientY > windowHeight / 2;
+
+        setAbove(() => isAbove);
+    }
+
+    const cl = above ?
+    ' above' : 
+    ''
+
+    return (
+        <div 
+        className={'member-card ' + me + (display ? ' active' : '')} 
+        onClick={click}
+        ref={container}
+
+        >
+            <span className={'name '}>{member.user.username}</span>
+
+            {display ?
+                <UserToolBox 
+                    member={member} 
+                    setLeaving={setLeaving}
+                    cl={cl} 
+                    ref={toolbox}/> :
+                null}
+        </div>
+    )
+}
+
+
+
+//user management
+const UserToolBox = forwardRef(({member, cl, setLeaving}, ref) => {
+
+    const {roles, checkRole} = useContextTeam();
+    const {user, error, blanket} = useSiteDefinitions();
+    const me = member.user.username === user.data.username;
+
+
+    let memberRole;
+
+
+    member.role.forEach((value, key) => {
+        if(!memberRole || value.level > memberRole[1]) memberRole = [key, value.level]
+    })
+
+
+    //prevent from taking click to document
+    function clickToolbox(event){
+        event.stopPropagation();
+    }
+
+    return (
+        <div className={'member-toolbox-container-outer ' + cl} ref={ref} onClick={clickToolbox}>
+            <span className='name'>
+                {member.user.username}
+            </span>
+            <span className='role'>
+                {Object.keys(memberRole)[0]}
+            </span>
+
+            {me ?
+            <button className='leave-team' onClick={() => {
+                setLeaving(() => true);
+                blanket.change(() => true);
+            }}>
+                leave team
+            </button> :
+            null
+            }
+        </div>
+    )
+})
 
 
 
@@ -688,6 +875,8 @@ function Delete({click, team, deleting}){
         </form>
     )
 }
+
+
 
 
 function AddMember({toggle, team}){
@@ -801,3 +990,5 @@ function AddMember({toggle, team}){
         </div>
     )
 }
+
+

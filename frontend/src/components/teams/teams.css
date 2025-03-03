@@ -4,15 +4,15 @@
     display: grid;
     grid-template-columns: 180px 1fr;
     width: 100%;
-    padding: 10px 40px;
+    padding: 10px 10px;
     min-width: 800px;
-    gap: 40px;
+    gap: 30px;
     min-width: 1200px;
     transition: grid-template-columns 10s ease;
 }
 
 .teams-main-container:has(.members-outer-container){
-    grid-template-columns: 180px 19fr 5fr;
+    grid-template-columns: 180px 20fr 5fr;
 }
 
 
@@ -38,12 +38,7 @@
     border-radius: 5px;
     font-size: 15px;
     max-width: 100%;
-    transition: filter 0.1s ease;
-}
-
-.card-teams-nav.active{
-    color: white;
-    background-color: var(--primary);
+    transition: background-color 0.1s ease;
 }
 
 .card-teams-nav > span{
@@ -58,9 +53,15 @@
 }
 
 .card-teams-nav:hover{
-    filter: brightness(1.2);
+    background-color: var(--hover);
     cursor: pointer;
 }
+
+.card-teams-nav.active{
+    color: white;
+    background-color: var(--primary);
+}
+
 
 .create-team-teams{
     padding: 20px 10px;
@@ -148,7 +149,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: 80vh;
+    height: 86vh;
     font-size: 15px;
 }
 
@@ -217,30 +218,29 @@
 
 .mid-team-main-information-container{
     display: flex;
-    gap: 30px;
+    gap: 20px;
     height: 100%;
+    overflow: hidden;
 }
 
 .mid-div-section{
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
     max-height: 100%;
     overflow: hidden;
     transition: flex 0.5s ease;
 }
 
-.mid-div-section:hover{
-    flex: 1.05;
-}
+
 
 .info-today-display-team{
     display: flex;
     flex-direction: column;
     padding: 15px;
     background-color: var(--neutral);
-    border-radius: 10px;
+    border-radius: 5px;
     gap: 5px;
 }
 
@@ -275,7 +275,7 @@
     flex-direction: column;
     padding: 15px;
     gap: 10px;
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: var(--neutral);
     box-sizing: border-box;
     overflow: auto;
@@ -286,7 +286,7 @@
 .task-section > span{
     text-align: center;
     color: var(--primary);
-    font-size: 22px;
+    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -326,6 +326,11 @@
     overflow: hidden;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.1s ease;
+}
+
+.inner-card-task-team:hover{
+    background-color: var(--hover);
 }
 
 .title-inner-card-task-team{
@@ -452,9 +457,23 @@
     background-color: var(--neutral2);
     border-radius: 4px;
     width: 100%;
-    overflow: hidden;
     box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    display: flex;
+    align-items: center;
 }
+
+.member-card:hover{
+    background-color: var(--hover);
+}
+
+.member-card.active{
+    background-color: var(--hover);
+}
+
+
 .member-card.me{
     background-color: var(--primary);
     color: white;
@@ -503,7 +522,91 @@
 
 
 
+/*MEMBER TOOLBOX*/
 
+.member-toolbox-container-outer{
+    display: flex;
+    position: absolute;
+    transform: translate(-100%, 0);
+    top: 0px;
+    left: -20px;
+    padding: 10px 20px;
+    font-weight: normal;
+    border-radius: 5px;
+    min-width: 200px;
+    background-color: var(--neutral2);
+    transform: all 1s ease;
+    box-sizing: border-box;
+    cursor: auto;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--font-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.member-toolbox-container-outer.above{
+    top: 100%;
+    transform: translate(-100%, -100%);
+}
+
+.member-toolbox-container-outer > .name{
+    color: var(--primary);
+    font-size: 24px;
+}
+
+.member-toolbox-container-outer > .role{
+    font-size: 15px;
+}
+
+.member-toolbox-container-outer > .leave-team{
+    background-color: var(--accent);
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    margin-top: 8px;    
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.leaving-container{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    background-color: var(--neutral);
+    padding: 14px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 10px;
+    font-size: 20px;
+    color: var(--accent);
+
+}
+
+.leaving-container > .buttons{
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+}
+
+
+.leaving-container > .buttons > button{
+    flex: 0.8;
+    background-color: transparent;
+    color: var(--font-color);
+    padding: 5px 20px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--neutral2);
+    color: var(--font-color);
+    font-size: 15px;
+    cursor: pointer;
+}
 
 
 

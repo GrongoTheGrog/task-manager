@@ -10,9 +10,10 @@
     --neutral2: #cfcfcf;
     --coral: #FFA07A; /* Light Salmon - A soft, warm accent */
     --light-blue: #40E0D0; /* Turquoise - A fresh, vibrant pop */
+    --hover: #bebebe;
 }
 
-body {
+body .theme{
     --font-color: #ECECEC;
     --background: #1A1A1A;
     --primary: #6BA4FF;
@@ -24,6 +25,7 @@ body {
     --neutral2: #424549;
     --coral: #FF7F50; /* Coral - A warm, inviting tone */
     --light-blue: #00CED1; /* Dark Turquoise - A rich, deep teal */
+    --hover: #505257;
 }
 
 body {
@@ -31,11 +33,12 @@ body {
     background-color: var(--background);
     color: var(--font-color);
     padding-top: 70px;
-    padding-bottom: 200px;
+    padding-bottom: 100px;
+    transition: padding-left 0.4s ease;
 }
 
 
-body:has(.left-sidebar-container-main){
+body:has(.left-sidebar-container-main.active){
     padding-left: 170px;
 }
 
@@ -64,3 +67,14 @@ body:has(.left-sidebar-container-main){
     border: 2px solid var(--neutral2);
     cursor: pointer;
 }
+
+.select-members-outer-container.scrollbar::-webkit-scrollbar{
+    width: 10px;
+}
+
+.select-members-outer-container.scrollbar::-webkit-scrollbar-thumb{
+    background-color: var(--neutral2);
+    border: 3px solid var(--neutral);
+    cursor: pointer;
+}
+

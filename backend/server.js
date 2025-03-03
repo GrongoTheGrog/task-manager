@@ -55,16 +55,15 @@ io.on("connection", async (socket) => {
 
     console.log('user connected: ', user.username);
 
-
     //join team
-    socket.on('join-team', (teamId) => {
-        socket.join(teamId);
-        
+    socket.on('join-team', (teamId) => {  
+        socket.join(teamId);      
         console.log('user ' + user.username + ' joined the team: ' + teamId);
+        console.log(socket.rooms);
     })
 
     //leave team
-    socket.on('leave-team', (teamId) => {
+    socket.on('leave-room', (teamId) => {
         socket.leave(teamId);
 
         console.log('user ' + user.username + ' left the team: ' + teamId);

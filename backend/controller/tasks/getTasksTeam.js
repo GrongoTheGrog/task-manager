@@ -5,9 +5,13 @@ const { default: mongoose } = require('mongoose');
 const getTasksTeam = async (req, res) => {
     const teamId = req.body.id; 
 
-    if (!teamId) return res.status(400).json({"error": "Missing id."});
+    let tasks;
+    if (teamId){
+        tasks = await Task.find({team: teamId}).populate('team author to').exec();
+    }else{
+        tasks = await Task.find({team: null}).populate('team author to').exec();
+    }
 
-    const tasks = await Task.find({team: teamId}).populate('team author to').exec();
 
     res.json(tasks);
 }

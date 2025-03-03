@@ -10,6 +10,7 @@ import blackViewOff from '../../assets/black-view-off.svg';
 
 
 import { Link, useNavigate } from 'react-router-dom';
+import { vi } from 'date-fns/locale';
 
 
 export function SignIn(){
@@ -123,11 +124,6 @@ function Password({change, value, name}){
 
     const definitions = useSiteDefinitions();
 
-    const views = {
-        on: !definitions.theme.data ? whiteView : blackView,
-        off: !definitions.theme.data ? whiteViewOff : blackViewOff
-    }
-
     const [view, setView] = useState(false);
 
     return(
@@ -140,7 +136,9 @@ function Password({change, value, name}){
                 className='input-signin password-input'>
             </input>
             <button type='button'  className='view-button-password' onClick={() => setView(prev => !prev)}>
-                <img src={view ? views.on : views.off}></img>
+                <i className='material-icons' style={{color: 'var(--primary)'}}>
+                    {view ? 'visibility' : 'visibility_off'}
+                </i>
             </button>
         </div>
     )

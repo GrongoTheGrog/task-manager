@@ -5,7 +5,6 @@ const io = require('../../server');
 const solveReq = async (req, res) => {
     try{
         const {reqId, accept} = req.body;
-        console.log(accept)
 
         if (!reqId || accept === undefined) return res.status(400).json({error: "Missing solve option or reqId."});
 
@@ -21,9 +20,9 @@ const solveReq = async (req, res) => {
 
             team.members.push({
                 user,
-                role: {
-                    Member: 1
-                }
+                role: [
+                    'Member'
+                ]
             })
 
 
@@ -31,8 +30,8 @@ const solveReq = async (req, res) => {
             await team.save();
             await user.save();
 
-            io.to(team._id).emit('add-member', user);
-            console.log('add-member emitted')
+            io.to(team._id.toString()).emit('add-member', user);
+            console.log('add-member emitted to team: ' + team._id.toString());
         }
 
         const deletedRequest = await TeamRequest.findByIdAndDelete(reqId).exec()

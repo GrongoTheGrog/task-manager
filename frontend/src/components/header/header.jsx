@@ -7,10 +7,28 @@ export function Header(){
 
     const definitions = useSiteDefinitions();
     const user = definitions.user;
+    const [navActive, setNavActive] = useState(true);
+
+
+    useEffect(() => {
+        const navBar = document.querySelector('.left-sidebar-container-main');
+        if (navBar){
+            if (navActive){
+                navBar.classList.remove('active');
+            }else{
+                navBar.classList.add('active');
+            }
+        }
+    }, [navActive])
 
     return (
         <header>
             <div className='left-header'>
+                {user.data ? <div className='menu' onClick={() => setNavActive(prev => !prev)}>
+                    <i className='material-icons'>
+                        menu
+                    </i>
+                </div> : null}
                 <span className='header-title'>
                     Taskify
                 </span>
@@ -116,6 +134,10 @@ function RightHeaderUser(){
                     }) : 
                     <div className='caught-up'>
                         You are all caught up
+
+                        <i className='material-icons'>
+                            done_all
+                        </i>
                     </div>
                     }
                 </div> :
@@ -129,6 +151,7 @@ function RightHeaderUser(){
 function RequestCard({req, setDeletedReq}){
     
     const {api, error, socket, enteringTeam} = useSiteDefinitions();
+    console.log(req);
 
     function solveReq(accept) {
 

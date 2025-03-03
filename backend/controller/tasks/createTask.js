@@ -3,8 +3,6 @@ const Task = require('../../models/Task');
 const User = require('../../models/User');
 const io = require('../../server');
 const Team = require('../../models/Team');
-console.log(io)
-
 
 const createTask = async (req, res) => {
 
@@ -55,7 +53,9 @@ const createTask = async (req, res) => {
         to
     });
 
+    console.log(io.rooms);
     io.to(team).emit("create-task", task);
+    console.log('task sent to team ' + team)
 
     res.json(task);
 }

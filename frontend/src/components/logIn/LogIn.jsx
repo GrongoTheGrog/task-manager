@@ -18,7 +18,6 @@ export function LogIn(){
     const definitions = useSiteDefinitions();
 
     const api = definitions.api.data;
-    console.log(api)
 
     const navigator = useNavigate();
 
@@ -113,10 +112,6 @@ function Password({change, value, name}){
 
     const definitions = useSiteDefinitions();
 
-    const views = {
-        on: !definitions.theme.data ? whiteView : blackView,
-        off: !definitions.theme.data ? whiteViewOff : blackViewOff
-    }
 
     const [view, setView] = useState(false);
 
@@ -130,7 +125,9 @@ function Password({change, value, name}){
                 className='input-signin password-input'>
             </input>
             <button type='button'  className='view-button-password' onClick={() => setView(prev => !prev)}>
-                <img src={view ? views.on : views.off}></img>
+                <i className='material-icons' style={{color: 'var(--primary)'}}>
+                    {view ? 'visibility' : 'visibility_off'}
+                </i>
             </button>
         </div>
     )

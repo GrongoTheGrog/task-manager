@@ -61,7 +61,7 @@ function App() {
 
         {
           definitions.blanket.data ? 
-            <div className='blanket-opacity'>
+            <div className='blanket-opacity' onClick={(event) => event.stopPropagation()}>
 
             </div> : 
             null
