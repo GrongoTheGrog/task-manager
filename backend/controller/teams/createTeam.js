@@ -9,7 +9,20 @@ const createTeam = async (req, res) => {
 
     const matching = await User.findOne({username: req.user}).exec();
     
-    const team = await Team.create({name, description, members: matching._id});
+    const team = new Team({
+        name, 
+        description, 
+        members: {
+            user: matching._id,
+            role: [
+                'Creator',
+                'Admin',
+                'Member'
+            ]
+        }
+    });
+
+    await team.save();
 
     matching.teams.push(team.id);
     await matching.save();

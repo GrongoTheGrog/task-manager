@@ -8,8 +8,14 @@ async function getOneTeam(req, res){
 
     if (!teamId) return res.status(400).json({error: 'Missing id.'});
 
-    const team = await Team.findById(teamId.id).populate('members').exec();
-
+    const team = await Team.findById(teamId.id)
+    .populate({
+        path: 'members',
+        populate: {
+            path: 'user'
+        }
+    }).exec();
+    console.log(team);
 
     res.json(team)
 }

@@ -12,6 +12,7 @@ import { Teams } from '../teams/teams';
 import { Tasks } from '../tasks/tasks';
 import { Calendar } from '../calendar/calendar';
 import { CreateTask } from '../createTask/createTask';
+import { OneTeam } from '../teams/teams';
 
 function App() {
   const navigator = useNavigate();
@@ -24,6 +25,7 @@ function App() {
     localStorage.setItem("lastVisitedPage", window.location.pathname);
   }, [window.location.pathname]);
 
+  
 
   useEffect(() => {
     if(api.data){
@@ -45,7 +47,7 @@ function App() {
   }, [api.data])
 
 
-  const resultLoad = !api.data || !socket.data || !theme.data;
+  const resultLoad = !api.data || !theme.data;
 
   return (
     <>
@@ -57,16 +59,27 @@ function App() {
           <LeftSideBar />
         }
 
+        {
+          definitions.blanket.data ? 
+            <div className='blanket-opacity' onClick={(event) => event.stopPropagation()}>
+
+            </div> : 
+            null
+        }
+
 
 
         <Routes>
           <Route path='/' element={<Home />}/>
           <Route path='/signIn' element={<SignIn />}/>
           <Route path='/logIn' element={<LogIn />}/>
-          <Route path='/teams' element={<Teams />}/>
+          <Route path='/teams' element={<Teams />}>
+            <Route path=':team' element={<OneTeam />}/>
+          </Route>
           <Route path='/tasks' element={<Tasks />}/>
           <Route path='/calendar' element={<Calendar />}/>
-          <Route path='/createTasks/:team' element={<CreateTask />}/>
+          <Route path='/createTasks/:team' element={<CreateTask update={false}/>}/>
+          <Route path='/updateTask/:team/:task' element={<CreateTask update={true}/>}/>
         </Routes>
       </main>
       }

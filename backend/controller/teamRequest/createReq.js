@@ -1,5 +1,7 @@
+const { request } = require('express');
 const TeamRequest = require('../../models/TeamRequest');
 const User = require('../../models/User');
+const io = require('../../server')
 
 const createTeamRequest = async (req, res) => {
     try{
@@ -7,14 +9,52 @@ const createTeamRequest = async (req, res) => {
 
         if (!to || !team) return res.status(400).json({error: "Missing to, from or team for creating the team request."});
 
-        const id = await User.findOne({username: req.user}).select('_id');
 
+        //get the id of who sends the message
+        const id = await User.findOne({username: req.user}).select('_id');
         const from = id._id;
 
-        const matching = await TeamRequest.findOne({to, from, team}).exec();
-        if (matching) return res.status(409).json({error: "User alredy has a request to that destination for that team."});
 
-        const teamRequest = await TeamRequest.create({to, from, team});
+        const existingRequests = await Promise.all(
+            to.map(user => TeamRequest.findOne({ user, from, team }).exec())
+        )  
+
+        const hasExisting = existingRequests.filter(request => request);
+
+        if (hasExisting.length){
+            return res.status(409).json({error: "You alredy have a request with the same destination."});
+        }
+
+
+        const requests = to.map(user => {
+            return {
+                to: user,
+                from,
+                team,
+            }
+        });
+
+
+        console.log(requests)
+        
+
+
+        //creates all the requests
+        const teamRequest = await TeamRequest.insertMany(requests);
+
+        await Promise.all(
+            teamRequest.map(async request => {
+                await request.populate('to from team')
+                const found = await User.findById(request.to);
+
+                if (found?.socket){
+                    io.to(found.socket).emit('create-req', request);
+                    console.log('socket request sent')
+                }
+            })
+        )
+
+
 
         res.json(teamRequest);
     }catch(err){

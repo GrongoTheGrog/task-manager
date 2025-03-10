@@ -1,196 +1,886 @@
-@keyframes loadTeams {
-    from{transform: translate(0, 5%);}
-    to{transform: translate(0, 0);}
-}
+/* MAIN */
 
-.teams-container-main{
-    display: flex;
-    flex-direction: column;
-    gap: 70px;
-    width: 70vw;
-    justify-content: center;
-    align-items: center;
-    animation: loadTeams 0.5s ease;
-}
-
-.title-main-teams{
-    background: linear-gradient(135deg, var(--primary), #8dbff8);
-    background-clip: text;
-    color: transparent;
-
-    font-size: 40px;
-    font-weight: bold;
-}
-
-.teams-container-teams{
-    display: flex;
+.teams-main-container{
+    display: grid;
+    grid-template-columns: 180px 1fr;
     width: 100%;
-    box-sizing: border-box;
+    padding: 30px 24px;
+    min-width: 800px;
     gap: 20px;
-    line-clamp: 4;
-    word-wrap: break-word;
-    word-break: break-all;
-    flex-wrap: wrap;
-    justify-content: center;
+    max-width: 1580px;
+    transition: grid-template-columns 10s ease;
+    justify-content: space-between;
+
 }
 
-.team-card-teams-container, .create-team-teams{
-    background-color: var(--neutral);
-    border-radius: 15px;
-    
+.teams-main-container:has(.members-outer-container){
+    grid-template-columns: 180px 19fr 4fr;
 }
 
-.team-card-teams-container{
-    text-decoration: none;
-    color: var(--font-color);
+
+
+/* TEAMS NAV BAR */
+
+
+.teams-navbar-container{ 
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px 10px;
-    box-sizing: border-box;
+    gap: 10px;
+    width: 100%;
     overflow: hidden;
-    word-break: keep-all;
+    box-sizing: border-box;
+}   
+
+.card-teams-nav{
+    background-color: var(--neutral);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 15px;
+    max-width: 100%;
+    transition: background-color 0.1s ease;
+}
+
+.card-teams-nav > span{
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 0px 20px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    line-clamp: 1;
+}
+
+.card-teams-nav:hover{
+    background-color: var(--hover);
+    cursor: pointer;
+}
+
+.card-teams-nav.active{
+    color: white;
+    background-color: var(--primary);
+}
+
+
+.create-team-teams{
+    padding: 20px 10px;
+}
+
+.card-teams-nav > i{
+    font-size: 25px;
+}
+
+.create-task-form{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--neutral);
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    gap: 4px;
+}
+
+.create-task-form > input, .create-task-form > textarea{
+    background-color: var(--neutral2);
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    color: var(--font-color);
+    padding: 3px 10px;
+    margin-bottom: 8px;
     word-wrap: break-word;
-    min-width: 180px;
-    max-width: 300px;
+    overflow: hidden;
+    white-space: wrap;
+
+}
+
+
+.create-task-form > textarea{
+    color: var(--font-color);
+    font-family: roboto;
+    height: 100px;
+    resize: none;
+    overflow: auto;
+}
+
+.create-task-form > input::placeholder{
+    font-size: 13px;
+}
+
+.create-task-form > .buttons{
+    display: flex;
     gap: 10px;
 }
 
-.create-team-teams{
+.create-task-form > .buttons > button{
+    background-color: transparent;
+    padding: 2px 10px;
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.create-task-form > .buttons > button > i{
+    font-size: 18px;
+}
+
+
+.create-task-form > .buttons > .create{
+    background-color: var(--secondary);
+}
+
+.create-task-form > .buttons > .delete{
+    background-color: var(--accent);
+}
+
+
+
+
+
+/*MID CONTAINER TEAM*/
+
+
+.outer-mid-team-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 15px;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.outer-mid-team-container > span{
+    color: var(--primary);
+    font-size: 45px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.outer-mid-team-container > span > .info{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.outer-mid-team-container > span > .info > span{
+    font-size: 15px;
+    word-wrap: break-word;
+    width: 500px;
+    margin-left: 10px;
+}
+
+.outer-mid-team-container > span > .buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: end;
+
+}
+
+.outer-mid-team-container > span > .buttons > .main > .link{
+    color: var(--font-color);
+    text-decoration: none;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    background-color: var(--neutral);
+    height: fit-content;
+}
+
+.outer-mid-team-container > span > .buttons > .toggle{
+    width: 200px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: var(--neutral);  
+    padding: 4px;  
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    font-size: 15px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.outer-mid-team-container > span > .buttons > .toggle > span{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    z-index: 49;
+    cursor: pointer;
+    color: var(--font-color);
+}
+
+.outer-mid-team-container > span > .buttons > .toggle > .slider{
+    height: 27px;
+    width: calc(50%);
+    position: absolute;
+    background-color: var(--neutral2);
+    border-radius: 5px;
+    transition: right 0.2s ease;
+    right: calc(50% - 4px);
+    z-index: 49;
+}
+
+.outer-mid-team-container > span > .buttons > .toggle > .slider.active{
+    right: 4px;
+}
+
+
+.outer-mid-team-container > span > .buttons > .main{
+    display: flex;
+    height: 100%;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.outer-mid-team-container > span > .buttons > .main > .delete{
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    background-color: var(--accent);
+    cursor: pointer;
+    height: fit-content;
+}
+
+.outer-mid-team-container > span > .link:hover{
+    filter: brightness(1.2);
+}
+
+
+.mid-team-main-information-container{
+    display: flex;
+    gap: 35px;
+    height: 100%;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.mid-div-section{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    max-height: 100%;
+    overflow: hidden;
+    transition: flex 0.5s ease;
+}
+
+
+
+.info-today-display-team{
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    background-color: var(--neutral);
+    border-radius: 10px;
+    gap: 5px;
+}
+
+.todays-info-team{
+    width: 100%;
+    min-height: 400px;
+    height: fit-content;
+    background-color: var(--neutral);
+    border-radius: 10px;
+    padding: 20px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.todays-info-team > .title{
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+
+.today-day{
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.today-day > .today{
+    font-size: 28px;
+    color: var(--primary);
+}
+
+.info-today-display-team > .task{
+    margin-top: 10px;
+}
+
+.info-today-display-team > .task.overdue{
+    margin: 0;
+    color: var(--accent);
+}
+
+
+
+
+/*TASK SECTION*/
+
+.task-section{
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+    border-radius: 10px;
+    background-color: var(--neutral);
+    box-sizing: border-box;
+    overflow: auto;
+    height: 100%;
+    flex-basis: 100%;
+}
+
+.task-section > span{
+    text-align: center;
+    color: var(--primary);
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.tasks-section-inner-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.no-task-container{
+    color: var(--accent);
+    font-size: 18px;
+    height: 100%;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--neutral);
+}
+
+
+
+/*task card*/
+
+.inner-card-task-team{
+    background-color: var(--neutral2);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.inner-card-task-team:hover{
+    background-color: var(--hover);
+}
+
+.update-icon-button{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    aspect-ratio: 1;
+    background-color: var(--primary);
+    display: flex;
+    padding: 3px;
+    border-radius: 4px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    z-index: 20;
+}
+
+.update-icon-button > i{
+    font-size: 20px;
+    color: white;
+}
+
+.inner-card-task-team:hover > .update-icon-button{
+    opacity: 100;
+    pointer-events: all;
+}
+
+.title-inner-card-task-team{
+    display: block;
+    width: 100%;
+    text-wrap: wrap;
+    word-break: break-word;
+    overflow: hidden;
+}
+
+
+.tasks-description-card{
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    text-wrap: wrap;
+    word-break: break-word;
+
+    overflow: hidden;
+}
+
+
+.tags-container-tasks-home{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.tag-card-tasks-home{
+    padding: 3px 5px;
+    font-size: 12px;
+    background-color: var(--purple);
+    color: white;
+    border-radius: 5px;
+}
+
+ .inner-card-task-team > .expired{
+    padding: 3px 10px;
+    border-radius: 4px;
+    background-color: var(--accent);
+    color: white;
+    width: fit-content;
+    margin-bottom: 8px;
+ }
+
+ .to-container-teams{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+ }
+
+ .to-card-teams{
+    display: flex;
+    color: white;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    background-color: var(--secondary);
+    padding: 2px 6px;
+    border-radius: 1000px;
+ }
+
+ .to-card-teams > i{
+    font-size: 20px;
+ }
+
+ .inner-card-task-team > .info{
+    display: flex;
+    padding: 4px;
+    margin-top: 5px;
+    margin-bottom: 3px;
+ }
+
+.inner-card-task-team > .info > div{
+    width: fit-content;
+    padding: 4px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    gap: 3px;
+    font-size: 13px;
+}
+
+.inner-card-task-team > .info > div > .data{
+    font-weight: 500;
+}
+
+.inner-card-task-team > .info > .border{
+    border-right: 1px solid var(--font-color);
+}
+
+
+
+
+ /*MEMBERS*/
+
+
+.members-outer-container{
+    background-color: var(--neutral);
+    padding: 15px;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-bottom: 35px;
+}
+
+.role-container-members{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.top-member-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    gap: 10px;
+    color: var(--primary);
+    flex: 8;
+}
+
+.role-title-members{
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.member-members-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.member-card{
+    padding: 6px 10px;
+    background-color: var(--neutral2);
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    display: flex;
+    align-items: center;
+}
+
+.member-card:hover{
+    background-color: var(--hover);
+}
+
+.member-card.active{
+    background-color: var(--hover);
+}
+
+
+.member-card.me{
+    background-color: var(--primary);
+    color: white;
+    font-weight: bold;
+
+}
+
+.member-card > .name{
+    font-size: 14px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    text-overflow: ellipsis;
+    width: 100%;
+    word-break: break-word;
+}
+
+.members-container-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.members-header{
+    display: flex;
+}
+
+.button-add-member{
+    flex: 1;
+    aspect-ratio: 1;
+    padding: 6px;
+    background-color: var(--primary);
     display: flex;
     justify-content: center;
     align-items: center;
-    text-decoration: none;
-    transition: all 0.5s ease;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+}
+
+
+
+
+
+
+
+/*MEMBER TOOLBOX*/
+
+.member-toolbox-container-outer{
+    display: flex;
+    position: absolute;
+    transform: translate(-100%, 0);
+    top: 0px;
+    left: -20px;
+    padding: 10px 20px;
+    font-weight: normal;
+    border-radius: 5px;
+    min-width: 200px;
+    background-color: var(--neutral2);
+    transform: all 1s ease;
+    box-sizing: border-box;
+    cursor: auto;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--font-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.member-toolbox-container-outer.above{
+    top: 100%;
+    transform: translate(-100%, -100%);
+}
+
+.member-toolbox-container-outer > .name{
+    color: var(--primary);
+    font-size: 24px;
+}
+
+.member-toolbox-container-outer > .role{
+    font-size: 15px;
+}
+
+.member-toolbox-container-outer > .leave-team{
+    background-color: var(--accent);
+    color: white;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    margin-top: 8px;    
+    cursor: pointer;
+    padding: 5px 0;
+}
+
+.leaving-container{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
     background-color: var(--neutral);
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    border-radius: 5px;
+    font-size: 20px;
+    color: var(--accent);
+
+}
+
+.leaving-container > .buttons{
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+}
+
+
+.leaving-container > .buttons > button{
+    flex: 0.8;
+    background-color: transparent;
+    color: var(--font-color);
+    padding: 5px 20px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--neutral2);
+    color: var(--font-color);
+    font-size: 15px;
+    cursor: pointer;
+}
+
+
+
+
+
+/*blanket delete*/
+
+.deleting-container-team{
+    z-index: 1001;
+    position: fixed;
+    background-color: var(--neutral);
+
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    right: 50%;
+    bottom: 50%;
+    transform: translate(50%, 50%);
+    border-radius: 20px;
+    gap: 10px;
+}
+
+.deleting-container-team > input{
+    padding: 5px 20px;
+    background-color: var(--neutral2);
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    color: var(--font-color);
+    font-size: 15px;
+}
+
+.deleting-container-team > label{
+    color: var(--accent);   
+}
+
+.deleting-container-team > .buttons{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.deleting-container-team > .buttons > button{
+    background-color: var(--neutral2);
+    color: var(--font-color);
+    border: none;
+    outline: none;
+    padding: 8px 40px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*Adding Member*/
+
+.adding-member-container{
+    position: fixed;
+    bottom: 50%;
+    right: 50%;
+    transform: translate(50%, 50%);
+    background-color: var(--neutral);
+    z-index: 1001;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px 40px;
+    color: var(--primary);
+    max-width: 480px;
+    align-items: center;
+}
+
+.adding-member-container > span{
+    font-size: 24px;
+}
+
+.form-add-member{
+    display: flex;
+    gap: 10px;
+}
+
+.form-add-member > input{
+    background-color: var(--neutral2);
+    border: none;
+    font-size: 15px;
+    border-radius: 8px;
+    color: var(--font-color);
+    padding: 4px 25px;
+    outline: none;
+    width: 240px;
+}
+
+.form-add-member > button{
+    background-color: var(--neutral2);
+    border: none;
+    font-size: 15px;
+    border-radius: 8px;
+    color: var(--font-color);
+    outline: none;
     aspect-ratio: 1;
     cursor: pointer;
 }
 
-.create-team-teams > i{
-    font-size: 80px;
-    transition: all 0.2s ease;
-}
-
-.create-team-teams:hover{
-    background-color: var(--neutral2);
-}
-
-.title-team-teams{
-    font-size: 25px;
-    color: var(--primary);
-}
-
-.description-team-teams{
-    font-size: 16px;
-    max-height: 100%;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
-    line-clamp: 4;
-    overflow: hidden;
-    flex: 1;
-    margin-top: 5px;
-    width: 100%;
-    text-align: center;
-}
-
-.create-team-container{
-    width: 25vw;
-    background-color: var(--neutral);
-    padding: 30px 40px;
-    box-sizing: border-box;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.label-form-team{
-    font-size: 20px;
-    color: var(--primary);
-}
-
-.input-create-team{
-    background-color: var(--neutral2);
+.form-add-member > button > i{
     color: var(--font-color);
-    padding: 8px 30px;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-    font-size: 16px;
 }
 
-.input-create-team::placeholder{
-    color: var(--font-color);
-    font-size: 16px;
-}
-
-.title-create-team{
-    color: var(--primary);
-    text-align: center;
-    font-size: 25px;
-    margin-bottom: 20px;
-
-}
-
-.description-create-team{
-    min-height: 60px;
-    padding: 8px 30px;
-    border-radius: 5px;
-    background-color: var(--neutral2);
-    color: var(--font-color);
-    border: none;
-    outline: none;
-    font-size: 16px;
-    font-family: roboto;
-    resize: none;
-
-}
-
-.description-create-team::-webkit-scrollbar{
-    border-top-right-radius: 5px;
-    width: 8px;
-}
-
-.description-create-team::-webkit-scrollbar-thumb{
-    background-color: var(--font-color);
-    border-radius: 4px;
-    border: 2px solid var(--neutral2);
-    cursor: pointer;
-
-}
-
-.description-create-team::placeholder{
-    color: var(--font-color);
-    font-family: roboto;
-    font-size: 16px;
-}
-
-.create-team-container .buttons{
+.users-adding-member-flex{
     display: flex;
     gap: 20px;
+    padding: 10px 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.added-user{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: var(--neutral2);
+    padding: 2px 10px ;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.added-user > i{
+    cursor: pointer;
+}
+
+.adding-member-container > .buttons{
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    width: 100%;
+}
+
+.adding-member-container > .buttons > button{
+    background-color: var(--neutral2);
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 17px;
+    border-radius: 10px;
     color: var(--font-color);
-    margin-top: 10px;
-}
+    padding: 4px;
+    cursor: pointer;}
 
-.create-team-container > .buttons > button > i{
-    color: white;
-}
-
-.create-team-container > .buttons > .send{
-    flex: 1;
-    background-color: var(--secondary);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.create-team-container > .buttons > .delete
-{
-    flex: 1;
-    background-color: var(--accent);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}

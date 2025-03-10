@@ -11,7 +11,13 @@
     gap: 5px;
     padding: 10px;
     box-sizing: border-box;
+    transition: all 0.4s ease;
+    transform: translate(-100%, 0);
 
+}
+
+.left-sidebar-container-main.active{
+    transform: translate(0, 0);
 }
 
 .link-left-nav{

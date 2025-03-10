@@ -6,21 +6,23 @@
 }
 
 .signin-card{
-    width: 300px;
+    width: 330px;
     background-color: var(--neutral);
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 30px;
     box-sizing: border-box;
     gap: 12px;
     display: flex;
     flex-direction: column;
 
-
 }
 
 .label{
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
+    width: 100%;
+    text-align: left;
+    margin-left: 10px;
 }
 
 .title-signin-card{
@@ -39,9 +41,9 @@
     background-color: var(--neutral2);
     border: none;
     outline: none;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 4px 20px;
-    font-size: 15px;
+    font-size: 14px;
     width: 100%;
     box-sizing: border-box;
     color: var(--font-color);
@@ -65,15 +67,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
     cursor: pointer;
     outline: none;
 
 }
 
+
 .submit-signin-form{
-    margin-top: 30px;
+    margin-top: 20px;
     align-self: center;
     width: 140px; 
     height: 40px;

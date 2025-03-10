@@ -5,33 +5,76 @@
     --secondary: #7ED321;
     --accent: #FF6B6B;
     --yellow: #f3d31f;
-    --purple: #800080;
-    --neutral: #F0F0F0;
-    --neutral2: #e2e2e2;
+    --purple: #a73aa7;
+    --neutral: #e9e9e9;
+    --neutral2: #cfcfcf;
+    --coral: #FFA07A; 
+    --light-blue: #40E0D0; 
+    --hover: #bebebe;
 }
 
 body {
     --font-color: #ECECEC;
     --background: #1A1A1A;
     --primary: #6BA4FF;
-    --secondary: #70bb36;
+    --secondary: #68af32;
     --accent: #FF8E8E;
     --yellow: #FFD700;
     --purple: #9370DB;
     --neutral: #2D2D2D;
     --neutral2: #424549;
+    --coral: #FF7F50; 
+    --light-blue: #00CED1; 
+    --hover: #505257;
 }
 
-body {
+body{
     font-family: roboto;
     background-color: var(--background);
     color: var(--font-color);
     padding-top: 70px;
-    padding-bottom: 50px;
+    padding-bottom: 100px;
+    transition: padding-left 0.4s ease;
 }
 
 
-body:has(.left-sidebar-container-main){
+body:has(.left-sidebar-container-main.active){
     padding-left: 170px;
+}
+
+.scrollbar::-webkit-scrollbar{
+    width: 10px;
+}
+
+
+.scrollbar::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background-color: var(--font-color);
+    border: 3px solid var(--neutral2);
+    cursor: pointer;
+}
+
+.task-section.scrollbar::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background-color: var(--neutral2);
+    border: 2px solid var(--neutral);
+    cursor: pointer;
+}
+
+.notifications-displayer-container.scrollbar::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background-color: var(--neutral);
+    border: 2px solid var(--neutral2);
+    cursor: pointer;
+}
+
+.select-members-outer-container.scrollbar::-webkit-scrollbar{
+    width: 10px;
+}
+
+.select-members-outer-container.scrollbar::-webkit-scrollbar-thumb{
+    background-color: var(--neutral2);
+    border: 3px solid var(--neutral);
+    cursor: pointer;
 }
 

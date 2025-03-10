@@ -31,7 +31,9 @@ const User = new Schema({
 
     teams: [{type: mongoose.Schema.Types.ObjectId, ref: "Team"}],
 
-    profilePicture: String
+    profilePicture: String,
+
+    socket: String
 });
 
 

@@ -1,14 +1,484 @@
 .outer-container-create-task-page{
-    min-width: 600px;
-    width: 44vw;
-    background-color: var(--neutral);
-    padding: 30px;
-    box-sizing: border-box;
-    border-radius: 20px;
+   display: flex; 
+   flex-direction: column;
+   width: 90%;
+   min-width: 600px;
+   max-width: 1050px;
+   gap: 25px;
+   padding-top: 60px;
+
+}
+
+.inner-container-create-task-page{
+    display: flex;
+    gap: 15px;
+    height: 65vh;
+}
+
+
+/*section 1*/
+
+.create-task-section.first{
+    flex: 1.2;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
+
+.create-task-section.first > .info{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-sizing: border-box;
+    padding: 0 10px;
+}
+
+.create-task-section.first > .info > .team{
+    font-size: 180%;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.create-task-section.first > .info > .assign{
+    font-size: 18px;
+    color: var(--font-color);
+    font-weight: bold;
+}
+
+.selected-users-container, .available-users-container{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+}
+
+
+/*select members*/
+
+.select-members-outer-container{
+    width: 100%;
+    background-color: var(--neutral);
+    padding: 20px 15px 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    gap: 10px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.select-members-outer-container > span{
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.input-search-create-container{
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.input-search-create-container > button{
+    padding: 0;
+    width: 40px;
+    border: none;
+    outline: none;
+    background-color: var(--neutral2);
+    color: var(--font-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 1000px;
+    border-bottom-right-radius: 1000px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.input-search-create-container > button:hover{
+    background-color: var(--hover);
+}
+
+.search-members-assign{
+    background-color: var(--neutral2);
+    border-top-left-radius: 1000px;
+    border-bottom-left-radius: 1000px;
+    outline: none;
+    border: none;
+    padding: 6px 16px;
+    box-sizing: border-box;
+    color: var(--font-color);
+    font-size: 14px;
+}
+
+.member-query-outer-card{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.checkbox-container{
+    display: flex;
+    gap: 5px;
+    width: 22px;
+    aspect-ratio: 1;
+    border: 2px var(--neutral2) solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.checkbox-container.selected{
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.member-query-card{
+    background-color: var(--neutral2);
+    flex: 1;
+    padding: 2px;
+    border-radius: 3px;
+    padding: 3px;
+    padding-left: 15px;
+    word-break: break-all;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.member-query-card.selected{
+    background-color: var(--primary);
+    color: white;
+}
+
+.no-members-found{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent);
+    padding-bottom: 20%;
+}
+
+/*basic info*/
+
+.basic-info-outer-container{
+    flex: 1;
+    display: flex;
+    gap: 15px;
+}
+
+.basic-info-container{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-radius: 10px;
+    background-color: var(--neutral);
+    flex-direction: column;
+    flex: 2.4;
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+
+.priority-container{
+    flex: 1;
+    border-radius: 10px;
+    background-color: var(--neutral);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+}
+
+.priority-container > span{
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.priority-picker-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 3px;
+}
+
+.priority-option{
+    padding: 2px 20px;
+    font-size: 14px;
+    width: 100%;
+    background-color: var(--neutral2);
+    box-sizing: border-box;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.priority-option:hover{
+    background-color: var(--hover);
+}
+
+.priority-option.active{
+    background-color: var(--primary);
+    color: white;
+}
+
+
+.status-outer-container-update{
+    flex: 0.8;
+    background-color: var(--neutral);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.status-outer-container-update > span{
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.status-option-update-container{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    
+}
+
+.status-option-update{
+    display: flex;
+    background-color: var(--neutral2);
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    
+}
+
+.status-option-update:hover{
+    background-color: var(--hover);
+    
+}
+
+.status-option-update.Todo{
+    background-color: var(--purple);
+    color: white;
+}
+
+.status-option-update.In.Progress{
+    background-color: var(--primary);
+    color: white;
+}
+
+.status-option-update.Done{
+    background-color: var(--primary);
+    color: white;
+}
+
+.status-option-update.Aproved{
+    background-color: var(--secondary);
+    color: white;
+}
+
+.basic-info-container > span{
+    font-size: 18px;
+    color: var(--primary);
+}
+
+
+.basic-info-container > input{
+    margin-bottom: 5px;
+    background-color: var(--neutral2);
+    border: none;
+    outline: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    color: var(--font-color);
+    font-size: 16px;
+}
+
+.basic-info-container > textarea{
+    resize: none;
+    height: 100%;
+    background-color: var(--neutral2);
+    border: none;
+    outline: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-family: roboto;
+    color: var(--font-color);
+    font-size: 16px;
+}
+
+
+/*extra info*/
+
+.extra-info-container{
+    flex: 1.1;
+    display: flex;
+    gap: 15px;
+}
+
+.duedate-container-assign{
+    flex: 1;
+    background-color: var(--neutral);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 12px;
+    align-items: center;
+}
+
+.duedate-container-assign > .title{
+    font-size: 18px;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 8px;
+    color: var(--primary);
+}
+
+
+
+/*BUTTONS CANCEL SUBMIT*/
+
+.outer-container-create-task-page > .buttons{
+    display: flex;
+    gap: 10px;
+}
+
+.outer-container-create-task-page > .buttons > button {
+    width: 200px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+
+}
+
+/*labels container*/
+
+.tags-container-assign{
+    background-color: var(--neutral);
+    flex: 2.2;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tags-container-assign > span{
+    font-size: 18px;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 8px;
+    color: var(--primary);
+}
+
+.box-creating-tag, .input-creating-tag{
+    padding: 5px 20px;
+    width: fit-content;
+    background-color: var(--neutral2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 1000px;
+    transition: background-color 0.1s ease;
+    font-size: 15px;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    height: 30px;
+    color: var(--font-color);
+}
+
+.box-creating-tag{
+    cursor: pointer;
+}
+
+.input-creating-tag{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    width: 160px;
+}
+
+.button-add-tag{
+    background-color: var(--neutral2);
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-right-radius: 1000px;
+    border-bottom-right-radius: 1000px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button-add-tag:hover{
+    background-color: var(--hover);
+}
+
+
+.box-creating-tag:hover{
+    background-color: var(--hover);
+}
+
+.tags-container-tags{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tags-container-tags > .tag{
+    display: flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 1000px;
+    background-color: var(--purple);
+    color: white;
+    font-size: 13px;
+    gap: 4px;
+}
+
+.tags-container-tags > .tag > i{
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/*section 2*/
+
+.create-task-section.second{
+    flex: 4;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+
+
+
+/*BEFORE*/
 
 .input-create-task{
     background-color: var(--neutral2);
@@ -109,7 +579,9 @@ label{
     box-sizing: border-box;
     font-size: 16px;
     border-radius: 10px;
-    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 220px;
+    box-sizing: border-box;
 }
 
 .tag-container-create-task{
@@ -160,6 +632,7 @@ label{
 
 .tag-create-task, .create-tag-create-task{
     background-color: var(--purple);
+    color: white;
     padding: 3px 8px;
     border-radius: 20px;
     display: flex;
@@ -185,17 +658,20 @@ label{
 
 .button-container{
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     margin-top: 40px;
+    gap: 20px;
 }
 
 .button-assign{
     background-color: var(--secondary);
+    flex: 1;
     color: white;
     font-size: 18px;
     padding: 8px 80px;
     border-radius: 10px;
     cursor: pointer;
+    border: none;
 }
 
 
@@ -205,38 +681,54 @@ label{
 /*date picker */
 
 .date-picker-container{
-    width: 200px;
+    width: 220px;
     display: flex;
-    flex-direction: column;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
     background-color: var(--neutral2);
     padding: 10px;
     border-radius: 10px;
     gap: 5px;
     font-size: 15px;
     transition: all 0.2s ease;
+    position: relative;
+    cursor: pointer;
+
+}
+
+.absolute-calendar{
+    position: absolute;
+    width: 200px;
+    box-sizing: border-box;
+    background-color: var(--neutral2);
+    top: calc(100% + 10px);
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: auto;
 }
 
 .date-picker-container.picking{
     font-size: 16px;
 }
 
-.date-picker-container.picking:hover{
-    cursor: pointer;
-}
 
-.date-picker-container > .info{
+.absolute-calendar > .info{
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.date-picker-container > .info > .buttons{
+.absolute-calendar > .info > .buttons{
     display: flex;
     gap: 10px;
 }
 
 
-.date-picker-container > .info > .buttons > button{
+.absolute-calendar > .info > .buttons > button{
     background-color: var(--primary);
     border: none;
     outline: none;
@@ -251,11 +743,11 @@ label{
     aspect-ratio: 1;
 }
 
-.date-picker-container > .info > .buttons > button > i{
+.absolute-calendar > .info > .buttons > button > i{
     font-size: 10px;
 }
 
-.date-picker-container > .info > .current{
+.absolute-calendar > .info > .current{
     display: flex;
     gap: 8px;
     justify-content: flex-end;
@@ -273,7 +765,7 @@ label{
     background-color: var(--neutral);
     border-radius: 3px;
     color: var(--primary);
-    font-size: 11px;
+    font-size: 10px;
     box-sizing: border-box;
     padding: 3px;
     cursor: pointer;
@@ -285,6 +777,12 @@ label{
 
 .calendar-container-picker > .day.not{
     filter: opacity(0.7);
+}
+
+.calendar-container-picker > .day.picked{
+    background-color: var(--primary);
+    border-radius: 3px;
+    color: white;
 }
 
 .calendar-icon-date-picker{
@@ -300,7 +798,8 @@ label{
 
 
 .time-container-picker{
-    width: 200px;
+    width: 220px;
+    height: fit-content;
     display: flex;
     background-color: var(--neutral2);
     align-items: center;
@@ -311,6 +810,7 @@ label{
     font-size: 16px;
     transition: all 0.2s ease;
     position: relative;
+    box-sizing: border-box;
     cursor: pointer;
 }
 
@@ -327,6 +827,7 @@ label{
     cursor: auto;
     display: flex;
     gap: 10px;
+    z-index: 50;
 }
 
 .complete-time{

@@ -1,68 +1,173 @@
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import './createTask.css';
-import { useParams } from 'react-router-dom'; 
+import { data, useParams } from 'react-router-dom'; 
 import { useEffect, useRef, useState } from 'react';
-import { set } from 'date-fns';
+import { set, setDate } from 'date-fns';
 import { ca, da } from 'date-fns/locale';
 import { Loading } from '../home/home';
 import { Teams } from '../teams/teams';
 
 
-export function CreateTask(){
+export function CreateTask({update}){
 
     const definitions = useSiteDefinitions();
 
-
+    //team data
     const [teamData, setTeamData] = useState();
+
+    //task data
+    const [taskData, setTaskData] = useState();
+
+    //controled input for query
+    const [inputQuery, setInputQuery] = useState('');
+
+    //members 
+    const [members, setMembers] = useState([]);
+    const [selectedMembers, setSelectedMembers] = useState([]);
+    const [queryMembers, setQueryMembers] = useState([]);
+
+    //info inputs
+    const [taskNameInput, setTaskNameInput] = useState('');
+    const [taskDescriptionInput, setTaskDescriptionInput] = useState('');
+
+    //create tags
+    const [inputTag, setInputTag] = useState('');
+    const [creatingTag, setCreatingTag] = useState();
+    const [tags, setTags] = useState([]);
+
+    //time and date
     const [selectedDate, setSelectedDate] = useState();
     const [selectedHour, setSelectedHour] = useState();
-    const [tags, setTags] = useState();
-    const [to, setTo] = useState();
 
+    //priority
+    const [currentPriority, setCurrentPriority] = useState({Medium: 50});
+
+    //status for updating
+    const [currentStatus, setCurrentStatus] = useState();
 
     const params = useParams();
+
     const team = params.team;
-    
-
-    
-    async function CreateTaskApi(event){
-        event.preventDefault();
-
-        const {year, month, day} = selectedDate;
-        const {hour, minutes} = selectedHour;
-
-        const data = new FormData(event.target);
-        const name = data.get('name');
-        const description = data.get('description');
-        const date = new Date(year, month, day, hour, minutes)
-        const toArray = [];
 
 
-        for(let key in to){
-            if (to[key]) toArray.push(key);
+    //force a deafult possible priorities (not proud of that at all)
+    useEffect(() => {
+        if (team === 'undefined') setTeamData(prev => ({
+                ...prev,
+                possiblePriorities: {
+                    Urgent: 100,
+                    ['Very High']: 87,
+                    High: 75,
+                    Medium: 50,
+                    Low: 25,
+                    ['Very Low']: 17
+                }
+        }))
+    }, [])
+
+
+    //create/update task api interaction
+    async function createTaskApi(){
+        if (taskNameInput.trim() === '') return definitions.error.change('Enter the task name');
+        if (taskDescriptionInput.trim() === '') return definitions.error.change('Enter the description.');
+
+        const date = new Date(
+            selectedDate.year,
+            selectedDate.month,
+            selectedDate.day,
+            selectedHour.hour,
+            selectedHour.minutes
+        );
+        if (date.getTime() < new Date().getTime() &&  !update) return definitions.error.change('Select an available date.')  
+
+        const newTask = {
+            name: taskNameInput, 
+            description: taskDescriptionInput,
+            deadline: date,
+            team: teamData._id,
+            tags,
+            to: selectedMembers.map(member => {
+                return member._id
+            }),
+            priority: currentPriority,
+            status: currentStatus
         }
-
-
-        if (!name || !description) return definitions.error.change('Both name and description are required.');
-
-
-        try{
-            const create = definitions.api.data.post('http://localhost:9000/createtask', {
-                name,
-                description, 
-                tags,
-                to: toArray,
-                deadline: date
-            })
-
+    
+        try{   
+            if (update) {
+                const update = await definitions.api.data.post('/edittask', {
+                    ...newTask,
+                    id: taskData?._id
+                })
+            }else{
+                const create = await definitions.api.data.post('/createtask', newTask);
+            }
+            
+    
+    
             window.history.back();
         }catch(err){
-            definitions.error.change(err?.data.error || err.message);
+            definitions.error.change(err?.response.data.error || err.message);
         }
-        
-
     }
 
+    //set query members
+    useEffect(() => {
+
+        const queryMembers = members.filter(member => {
+
+            if (selectedMembers.find(memberFind => memberFind._id === member._id)) {
+                return;
+            };
+
+            return member.username.slice(0, inputQuery.trim().length) === inputQuery.trim();
+        })
+
+        setQueryMembers(queryMembers);
+    }, [inputQuery, selectedMembers, members])
+
+    //get the task data
+    useEffect(() => {
+        if(params?.task){
+            async function getData(){
+                try{
+                    const taskId = params.task;
+                        const task = await definitions.api.data.post('/getTaskById', {
+                            taskId,
+                        });
+
+                        //set the task data
+                        setTaskData(task.data);
+
+                        //set the current selected members
+                        setSelectedMembers(task.data.to);
+
+                        //set the current name and description
+                        setTaskNameInput(task.data.name);
+
+                        //set the current task description
+                        setTaskDescriptionInput(task.data.description);
+
+                        //set the current task priority
+                        setCurrentPriority(task.data.priority);
+
+                        //set tags 
+                        setTags(task.data.tags)
+
+                        //set status
+                        setCurrentStatus(task.data.status);
+        
+                }catch(err){
+                    definitions.error.change(err?.response?.data.error || err.message);
+                }
+            }
+            getData();
+        }
+    }, [])
+
+
+
+    //get the team data and set members only if team is not undefined
     useEffect(() => {
         if (team !== 'undefined'){
             const getData = async () => {
@@ -72,6 +177,9 @@ export function CreateTask(){
                     });
 
                     setTeamData(() => response.data);
+                    setMembers(response.data.members.map(member => {
+                        return member.user;
+                    }))
                 }catch(err){
                     definitions.error.change(err?.data?.error || err.message);
                 }
@@ -80,76 +188,335 @@ export function CreateTask(){
         }
     }, [])
 
+    useEffect(() => {
 
-    return  teamData || team === 'undefined' ? 
-        <form className='outer-container-create-task-page' onSubmit={CreateTaskApi}>
+        function handleClick(event){
+            setCreatingTag(false);
+            setInputTag('');
+        }
 
-            <label style={{textAlign: 'center', fontSize: '28px', marginBottom: '10px'}}>
-                {teamData?.name || 'Your own tasks'}
-            </label>
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, [])
 
-            <div className='main-section-create-task'>
-                <div className='basic'>
-                    <div className='basic-together'>
-                        <label htmlFor='name'>Name:</label>
-                        <input className='input-create-task name' placeholder='E.g. new feature' name='name'/>
+    
+
+    return  teamData ? 
+        <div className='outer-container-create-task-page'> 
+            <div className='inner-container-create-task-page'>
+                <div className='create-task-section first'>
+                    <div className='info'>
+                        <span className='team'>
+                            {teamData?.name || 'My Own Tasks'}
+                        </span>
+                        <span className='assign'>
+                            {update ? 'update task' : 'assign task'}
+                        </span>
                     </div>
 
-                    <div className='basic-together description'>
-                        <label htmlFor='name'>Description:</label>
-                        <textarea className='description' placeholder='E.g. add new feature' name='description'/>
-                    </div>
 
-                    {teamData &&
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-                        <label>
-                            Who is making that task?
-                        </label>
-                        <To team={teamData} change={setTo}>
-                        </To>
+                    <div className='select-members-outer-container scrollbar'>
+                        <span>
+                            Assign task to users
+                        </span>
+
+                        <div className='input-search-create-container'>
+                            <input 
+                                className='search-members-assign' 
+                                placeholder='Search users'
+                                value={inputQuery}
+                                onChange={(event) => setInputQuery(event.target.value)}
+                                >
+
+                            </input>
+
+                            <button onClick={() => setInputQuery('')}>
+                                <i className='material-icons'>
+                                    {inputQuery.length ? 
+                                    'close' : 
+                                    'search'}
+                                </i>
+                            </button>
+                        </div>
+
+                        {selectedMembers.length ? 'Assigned member(s):' : ''}
+
+                        <div className='selected-users-container' style={{marginBottom: '10px'}}>
+                        {selectedMembers.length ? selectedMembers.map((member, index) => {
+
+                            return (
+                                <MemberQueryCard 
+                                setSelectedMembers={setSelectedMembers} 
+                                setQueryMembers={setQueryMembers}
+                                member={member}
+                                selected={true}
+                                key={index}
+                                /> 
+                            )
+
+                            }) : 
+
+                            null} 
+                        </div>
+
+                        {queryMembers.length ? 'Results:' : ''}
+
+                        <div className='available-users-container' style={{height: '100%'}}>
+                            {queryMembers.length ? queryMembers.map((member, index) => {
+
+                                const selected = selectedMembers.includes(member);
+
+                                return (
+                                    <MemberQueryCard 
+                                    setSelectedMembers={setSelectedMembers} 
+                                    setQueryMembers={setQueryMembers}
+                                    member={member}
+                                    selected={selected}
+                                    key={index}
+                                    /> 
+                                )
+                                
+                            }) : 
+                            
+                            <div className='no-members-found'>
+                                No members found
+                            </div>} 
+                        </div>
                     </div>
-                }
                 </div>
 
-                <div className='specific'>
+                <div className='create-task-section second'>
+                    <div className='basic-info-outer-container'>
+                        <div className='basic-info-container'>
+                            <span>
+                                Name
+                            </span>
+                            <input
+                                value={taskNameInput}
+                                onChange={(event) => setTaskNameInput(event.target.value)}
+                                placeholder='Enter the task name'
+                                >
+                            </input>
+                            <span>
+                                Description:
+                            </span>
+                            <textarea
+                                className='scrollbar'
+                                value={taskDescriptionInput}
+                                onChange={(event) => setTaskDescriptionInput(event.target.value)}
+                                placeholder='Enter the task description'
+                                >
+                            </textarea>
+                        </div>
 
-                    <label style={{marginBottom: '20px'}}>
-                        Choose the deadline
-                    </label>
-                    <DatePicker change={setSelectedDate}></DatePicker>
-                    <TimePicker change={setSelectedHour}/>
-                    {selectedHour && selectedDate ? <span className='deadline-displayer'>
-                        {selectedHour.hour}:{selectedHour.minutes}, {selectedDate.month + 1}/{selectedDate.day}/{selectedDate.year}
-                    </span> :
-                    null}
+                        <div className='priority-container'>
+                            <span>
+                                Select the priority
+                            </span>
 
-                    <div className='tags-outer-container-simple'>
-                        <label>Create tags</label>
-                        <Tags change={setTags}/>
+                            <div className='priority-picker-container'>
+                                {teamData.possiblePriorities ?
+                                Object.keys(teamData.possiblePriorities).map(priority => {
+                                    const pr = teamData.possiblePriorities[priority];
+
+                                    let cl = '';
+                                    if (Object.keys(currentPriority)[0] === priority) cl = ' active';
+
+                                    return (
+                                        <div 
+                                            className={'priority-option' + cl}
+                                            onClick={(event) => {setCurrentPriority({
+                                                [priority]: pr
+                                            })}}
+                                        >
+                                            {priority}
+                                        </div>
+                                    )
+                                }) : 
+                                null}
+                            </div>
+                        </div>
+
+                        {update ?
+                            <div className='status-outer-container-update'>
+                                <span>
+                                    Status
+                                </span>
+
+                                <div className='status-option-update-container'>
+                                    {[
+                                        'Todo',
+                                        'In Progress',
+                                        'Done',
+                                        'Aproved'
+                                    ].map(status => {
+                                        const current = status === currentStatus ? 
+                                        status : '';
+                                        return (
+                                            <div 
+                                                className={'status-option-update ' + current}
+                                                onClick={() => setCurrentStatus(status)}
+                                            >
+                                                {status}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div> :
+                        null}
                     </div>
-                    
+
+                    <div className='extra-info-container'>
+                        <div className='duedate-container-assign'>
+                            <span className='title'>
+                                Duedate
+                            </span>
+
+                            <span className='time-displayer'>
+
+                            </span>
+
+                            <TimePicker change={setSelectedHour} timeProp={taskData?.deadline}/>
+                            <DatePicker change={setSelectedDate} timeProp={taskData?.deadline}/>
+                        </div>
+
+                        <div className='tags-container-assign'>
+                            <span>
+                                Labels
+                            </span>
+
+                            {!creatingTag ?
+                                <div 
+                                    className='box-creating-tag'
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        setCreatingTag(() => true)
+                                    }}
+                                >
+                                    <span>
+                                        Create Tag
+                                    </span>
+                                    <i className='material-icons'>
+                                        add
+                                    </i>
+                                </div> :
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}>
+                                    <input
+                                        autoFocus
+                                        className='input-creating-tag'
+                                        value={inputTag}
+                                        onChange={(event) => {
+                                            setInputTag(event.target.value);
+                                        }}
+                                        onKeyDown={(event) => {
+                                            if (event.key === 'Enter') {
+                                                if(inputTag.trim() === '') return definitions.error.change('Enter a tag name.')
+                                                setCreatingTag(() => false);
+                                                setTags(prev => [...prev, inputTag]);
+                                                setInputTag('');
+                                            }
+                                        }}
+                                        onClick={(event) => event.stopPropagation()}
+                                    >
+                                    </input>
+
+                                    <div 
+                                        className='button-add-tag'
+                                        onClick={(event) => {
+                                            if(inputTag.trim() === '') return definitions.error.change('Enter a tag name.')
+                                            setCreatingTag(false);
+                                            setTags(prev => [...prev, inputTag]);
+                                            setInputTag('');
+                                        }}
+                                    >
+                                        <i className='material-icons'>
+                                            add
+                                        </i>
+                                    </div>
+                                </div>
+                            }
+
+                                <div 
+                                    className='tags-container-tags'
+                                >
+                                        {tags ? 
+                                        tags.map(tag => {
+                                            return (
+                                                <div className='tag'
+                                                >
+                                                    <span>{tag}</span>
+                                                    <i className='material-icons'
+                                                        onClick={() => setTags(prev => prev.filter(tag1 => tag1 !== tag))}>
+                                                        close
+                                                    </i>
+                                                </div>
+                                            )
+                                        }) :
+                                        null}
+                                </div>  
+
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <div className='buttons'>
+                <button 
+                    style={{backgroundColor: 'var(--accent)'}}
+                    onClick={() => window.history.back()}
+                    >
+                    Cancel
+                </button>
 
-            <div className='button-container'>
-                <button className='button-assign'>
-                    Assign Task
+                <button style={{backgroundColor: 'var(--secondary)'}} onClick={createTaskApi}>
+                    {update ? 'Update task' : 'Assign Task'}
                 </button>
             </div>
-
-
-        </form> : <Loading />
+        </div>    
+        : <Loading />
 }
 
 
+function MemberQueryCard({setSelectedMembers, setQueryMembers, member, selected, key}){
 
+    function click(){
+        if (selected) {
+            setQueryMembers(prev => [...prev, member])
+            setSelectedMembers(prev => prev.filter(memberFilter => memberFilter !== member));
+        }else {
+            setQueryMembers(prev => prev.filter(memberFilter => memberFilter !== member))
+            setSelectedMembers(prev => {
+                if (prev.includes(member)) return prev;
+                
+                return [...prev, member];
+            })
+        }
+    }
+
+    return (
+        <div className='member-query-outer-card' key={key}>
+            <div className={'checkbox-container' + (selected ? ' selected' : '')} onClick={click}>
+                {selected ? 
+                <i className='material-icons' style={{fontSize: '16px'}}>
+                    check
+                </i> : 
+                null}
+            </div>
+            <div className={'member-query-card' + (selected ? ' selected' : '')}>
+                {member?.username}
+            </div>
+        </div>
+    )
+}
 
 
 
 ///// DATE PICKER
 
-function getCalendar(year, month){
+function getCalendar(year, month){ 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
@@ -168,7 +535,7 @@ function getCalendar(year, month){
     return calendar;
 }
 
-function DatePicker({value, change}){
+function DatePicker({timeProp, change}){
 
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -176,14 +543,34 @@ function DatePicker({value, change}){
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    const [month, setMonth] = useState(new Date().getMonth());
+    const [month, setMonth] = useState(new Date().getMonth() );
     const [year, setYear] = useState(new Date().getFullYear());
     const [day, setDay] = useState(new Date().getDate());
     const [calendar, setCalendar] = useState();
     const [picking, setPicking] = useState(false);
 
+    useEffect(() => {
+        function click(){
+            setPicking(false);
+        };  
+
+        document.addEventListener('click', click)
+
+        return () => document.removeEventListener('click', click);
+    }, [])
+
+
+    useEffect(() => {
+        if (timeProp){
+            setMonth(new Date(timeProp).getMonth());
+            setYear(new Date(timeProp).getFullYear());
+            setDay(new Date(timeProp).getDate());
+        }
+    }, [timeProp])
+
     function clickMonth(sum){
-        return function(){
+        return function(event){
+            event.stopPropagation();
             if (month + sum >= 12){
                 setYear(prev => prev + 1);
                 setMonth(() => 0);
@@ -204,7 +591,8 @@ function DatePicker({value, change}){
 
 
     function clickDay(day){
-        return function(){
+        return function(event){
+            event.stopPropagation();
             setDay(day.day);
             setMonth(day.month);
             setYear(day.year)
@@ -221,52 +609,62 @@ function DatePicker({value, change}){
     }, [year, month, day])
 
     return(
-        <div className={`date-picker-container ${!picking ? 'picking' : ''}`} onClick={() => {
-            if (!picking) {
-                setPicking(() => true);
-            }
+        <div className={`date-picker-container`} onClick={(e) => {
+            e.stopPropagation();
+            setPicking(prev => !prev)
         }}>
-            <div className='info'>
-                {picking && <div className='buttons'>
-                    <button type='button' className='prev' onClick={clickMonth(-1)}>
-                        <i className={'material-icons'}>
-                            arrow_back_ios
-                        </i>
-                    </button>
-
-                    <button type='button' className='next' onClick={clickMonth(1)}>
-                        <i className={'material-icons'}>
-                            arrow_forward_ios
-                        </i>
-                    </button>
-                </div>}
-
-                {!picking && <span className='calendar-icon-date-picker'>
+                <span className='calendar-icon-date-picker'>
                         <i className={'material-icons'}>
                             calendar_month
                         </i>
-                    </span>}
+                    </span>
 
                 <div className='current'>
-                    <span className='year'>
-                        {year} 
-                    </span>
-
                     <span className='month'>
-                        {months[month]}, {day}
+                        {year} {months[month]}, {day}
                     </span>
                 </div>
-            </div>
 
-            {picking && <div className='calendar-container-picker'>
-                {calendar && calendar.map((day, index) => {
-                    return (
-                        <div className={`day ${day.month !== month && 'not'}`} onClick={clickDay(day)} key={index}>
-                            {day.day}
+
+                {picking && <div className='absolute-calendar' onClick={(event) => event.stopPropagation()}>
+                    <div className='info'>
+                        <div className='buttons'>
+                            <button type='button' className='prev' onClick={clickMonth(-1)}>
+                                <i className={'material-icons'}>
+                                    arrow_back_ios
+                                </i>
+                            </button>
+    
+                            <button type='button' className='next' onClick={clickMonth(1)}>
+                                <i className={'material-icons'}>
+                                    arrow_forward_ios
+                                </i>
+                            </button>
                         </div>
-                    )
-                })}
-            </div>}
+
+                        <span>
+                            {year}, {months[month]}, {day}
+                        </span>
+                    </div>
+    
+                    <div className='calendar-container-picker'>
+                        {calendar && calendar.map((dayMap, index) => {
+
+                            const picked = 
+                            dayMap?.day === day &&
+                            dayMap?.month === month &&
+                            dayMap?.year === year ?
+                            ' picked' : 
+                            '';
+
+                            return (
+                                <div className={`day ${dayMap.month !== month && 'not'} ${picked}`} onClick={clickDay(dayMap)} key={index}>
+                                    {dayMap.day}
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>}
         </div>
     )
 }
@@ -275,16 +673,36 @@ function DatePicker({value, change}){
 
 ////TIME PICKER
 
-function TimePicker({change}){
+function TimePicker({change, timeProp}){
 
-    const [picking, setPicking] = useState();
+    const [picking, setPicking] = useState(false);
     const [time, setTime] = useState({
         ['hour']: new Date().getHours(),
-        ['minutes']: 0
+        ['minutes']: new Date().getMinutes()
     });
+
+    useEffect(() => {
+        function click(){
+            setPicking(false);
+        };  
+
+        document.addEventListener('click', click)
+
+        return () => document.removeEventListener('click', click);
+    }, [])
 
     const hours = useRef([]);
     const minutes = useRef([]);
+
+    useEffect(() => {
+        if (timeProp){
+            setTime({
+                ['hour']: new Date(timeProp).getHours(),
+                ['minutes']: new Date(timeProp).getMinutes()
+            });
+
+        }
+    }, [timeProp])
 
     useEffect(() => {
         hours.current = [];
@@ -305,10 +723,6 @@ function TimePicker({change}){
             minutes.current.push(push);
         }
 
-        setTime(prev => ({
-            ...prev,
-            minutes: minutes.current[0]
-        }))
     }, [])
 
     useEffect(() => {
@@ -324,8 +738,13 @@ function TimePicker({change}){
         }
     }
 
+    console.log(time['minutes']);
+
     return (
-        <div className='time-container-picker' onClick={() => setPicking(prev => !prev)}>
+        <div className='time-container-picker' onClick={(e) => {
+            e.stopPropagation()
+            setPicking(prev => !prev);
+        }}>
             <i className={'material-icons'} style={{marginLeft: '10px'}}>
                 schedule
             </i>
@@ -357,145 +776,6 @@ function TimePicker({change}){
                     </div>
                 </div>
             )}
-        </div>
-    )
-}
-
-
-function To({team, change}){
-
-    const [to, setTo] = useState({});
-    let list = team.members;
-    list = list.sort((a, b) => {
-        const aif = to[a._id] ? 1 : 0;
-        const bif = to[b._id] ? 1 : 0;
-
-        return bif - aif;
-    } );
-
-
-    function clickMemberTag(member, chosen){
-        return function(){
-            setTo(prev => {
-                return {
-                    ...prev,
-                    [member._id]: chosen ? false : true
-                }
-            })
-        }
-    }
-
-    useEffect(() => {
-        change(() => to);
-    }, [to]);
-
-    
-    
-    return (
-        <div className='to-container'>
-            {list.map(member => {
-                const chosen = to[member._id] === true ? true : false;
-
-                return (
-                    <div className={`to-tag ${chosen && 'active'}`} onClick={clickMemberTag(member, chosen)}>
-                        <span>{member.username}</span>
-
-                        <i className='material-icons'>
-                            {chosen ? 'person_remove' : 'person_add'}
-                        </i>
-                    </div>
-                )
-            })}
-        </div>
-    )
-}
-
-
-
-function Tags({change}){
-
-    const [tags, setTags] = useState([]);
-
-    useEffect(() => {
-        change(() => tags);
-    }, [tags])
-
-    return (
-        <div className='tag-container-create-task'>
-            {tags.map((tag, index) => {
-                return (
-                    <Tag tag={tag} change={setTags}/>
-                )
-            })}
-
-            <CreateTag change={setTags}/>
-        </div>
-    )
-}
-
-
-function CreateTag({change}){
-
-    const [add, setAdd] = useState(false);
-
-    function createTag(event){
-        setAdd(() => false);
-        if (!event.target.value) {
-            return;
-        }else{
-            change(prev => ([
-                ...prev, 
-                event.target.value
-            ]))
-        }
-    }
-
-
-    function createTagKey(event){
-        if (event.key === 'Enter'){
-            setAdd(() => false);
-            if (!event.target.value) {
-                return;
-            }else{
-                change(prev => ([
-                    ...prev, 
-                    event.target.value
-                ]))
-            }
-        }
-    }
-    
-    return !add ?
-        <div className='create-tag-create-task' onClick={() => setAdd(prev => !prev)}>
-            Create Tag
-            <i className='material-icons'>add</i>
-        </div> :
-
-        <div className='create-tag-create-task' onClick={() => setAdd(prev => !prev)}>
-            <input autoFocus onBlur={createTag} onKeyDown={createTagKey}>
-
-            </input>
-        </div>
-    
-}
-
-function Tag({tag, change}){
-    
-    const [name, setName] = useState();
-
-    function deleteTag(){
-        change(prev => {
-            const list = prev.filter(name => name !== tag);
-            return list;
-        })
-    }
-
-    return (
-        <div className='tag-create-task' onClick={deleteTag}>
-            {tag}
-            <i className='material-icons'>
-                close
-            </i>
         </div>
     )
 }
