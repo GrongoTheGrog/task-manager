@@ -13,7 +13,8 @@ const createTask = async (req, res) => {
         deadline,
         team,
         tags,
-        to
+        to,
+        priority
     } = req.body;
 
     console.log(req.body);
@@ -50,7 +51,8 @@ const createTask = async (req, res) => {
         author: userId._id,
         team,
         tags: tags,
-        to
+        to,
+        priority
     });
 
     console.log(io.rooms);

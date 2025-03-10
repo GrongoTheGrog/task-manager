@@ -4,15 +4,17 @@
     display: grid;
     grid-template-columns: 180px 1fr;
     width: 100%;
-    padding: 10px 10px;
+    padding: 30px 24px;
     min-width: 800px;
-    gap: 30px;
-    min-width: 1200px;
+    gap: 20px;
+    max-width: 1580px;
     transition: grid-template-columns 10s ease;
+    justify-content: space-between;
+
 }
 
 .teams-main-container:has(.members-outer-container){
-    grid-template-columns: 180px 20fr 5fr;
+    grid-template-columns: 180px 19fr 4fr;
 }
 
 
@@ -20,7 +22,7 @@
 /* TEAMS NAV BAR */
 
 
-.teams-navbar-container{
+.teams-navbar-container{ 
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -148,9 +150,10 @@
 .outer-mid-team-container{
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    height: 86vh;
+    gap: 10px;
     font-size: 15px;
+    width: 100%;
+    min-height: 100vh;
 }
 
 .outer-mid-team-container > span{
@@ -159,7 +162,7 @@
     font-weight: bold;
     display: flex;
     justify-content: space-between;
-    align-items: end;
+    align-items: start;
 }
 
 .outer-mid-team-container > span > .info{
@@ -173,9 +176,18 @@
     font-size: 15px;
     word-wrap: break-word;
     width: 500px;
+    margin-left: 10px;
 }
 
-.outer-mid-team-container > span > .buttons > .link{
+.outer-mid-team-container > span > .buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: end;
+
+}
+
+.outer-mid-team-container > span > .buttons > .main > .link{
     color: var(--font-color);
     text-decoration: none;
     font-size: 18px;
@@ -188,7 +200,46 @@
     height: fit-content;
 }
 
-.outer-mid-team-container > span > .buttons{
+.outer-mid-team-container > span > .buttons > .toggle{
+    width: 200px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: var(--neutral);  
+    padding: 4px;  
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    font-size: 15px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.outer-mid-team-container > span > .buttons > .toggle > span{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    z-index: 49;
+    cursor: pointer;
+    color: var(--font-color);
+}
+
+.outer-mid-team-container > span > .buttons > .toggle > .slider{
+    height: 27px;
+    width: calc(50%);
+    position: absolute;
+    background-color: var(--neutral2);
+    border-radius: 5px;
+    transition: right 0.2s ease;
+    right: calc(50% - 4px);
+    z-index: 49;
+}
+
+.outer-mid-team-container > span > .buttons > .toggle > .slider.active{
+    right: 4px;
+}
+
+
+.outer-mid-team-container > span > .buttons > .main{
     display: flex;
     height: 100%;
     gap: 10px;
@@ -197,7 +248,7 @@
 }
 
 
-.outer-mid-team-container > span > .buttons > .delete{
+.outer-mid-team-container > span > .buttons > .main > .delete{
     color: white;
     text-decoration: none;
     font-size: 18px;
@@ -218,16 +269,17 @@
 
 .mid-team-main-information-container{
     display: flex;
-    gap: 20px;
+    gap: 35px;
     height: 100%;
     overflow: hidden;
+    margin-top: 20px;
 }
 
 .mid-div-section{
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 35px;
     max-height: 100%;
     overflow: hidden;
     transition: flex 0.5s ease;
@@ -240,9 +292,30 @@
     flex-direction: column;
     padding: 15px;
     background-color: var(--neutral);
-    border-radius: 5px;
+    border-radius: 10px;
     gap: 5px;
 }
+
+.todays-info-team{
+    width: 100%;
+    min-height: 400px;
+    height: fit-content;
+    background-color: var(--neutral);
+    border-radius: 10px;
+    padding: 20px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.todays-info-team > .title{
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: bold;
+}
+
 
 .today-day{
     font-size: 15px;
@@ -275,7 +348,7 @@
     flex-direction: column;
     padding: 15px;
     gap: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: var(--neutral);
     box-sizing: border-box;
     overflow: auto;
@@ -286,8 +359,9 @@
 .task-section > span{
     text-align: center;
     color: var(--primary);
-    font-size: 20px;
+    font-size: 22px;
     margin-bottom: 20px;
+    font-weight: bold;
 }
 
 .tasks-section-inner-flex{
@@ -324,13 +398,38 @@
     padding: 10px 10px;
     box-sizing: border-box;
     overflow: hidden;
-    cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.2s ease;
+    position: relative;
 }
 
 .inner-card-task-team:hover{
     background-color: var(--hover);
+}
+
+.update-icon-button{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    aspect-ratio: 1;
+    background-color: var(--primary);
+    display: flex;
+    padding: 3px;
+    border-radius: 4px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    z-index: 20;
+}
+
+.update-icon-button > i{
+    font-size: 20px;
+    color: white;
+}
+
+.inner-card-task-team:hover > .update-icon-button{
+    opacity: 100;
+    pointer-events: all;
 }
 
 .title-inner-card-task-team{
@@ -398,12 +497,31 @@
     font-size: 20px;
  }
 
+ .inner-card-task-team > .info{
+    display: flex;
+    padding: 4px;
+    margin-top: 5px;
+    margin-bottom: 3px;
+ }
 
+.inner-card-task-team > .info > div{
+    width: fit-content;
+    padding: 4px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    gap: 3px;
+    font-size: 13px;
+}
 
+.inner-card-task-team > .info > div > .data{
+    font-weight: 500;
+}
 
-
-
-
+.inner-card-task-team > .info > .border{
+    border-right: 1px solid var(--font-color);
+}
 
 
 
@@ -421,7 +539,6 @@
     flex-direction: column;
     gap: 25px;
     padding-bottom: 35px;
-    width: 100%;
 }
 
 .role-container-members{
@@ -577,11 +694,11 @@
     transform: translate(-50%, -50%);
     z-index: 1001;
     background-color: var(--neutral);
-    padding: 14px 25px;
+    padding: 20px 40px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    border-radius: 10px;
+    gap: 30px;
+    border-radius: 5px;
     font-size: 20px;
     color: var(--accent);
 
@@ -681,12 +798,12 @@
     transform: translate(50%, 50%);
     background-color: var(--neutral);
     z-index: 1001;
-    border-radius: 10px;
+    border-radius: 5px;
 
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 20px;
+    gap: 15px;
+    padding: 20px 40px;
     color: var(--primary);
     max-width: 480px;
     align-items: center;

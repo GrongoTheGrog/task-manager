@@ -47,7 +47,7 @@ const createTeamRequest = async (req, res) => {
                 await request.populate('to from team')
                 const found = await User.findById(request.to);
 
-                if (found.socket){
+                if (found?.socket){
                     io.to(found.socket).emit('create-req', request);
                     console.log('socket request sent')
                 }

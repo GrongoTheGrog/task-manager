@@ -32,10 +32,10 @@ const Team = new mongoose.Schema({
                         'task:accept',
                         'task:delete',  
                         'team:delete',
+                        'task:finish',
                         'members:invite',
                         'members:promote',
                         'members:remove',
-                        'task:finish'
                     ]
                 }
             ],
@@ -59,6 +59,33 @@ const Team = new mongoose.Schema({
                 ]
             }]
         ])
+    },
+
+    possiblePriorities: {
+        Urgent: {
+            type: Number,
+            default: 100
+        },
+        ['Very High']: {
+            type: Number,
+            default: 87
+        },
+        High: {
+            type: Number,
+            default: 75
+        },
+        Medium: {
+            type: Number,
+            default: 50
+        },
+        Low: {
+            type: Number,
+            default: 25
+        },
+        ['Very Low']: {
+            type: Number,
+            default: 17
+        }
     }
 })
 

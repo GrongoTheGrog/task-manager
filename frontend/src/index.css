@@ -8,12 +8,12 @@
     --purple: #a73aa7;
     --neutral: #e9e9e9;
     --neutral2: #cfcfcf;
-    --coral: #FFA07A; /* Light Salmon - A soft, warm accent */
-    --light-blue: #40E0D0; /* Turquoise - A fresh, vibrant pop */
+    --coral: #FFA07A; 
+    --light-blue: #40E0D0; 
     --hover: #bebebe;
 }
 
-body .theme{
+body {
     --font-color: #ECECEC;
     --background: #1A1A1A;
     --primary: #6BA4FF;
@@ -23,12 +23,12 @@ body .theme{
     --purple: #9370DB;
     --neutral: #2D2D2D;
     --neutral2: #424549;
-    --coral: #FF7F50; /* Coral - A warm, inviting tone */
-    --light-blue: #00CED1; /* Dark Turquoise - A rich, deep teal */
+    --coral: #FF7F50; 
+    --light-blue: #00CED1; 
     --hover: #505257;
 }
 
-body {
+body{
     font-family: roboto;
     background-color: var(--background);
     color: var(--font-color);

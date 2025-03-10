@@ -41,7 +41,19 @@ const Task = new mongoose.Schema({
     to: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+
+    priority: {
+        type: Object,
+        default: {
+            Medium: 50
+        }
+    },
+
+    status: {
+        type: String,
+        default: 'Todo'
+    }
 })
 
 module.exports = mongoose.model('Task', Task);

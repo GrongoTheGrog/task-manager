@@ -1,9 +1,9 @@
 .outer-container-create-task-page{
    display: flex; 
    flex-direction: column;
-   width: 85%;
+   width: 90%;
    min-width: 600px;
-   max-width: 1000px;
+   max-width: 1050px;
    gap: 25px;
    padding-top: 60px;
 
@@ -11,7 +11,7 @@
 
 .inner-container-create-task-page{
     display: flex;
-    gap: 25px;
+    gap: 15px;
     height: 65vh;
 }
 
@@ -22,7 +22,7 @@
     flex: 1.2;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 20px;
 }
 
 .create-task-section.first > .info{
@@ -169,6 +169,12 @@
 
 /*basic info*/
 
+.basic-info-outer-container{
+    flex: 1;
+    display: flex;
+    gap: 15px;
+}
+
 .basic-info-container{
     display: flex;
     flex-direction: column;
@@ -176,14 +182,119 @@
     border-radius: 10px;
     background-color: var(--neutral);
     flex-direction: column;
-    flex: 1;
+    flex: 2.4;
     padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+
+.priority-container{
+    flex: 1;
+    border-radius: 10px;
+    background-color: var(--neutral);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+}
+
+.priority-container > span{
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.priority-picker-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 3px;
+}
+
+.priority-option{
+    padding: 2px 20px;
+    font-size: 14px;
+    width: 100%;
+    background-color: var(--neutral2);
+    box-sizing: border-box;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.priority-option:hover{
+    background-color: var(--hover);
+}
+
+.priority-option.active{
+    background-color: var(--primary);
+    color: white;
+}
+
+
+.status-outer-container-update{
+    flex: 0.8;
+    background-color: var(--neutral);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.status-outer-container-update > span{
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.status-option-update-container{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    
+}
+
+.status-option-update{
+    display: flex;
+    background-color: var(--neutral2);
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    
+}
+
+.status-option-update:hover{
+    background-color: var(--hover);
+    
+}
+
+.status-option-update.Todo{
+    background-color: var(--purple);
+    color: white;
+}
+
+.status-option-update.In.Progress{
+    background-color: var(--primary);
+    color: white;
+}
+
+.status-option-update.Done{
+    background-color: var(--primary);
+    color: white;
+}
+
+.status-option-update.Aproved{
+    background-color: var(--secondary);
+    color: white;
 }
 
 .basic-info-container > span{
     font-size: 18px;
     color: var(--primary);
 }
+
 
 .basic-info-container > input{
     margin-bottom: 5px;
@@ -215,7 +326,7 @@
 .extra-info-container{
     flex: 1.1;
     display: flex;
-    gap: 25px;
+    gap: 15px;
 }
 
 .duedate-container-assign{
@@ -294,6 +405,7 @@
     outline: none;
     box-sizing: border-box;
     height: 30px;
+    color: var(--font-color);
 }
 
 .box-creating-tag{
@@ -355,7 +467,7 @@
 
 .create-task-section.second{
     flex: 4;
-    gap: 25px;
+    gap: 15px;
     display: flex;
     flex-direction: column;
 }

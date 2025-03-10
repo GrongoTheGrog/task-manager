@@ -9,8 +9,10 @@ const getTasksAuthor = async (req, res) => {
     const user = await User.findOne({username: req.user}).exec();
 
     const tasks = await Task.find({team: { $in: user.teams}}).populate('team author to').exec();
+    const noTeamQuests = await Task.find({author: user._id, team: null});
+    
 
-    res.json([...tasks]);
+    res.json([...tasks, ...noTeamQuests]);
 }
 
 module.exports = getTasksAuthor;

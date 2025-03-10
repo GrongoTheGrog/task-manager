@@ -78,7 +78,8 @@ function App() {
           </Route>
           <Route path='/tasks' element={<Tasks />}/>
           <Route path='/calendar' element={<Calendar />}/>
-          <Route path='/createTasks/:team' element={<CreateTask />}/>
+          <Route path='/createTasks/:team' element={<CreateTask update={false}/>}/>
+          <Route path='/updateTask/:team/:task' element={<CreateTask update={true}/>}/>
         </Routes>
       </main>
       }

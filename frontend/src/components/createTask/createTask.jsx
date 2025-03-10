@@ -8,12 +8,15 @@ import { Loading } from '../home/home';
 import { Teams } from '../teams/teams';
 
 
-export function CreateTask(){
+export function CreateTask({update}){
 
     const definitions = useSiteDefinitions();
 
     //team data
     const [teamData, setTeamData] = useState();
+
+    //task data
+    const [taskData, setTaskData] = useState();
 
     //controled input for query
     const [inputQuery, setInputQuery] = useState('');
@@ -36,14 +39,34 @@ export function CreateTask(){
     const [selectedDate, setSelectedDate] = useState();
     const [selectedHour, setSelectedHour] = useState();
 
+    //priority
+    const [currentPriority, setCurrentPriority] = useState({Medium: 50});
 
+    //status for updating
+    const [currentStatus, setCurrentStatus] = useState();
 
     const params = useParams();
+
     const team = params.team;
-    console.log(selectedMembers)
 
-    //create task api interaction
 
+    //force a deafult possible priorities (not proud of that at all)
+    useEffect(() => {
+        if (team === 'undefined') setTeamData(prev => ({
+                ...prev,
+                possiblePriorities: {
+                    Urgent: 100,
+                    ['Very High']: 87,
+                    High: 75,
+                    Medium: 50,
+                    Low: 25,
+                    ['Very Low']: 17
+                }
+        }))
+    }, [])
+
+
+    //create/update task api interaction
     async function createTaskApi(){
         if (taskNameInput.trim() === '') return definitions.error.change('Enter the task name');
         if (taskDescriptionInput.trim() === '') return definitions.error.change('Enter the description.');
@@ -55,19 +78,31 @@ export function CreateTask(){
             selectedHour.hour,
             selectedHour.minutes
         );
-        if (date.getTime() < new Date().getTime()) return definitions.error.change('Select an available date.')  
-        try{
-            const create = await definitions.api.data.post('/createtask', {
-                name: taskNameInput, 
-                description: taskDescriptionInput,
-                deadline: date,
-                team: teamData._id,
-                tags,
-                to: selectedMembers.map(member => {
-                    console.log(member);
-                    return member.user._id
+        if (date.getTime() < new Date().getTime() &&  !update) return definitions.error.change('Select an available date.')  
+
+        const newTask = {
+            name: taskNameInput, 
+            description: taskDescriptionInput,
+            deadline: date,
+            team: teamData._id,
+            tags,
+            to: selectedMembers.map(member => {
+                return member._id
+            }),
+            priority: currentPriority,
+            status: currentStatus
+        }
+    
+        try{   
+            if (update) {
+                const update = await definitions.api.data.post('/edittask', {
+                    ...newTask,
+                    id: taskData?._id
                 })
-            });
+            }else{
+                const create = await definitions.api.data.post('/createtask', newTask);
+            }
+            
     
     
             window.history.back();
@@ -76,56 +111,60 @@ export function CreateTask(){
         }
     }
 
-
     //set query members
     useEffect(() => {
-        const queryMembers = members.filter(member => {
-            if (selectedMembers.includes(member)) return false;
 
-            return member.user.username.slice(0, inputQuery.trim().length) === inputQuery.trim();
+        const queryMembers = members.filter(member => {
+
+            if (selectedMembers.find(memberFind => memberFind._id === member._id)) {
+                return;
+            };
+
+            return member.username.slice(0, inputQuery.trim().length) === inputQuery.trim();
         })
 
-        console.log(queryMembers)
-
-        setQueryMembers(() => queryMembers);
+        setQueryMembers(queryMembers);
     }, [inputQuery, selectedMembers, members])
 
-    
-    async function CreateTaskApi(event){
-        event.preventDefault();
+    //get the task data
+    useEffect(() => {
+        if(params?.task){
+            async function getData(){
+                try{
+                    const taskId = params.task;
+                        const task = await definitions.api.data.post('/getTaskById', {
+                            taskId,
+                        });
 
-        const {year, month, day} = selectedDate;
-        const {hour, minutes} = selectedHour;
+                        //set the task data
+                        setTaskData(task.data);
 
-        const data = new FormData(event.target);
-        const name = data.get('name');
-        const description = data.get('description');
-        const date = new Date(year, month, day, hour, minutes)
-        if (new Date() - date > 0) return definitions.error.change('Select an available time.')
-        const toArray = [];
+                        //set the current selected members
+                        setSelectedMembers(task.data.to);
+
+                        //set the current name and description
+                        setTaskNameInput(task.data.name);
+
+                        //set the current task description
+                        setTaskDescriptionInput(task.data.description);
+
+                        //set the current task priority
+                        setCurrentPriority(task.data.priority);
+
+                        //set tags 
+                        setTags(task.data.tags)
+
+                        //set status
+                        setCurrentStatus(task.data.status);
         
-
-
-        if (!name || !description) return definitions.error.change('Both name and description are required.');
-
-
-        try{
-            const create = await definitions.api.data.post('http://localhost:9000/createtask', {
-                name,
-                description, 
-                tags,
-                to: toArray,
-                deadline: date,
-                ...(team !== 'myOwn' && team ? {team} : {})
-            })
-
-            window.history.back();
-        }catch(err){
-            definitions.error.change(err?.data.error || err.message);
+                }catch(err){
+                    definitions.error.change(err?.response?.data.error || err.message);
+                }
+            }
+            getData();
         }
-        
+    }, [])
 
-    }
 
 
     //get the team data and set members only if team is not undefined
@@ -138,7 +177,9 @@ export function CreateTask(){
                     });
 
                     setTeamData(() => response.data);
-                    setMembers(response.data.members)
+                    setMembers(response.data.members.map(member => {
+                        return member.user;
+                    }))
                 }catch(err){
                     definitions.error.change(err?.data?.error || err.message);
                 }
@@ -158,9 +199,9 @@ export function CreateTask(){
         return () => document.removeEventListener('click', handleClick);
     }, [])
 
-    console.log(selectedMembers);
+    
 
-    return  teamData || team === 'undefined' ? 
+    return  teamData ? 
         <div className='outer-container-create-task-page'> 
             <div className='inner-container-create-task-page'>
                 <div className='create-task-section first'>
@@ -169,7 +210,7 @@ export function CreateTask(){
                             {teamData?.name || 'My Own Tasks'}
                         </span>
                         <span className='assign'>
-                            assign task
+                            {update ? 'update task' : 'assign task'}
                         </span>
                     </div>
 
@@ -245,30 +286,84 @@ export function CreateTask(){
                 </div>
 
                 <div className='create-task-section second'>
-                    <div className='basic-info-container'>
-                        <span>
-                            Name
-                        </span>
-                        <input 
-                            value={taskNameInput}
-                            onChange={(event) => setTaskNameInput(event.target.value)}
-                            placeholder='Enter the task name'
-                            >
+                    <div className='basic-info-outer-container'>
+                        <div className='basic-info-container'>
+                            <span>
+                                Name
+                            </span>
+                            <input
+                                value={taskNameInput}
+                                onChange={(event) => setTaskNameInput(event.target.value)}
+                                placeholder='Enter the task name'
+                                >
+                            </input>
+                            <span>
+                                Description:
+                            </span>
+                            <textarea
+                                className='scrollbar'
+                                value={taskDescriptionInput}
+                                onChange={(event) => setTaskDescriptionInput(event.target.value)}
+                                placeholder='Enter the task description'
+                                >
+                            </textarea>
+                        </div>
 
-                        </input>
+                        <div className='priority-container'>
+                            <span>
+                                Select the priority
+                            </span>
 
-                        <span>
-                            Description:
-                        </span>
+                            <div className='priority-picker-container'>
+                                {teamData.possiblePriorities ?
+                                Object.keys(teamData.possiblePriorities).map(priority => {
+                                    const pr = teamData.possiblePriorities[priority];
 
-                        <textarea
-                            className='scrollbar'
-                            value={taskDescriptionInput}
-                            onChange={(event) => setTaskDescriptionInput(event.target.value)}
-                            placeholder='Enter the task description'
-                            >
+                                    let cl = '';
+                                    if (Object.keys(currentPriority)[0] === priority) cl = ' active';
 
-                        </textarea>
+                                    return (
+                                        <div 
+                                            className={'priority-option' + cl}
+                                            onClick={(event) => {setCurrentPriority({
+                                                [priority]: pr
+                                            })}}
+                                        >
+                                            {priority}
+                                        </div>
+                                    )
+                                }) : 
+                                null}
+                            </div>
+                        </div>
+
+                        {update ?
+                            <div className='status-outer-container-update'>
+                                <span>
+                                    Status
+                                </span>
+
+                                <div className='status-option-update-container'>
+                                    {[
+                                        'Todo',
+                                        'In Progress',
+                                        'Done',
+                                        'Aproved'
+                                    ].map(status => {
+                                        const current = status === currentStatus ? 
+                                        status : '';
+                                        return (
+                                            <div 
+                                                className={'status-option-update ' + current}
+                                                onClick={() => setCurrentStatus(status)}
+                                            >
+                                                {status}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div> :
+                        null}
                     </div>
 
                     <div className='extra-info-container'>
@@ -281,8 +376,8 @@ export function CreateTask(){
 
                             </span>
 
-                            <TimePicker change={setSelectedHour}/>
-                            <DatePicker change={setSelectedDate}/>
+                            <TimePicker change={setSelectedHour} timeProp={taskData?.deadline}/>
+                            <DatePicker change={setSelectedDate} timeProp={taskData?.deadline}/>
                         </div>
 
                         <div className='tags-container-assign'>
@@ -377,7 +472,7 @@ export function CreateTask(){
                 </button>
 
                 <button style={{backgroundColor: 'var(--secondary)'}} onClick={createTaskApi}>
-                    Assign Task
+                    {update ? 'Update task' : 'Assign Task'}
                 </button>
             </div>
         </div>    
@@ -411,7 +506,7 @@ function MemberQueryCard({setSelectedMembers, setQueryMembers, member, selected,
                 null}
             </div>
             <div className={'member-query-card' + (selected ? ' selected' : '')}>
-                {member.user.username}
+                {member?.username}
             </div>
         </div>
     )
@@ -421,7 +516,7 @@ function MemberQueryCard({setSelectedMembers, setQueryMembers, member, selected,
 
 ///// DATE PICKER
 
-function getCalendar(year, month){
+function getCalendar(year, month){ 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
@@ -440,7 +535,7 @@ function getCalendar(year, month){
     return calendar;
 }
 
-function DatePicker({value, change}){
+function DatePicker({timeProp, change}){
 
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -448,11 +543,30 @@ function DatePicker({value, change}){
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    const [month, setMonth] = useState(new Date().getMonth());
+    const [month, setMonth] = useState(new Date().getMonth() );
     const [year, setYear] = useState(new Date().getFullYear());
     const [day, setDay] = useState(new Date().getDate());
     const [calendar, setCalendar] = useState();
     const [picking, setPicking] = useState(false);
+
+    useEffect(() => {
+        function click(){
+            setPicking(false);
+        };  
+
+        document.addEventListener('click', click)
+
+        return () => document.removeEventListener('click', click);
+    }, [])
+
+
+    useEffect(() => {
+        if (timeProp){
+            setMonth(new Date(timeProp).getMonth());
+            setYear(new Date(timeProp).getFullYear());
+            setDay(new Date(timeProp).getDate());
+        }
+    }, [timeProp])
 
     function clickMonth(sum){
         return function(event){
@@ -495,7 +609,10 @@ function DatePicker({value, change}){
     }, [year, month, day])
 
     return(
-        <div className={`date-picker-container`} onClick={() => setPicking(prev => !prev)}>
+        <div className={`date-picker-container`} onClick={(e) => {
+            e.stopPropagation();
+            setPicking(prev => !prev)
+        }}>
                 <span className='calendar-icon-date-picker'>
                         <i className={'material-icons'}>
                             calendar_month
@@ -556,16 +673,36 @@ function DatePicker({value, change}){
 
 ////TIME PICKER
 
-function TimePicker({change}){
+function TimePicker({change, timeProp}){
 
-    const [picking, setPicking] = useState();
+    const [picking, setPicking] = useState(false);
     const [time, setTime] = useState({
         ['hour']: new Date().getHours(),
-        ['minutes']: 0
+        ['minutes']: new Date().getMinutes()
     });
+
+    useEffect(() => {
+        function click(){
+            setPicking(false);
+        };  
+
+        document.addEventListener('click', click)
+
+        return () => document.removeEventListener('click', click);
+    }, [])
 
     const hours = useRef([]);
     const minutes = useRef([]);
+
+    useEffect(() => {
+        if (timeProp){
+            setTime({
+                ['hour']: new Date(timeProp).getHours(),
+                ['minutes']: new Date(timeProp).getMinutes()
+            });
+
+        }
+    }, [timeProp])
 
     useEffect(() => {
         hours.current = [];
@@ -586,10 +723,6 @@ function TimePicker({change}){
             minutes.current.push(push);
         }
 
-        setTime(prev => ({
-            ...prev,
-            minutes: minutes.current[0]
-        }))
     }, [])
 
     useEffect(() => {
@@ -605,8 +738,13 @@ function TimePicker({change}){
         }
     }
 
+    console.log(time['minutes']);
+
     return (
-        <div className='time-container-picker' onClick={() => setPicking(prev => !prev)}>
+        <div className='time-container-picker' onClick={(e) => {
+            e.stopPropagation()
+            setPicking(prev => !prev);
+        }}>
             <i className={'material-icons'} style={{marginLeft: '10px'}}>
                 schedule
             </i>

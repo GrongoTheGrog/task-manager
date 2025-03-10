@@ -8,11 +8,12 @@ import { remainingTime } from '../home/home';
 //utils
 import { transformDay, transformMonth } from '../../utils/time';
 import { set } from 'date-fns';
+import { Kanban } from './kanban/kanban';
 
 
 const Provider = createContext();
 
-function useContextTeam() {
+export function useContextTeam() {
     return useContext(Provider);
 }
 
@@ -36,13 +37,14 @@ export function Teams(){
     const [roles, setRoles] = useState([]);             //roles array ['Creator', 'Member']
     const [permissions, setPermissions] = useState();   //permissions 
 
+    //set deleted task
+    const [deletedTask, setDeletedTask] = useState();
+
     //navigation
     const navigator = useNavigate();
     const params = useParams()                          // {team: ...}
-
-
     
-    //save permissions and roles
+    //save permissions and roles    
     useEffect(() => {
         if (curTeam){
             //create id to look for which member is loged user
@@ -77,12 +79,11 @@ export function Teams(){
     
     //check if user has required permission (allow if !curTeam and allowedOwnTasks)
     function checkRole(permission, allowedOwnTasks){
+
+        if (allowedOwnTasks && !curTeam) return true;
+        if (!allowedOwnTasks && !curTeam) return false;
         
         if(permissions){//allow when in ownTasks page
-            if (allowedOwnTasks && !curTeam) return true;
-            if (!allowedOwnTasks && !curTeam) return false;
-
-
             //check if set() permissions has permission
             if (permissions.has(permission)) return true;
             return false;
@@ -127,7 +128,6 @@ export function Teams(){
         }
     }, [curTeam]);
     
-    console.log(teamTasks)
     //listen to added member
     useEffect(() => {
         function handleAddedMember(member){
@@ -163,7 +163,7 @@ export function Teams(){
                 }
         }   
         getData();
-    }, [createedTeam, deletedTeam, addMember, definitions.enteringTeam.data]);
+    }, [createedTeam, deletedTeam, addMember, definitions.enteringTeam.data, deletedTask]);
 
 
     //set current team 
@@ -174,12 +174,13 @@ export function Teams(){
         }
     }, [window.location.pathname, teams])
 
+    console.log(deletedTask);
 
     //set the team quests
     useEffect(() => {
         if (tasks){
             if (curTeam){
-                const teamTasks = tasks.filter(task => task.team._id === curTeam._id);
+                const teamTasks = tasks.filter(task => task?.team?._id === curTeam._id);
                 setTeamTasks(teamTasks);
                 return;
             }
@@ -194,7 +195,7 @@ export function Teams(){
         }
     }, [tasks, curTeam])
 
-    console.log(tasks)
+
 
     //change url to created teams tab
     useEffect(() => {
@@ -215,9 +216,9 @@ export function Teams(){
         roles,                      //roles is an array ['Admin', 'Member'];
         checkRole,                  //function that checks if current user has permission
         setCreatedTeam,             //updates the state when creates team
-        setDeletedTeam              //updates the state when deletes team
+        setDeletedTeam,             //updates the state when deletes team
+        setDeletedTask,             //updates when deletes tasks
     }
-
 
 
     return (
@@ -292,14 +293,14 @@ function TeamsNav({teams, create, curTeam}){
         <div className='teams-navbar-container'>
             {creating ? (
                 <form className='create-task-form' onSubmit={submit}>
-                    <labe>
+                    <labe style={{fontWeight: 'bold'}}>
                         Name:
                     </labe>
 
                     <input name='name' placeholder='e.g: backend team' autoFocus>
                     </input>
 
-                    <labe>
+                    <labe style={{fontWeight: 'bold'}}>
                         Description:
                     </labe>
 
@@ -359,16 +360,26 @@ function TeamsNav({teams, create, curTeam}){
 export function OneTeam({tasks, team, setDeletedTeam}){
 
 
-    const todayTasks = [];
-    const overdueTasks = [];
-    const upcomingTasks = [];
-    const today = new Date().getDate();
-    const todayWeek = new Date().getDay();
-    const month = new Date().getMonth();
-    const year = new Date().getFullYear();
-    const [deleting, setDeleting] = useState(false);
-    const definitions = useSiteDefinitions();
+    const todayTasks = [];                              //list of tasks from today
+    const overdueTasks = [];                            //list of overdue tasks
+    const upcomingTasks = [];                           //list of upcoming tasks
+    const today = new Date().getDate();                 //1 - 31
+    const todayWeek = new Date().getDay();              //0 - 6
+    const month = new Date().getMonth();                //0 - 11
+    const year = new Date().getFullYear();              //yyyy
+    const [deleting, setDeleting] = useState();    //just a state for rerender the component
+    const definitions = useSiteDefinitions();           //get site definitions (context)
+
+
+    //get check role
     const {checkRole} = useContextTeam();
+
+    //kanban
+    const [kanbanView, setKanbanView] = useState(
+        localStorage.getItem('kanban') ? 
+        JSON.parse(localStorage.getItem('kanban')) :
+        false
+    );
 
 
     function clickDelete(){
@@ -416,10 +427,9 @@ export function OneTeam({tasks, team, setDeletedTeam}){
     sort(upcomingTasks, true);
     sort(todayTasks, true);
 
-
-
-
-
+    useEffect(() => {
+        localStorage.setItem('kanban', JSON.stringify(kanbanView));
+    }, [kanbanView])
 
     return (
         <div className='outer-mid-team-container'>
@@ -432,72 +442,117 @@ export function OneTeam({tasks, team, setDeletedTeam}){
 
                 <div className='info'>
                     {team?.name || 'Your Own Tasks'}
-                    <span>
-                        {team?.description}
+                    <span >
+                        {team?.description || 'Here you can create your own tasks where no one but you can see them.'}
                     </span>
                 </div>
 
 
                 <div className='buttons'>
+                    <div className='toggle'>
+                        <div className={'slider ' + (kanbanView ? ' active' : '')}>
+                        </div>
 
+                        <span onClick={() => setKanbanView(false)}>
+                            Overview
+                        </span>
 
-                    {checkRole('team:delete', false) ? <div className='delete' onClick={clickDelete}>
-                        <i className='material-icons'>
-                            delete
-                        </i>
-                        delete team
-                    </div> : null}
+                        <span onClick={() => setKanbanView(true)}>
+                            Kanban
+                        </span>
+                    </div>
 
-
-
-                    {checkRole('task:create', true) ? 
-                        <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
+                    <div className='main'>
+                        {checkRole('team:delete', false) ? <div className='delete' onClick={clickDelete}>
                             <i className='material-icons'>
-                                add
+                                delete
                             </i>
-                            create task
-                        </Link> : 
-                        null}
+                            delete team
+                        </div> : null}
+                        {checkRole('task:create', true) ?
+                            <Link className='link' to={`/createTasks/${team?._id || undefined}`}>
+                                <i className='material-icons'>
+                                    add
+                                </i>
+                                create task
+                            </Link> :
+                            null}
+                    </div>
                 </div>
             </span>
 
-            <div className='mid-team-main-information-container'>
-                <div className='mid-div-section'>
-                    <div className='info-today-display-team'>
-                        <div className='today-day'>
-                            <span className='today'>{transformDay(todayWeek)}</span>
+
+            {kanbanView ? 
+                <Kanban 
+                    tasks={tasks}
+                    checkRole={checkRole}                /> :
+                <div className='mid-team-main-information-container'>
+                    <div className='mid-div-section'>
+                        <div className='info-today-display-team'>
+                            <div className='today-day'>
+                                <span className='today'>{transformDay(todayWeek)}</span>
+                            </div>
+
+                            <span>
+                                {transformMonth(month)}, {today}
+                            </span>
+
+                            <span className='task'>
+                                {todayTasks.length ? 
+                                `You have ${todayTasks.length} tasks assigned for today.` :
+                                "No tasks assigned for today."}
+                            </span>
+
+                            {overdueTasks.length ? <span className='task overdue'>
+                                You have {overdueTasks.length} overdue tasks.
+                            </span> : null}
                         </div>
 
-                        <span>
-                            {transformMonth(month)}, {today}
-                        </span>
 
-                        <span className='task'>
-                            {todayTasks.length ? 
-                            `You have ${todayTasks.length} tasks assigned for today.` :
-                            "No tasks assigned for today."}
-                        </span>
+                        <div className='todays-info-team'>
+                            <span className='title'>Today</span>
 
-                        {overdueTasks.length ? <span className='task overdue'>
-                            You have {overdueTasks.length} overdue tasks.
-                        </span> : null}
+                            <span style={{
+                                fontSize: '18px',
+                                width: '100%',
+                                marginTop: '24px'
+                            }}>
+                                {todayTasks.length} tasks
+                            </span>
+
+
+                            <span style={{
+                                fontSize: '28px',
+                                width: '100%',
+                            }}>
+                                {todayTasks.filter(task => task.status === 'Aproved').length / (todayTasks.length || 1) * 100}% aproved
+                            </span>
+
+
+                            <span style={{
+                                fontSize: '18px',
+                                width: '100%',
+                                color: 'var(--accent)'
+                            }}>
+                                {todayTasks.filter(task => {
+                                    return new Date(task.deadline).getTime() - new Date().getTime() < 0;
+                                }).length / (todayTasks.length || 1) * 100}% overdue
+                            </span>
+                        </div> 
+                    
+
+
                     </div>
 
+                    <div className='mid-div-section'>
+                        <TaskSection mode='normal' tasks={upcomingTasks} title={'Upcoming tasks (3 days)'}/> 
+                    </div>
 
-                    <TaskSection mode='normal' tasks={todayTasks} title='Today'/> 
-                
-
-
+                    <div className='mid-div-section'>
+                        <TaskSection mode='overdue' tasks={overdueTasks} title={'Overdue tasks'}/> 
+                    </div>
                 </div>
-
-                <div className='mid-div-section'>
-                    <TaskSection mode='normal' tasks={upcomingTasks} title={'Upcoming tasks (3 days)'}/> 
-                </div>
-
-                <div className='mid-div-section'>
-                    <TaskSection mode='overdue' tasks={overdueTasks} title={'Overdue tasks'}/> 
-                </div>
-            </div>
+            }
         </div>
     )
 }
@@ -518,52 +573,8 @@ function TaskSection({mode, tasks, title}){
             {tasks.length ? <div className='tasks-section-inner-flex'>
 
 
-            {tasks.map((task, index) => {
-                const expired = new Date() - new Date(task.deadline) > 0 ? true : false;
+            {tasks.map((task, index) => <TaskCard task={task} color={color}/>)}
 
-
-                return (
-                    <div className='inner-card-task-team' key={task._id}>
-                        {expired ? 
-                            <div className='expired'>Expired</div> :
-                            null}
-
-                        <span style={{fontSize: '20px', fontWeight: 'bold', color}} className='title-inner-card-task-team'>
-                            {task.name}
-                        </span>
-            
-                        <span className='tasks-description-card'>
-                            {task.description}
-                        </span>
-            
-                        {task.tags.length ? <div className='tags-container-tasks-home'>
-                            {task.tags && task.tags.map((tag, index) => {
-                                return <span className='tag-card-tasks-home' key={index}>{tag} </span>
-                            })}
-                        </div> : null}
-
-                        {task.to.length ? 
-                            <div className='to-container-teams'>
-                                {task.to.map((member, index) => {
-                                    return (
-                                        <div className='to-card-teams' key={index}>
-                                            <i className='material-icons'>
-                                                person
-                                            </i>
-
-                                            <span>{member.username}</span>
-                                        </div>
-                                    )
-                                })}
-                            </div> :
-                            null}
-            
-                        {task.deadline && <div className='dead-line-card-home'>
-                            <strong>Deadline:</strong> {remainingTime(new Date(task.deadline).getTime() - new Date().getTime())}
-                        </div>}
-                    </div>
-                )
-            })}
             </div> : 
             <div className='no-task-container'>
                 <span>No tasks</span>
@@ -574,12 +585,104 @@ function TaskSection({mode, tasks, title}){
 }
 
 
+function TaskCard({task, color}){
+    const expired = new Date() - new Date(task.deadline) > 0 ? true : false;
+    const {api, error} = useSiteDefinitions();
+    const navigator = useNavigate();
+    const {setDeletedTask, checkRole} = useContextTeam();
+
+    function clickUpdate(event){
+        navigator('/updateTask/' + (task?.team?._id || undefined) + '/' + task._id);
+    }
+
+    async function clickDelete(event){
+        event.stopPropagation();
+        try{
+            await api.data.post('/deletetask', {
+                id: task._id
+            });
+        }catch(err){
+            error.change(err?.response?.data.error || err.message);
+        }
+        setDeletedTask(task._id);
+        
+    }
+
+    return(
+        <div className='inner-card-task-team' key={task._id}>
+            {expired ? 
+                <div className='expired'>Expired</div> :
+                null}
+
+            <span style={{fontSize: '20px', fontWeight: 'bold', color}} className='title-inner-card-task-team'>
+                {task.name}
+            </span>
+
+            {checkRole('task:create', true) ? <span className='update-icon-button' onClick={clickUpdate}>
+                <i className='material-icons'>
+                    edit
+                </i>
+            </span> : null}
+
+            {checkRole('task:delete', true) ? <span className='update-icon-button delete' onMouseDown={clickDelete}>
+                <i className='material-icons'>
+                    delete
+                </i>
+            </span> : null}
+
+            <span className='tasks-description-card'>
+                {task.description}
+            </span>
+
+            <div className='info'>
+                <div className='border'>
+                    <span style={{color: 'var(--primary)', fontSize: '14px'}}>priority</span>
+                    <span className='data'>{Object.keys(task.priority)}</span>
+                </div>
+
+                <div className='border'>
+                    <span style={{color: 'var(--primary)', fontSize: '14px'}}>status</span>
+                    <span className='data'>{task?.status}</span>
+                </div>
+
+                <div>
+                    <span style={{color: 'var(--accent)', fontSize: '14px'}}>deadline</span>
+                    <span className='data'>{remainingTime(new Date(task.deadline).getTime() - new Date().getTime())}</span>
+                </div>
+            </div>
+
+
+            {task.tags.length ? <div className='tags-container-tasks-home'>
+                {task.tags && task.tags.map((tag, index) => {
+                    return <span className='tag-card-tasks-home' key={index}>{tag} </span>
+                })}
+            </div> : null}
+
+            {task.to.length ? 
+                <div className='to-container-teams'>
+                    {task.to.map((member, index) => {
+                        return (
+                            <div className='to-card-teams' key={index}>
+                                <i className='material-icons'>
+                                    person
+                                </i>
+
+                                <span>{member.username}</span>
+                            </div>
+                        )
+                    })}
+                </div> :
+                null}
+        </div>
+)
+}
+
+
 
 
 function Members({team}){
 
     const {members} = useContextTeam();
-
     const possibleRoles = team.possibleRoles;
     const definitions = useSiteDefinitions();
     const [leaving, setLeaving] = useState();
@@ -624,6 +727,8 @@ function Members({team}){
         objectRoles[role.role].push(member);;
     });
 
+
+
     const elements = []
 
     for (let key in objectRoles){
@@ -650,6 +755,7 @@ function Members({team}){
                             <CardMember 
                                 member={member} 
                                 me={me} 
+                                role={key}
                                 key={index} 
                                 setLeaving={setLeaving}/>
                         )
@@ -721,7 +827,7 @@ function Members({team}){
 }
 
 
-function CardMember({member, me, setLeaving}){
+function CardMember({member, me, setLeaving, role}){
 
     const [display, setDisplay] = useState(false);
     const [above, setAbove] = useState(false);
@@ -766,14 +872,16 @@ function CardMember({member, me, setLeaving}){
         ref={container}
 
         >
-            <span className={'name '}>{member.user.username}</span>
+            <span className={'name '}>{member?.user.username}</span>
 
             {display ?
                 <UserToolBox 
                     member={member} 
                     setLeaving={setLeaving}
                     cl={cl} 
-                    ref={toolbox}/> :
+                    ref={toolbox}
+                    role={role}
+                    /> :
                 null}
         </div>
     )
@@ -782,19 +890,16 @@ function CardMember({member, me, setLeaving}){
 
 
 //user management
-const UserToolBox = forwardRef(({member, cl, setLeaving}, ref) => {
+const UserToolBox = forwardRef(({member, cl, setLeaving, role}, ref) => {
 
     const {roles, checkRole} = useContextTeam();
     const {user, error, blanket} = useSiteDefinitions();
     const me = member.user.username === user.data.username;
 
-
     let memberRole;
 
 
-    member.role.forEach((value, key) => {
-        if(!memberRole || value.level > memberRole[1]) memberRole = [key, value.level]
-    })
+
 
 
     //prevent from taking click to document
@@ -802,13 +907,15 @@ const UserToolBox = forwardRef(({member, cl, setLeaving}, ref) => {
         event.stopPropagation();
     }
 
+
+
     return (
         <div className={'member-toolbox-container-outer ' + cl} ref={ref} onClick={clickToolbox}>
             <span className='name'>
                 {member.user.username}
             </span>
             <span className='role'>
-                {Object.keys(memberRole)[0]}
+                {role}
             </span>
 
             {me ?
