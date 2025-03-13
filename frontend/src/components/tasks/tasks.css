@@ -6,7 +6,7 @@
 .tasks-container-tasks{
     display: flex;
     flex-direction: column;
-    gap: 80px;
+    gap: 40px;
     animation: loadTasks 0.5s ease;
     width: 60vw;
     max-width: 1500px;
@@ -18,6 +18,78 @@
     font-size: 45px;
 }
 
-.overview-outer-flex{
-    
+.overview-tasks-outer-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.overview-tasks-grid{
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 50px;
+    height: 35px;
+    gap: 10px;
+    align-items: center;
+}
+
+.overview-tasks-grid.back{
+    background-color: var(--neutral);
+    border-radius: 5px;
+}
+
+.overview-tasks-grid > .title{
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.label-container-overview{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    height: 100%;
+    color: white;
+}
+
+.no-tasks-tasks{
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+    font-size: 24px;
+
+}
+
+.overview-tasks-grid.back > .team{
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-overflow: ellipsis;
+    line-clamp: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
+}
+
+.overview-tasks-grid.back > .label-overview{
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+}
+
+.overview-tasks-grid.back > .redirect-button{
+    background: none;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.overview-tasks-grid.back > .redirect-button > i{
+    color: var(--font-color);
+    font-size: 22px;
 }
