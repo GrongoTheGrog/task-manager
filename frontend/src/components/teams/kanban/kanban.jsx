@@ -8,6 +8,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { useNavigate } from 'react-router-dom';
 import { useSiteDefinitions } from '../../../context/siteDefinitions';
 import { useContextTeam } from '../teams';
+import { remainingTime } from '../../home/home';
 
 const dateFilters = [
     {label: 'All', value: null},
@@ -38,7 +39,7 @@ const columns = [
     {title: 'Todo', id: 'Todo', color: 'var(--purple)'},
     {title: 'In Progress', id: 'In Progress', color: 'var(--primary)'},
     {title: 'Done', id: 'Done', color: 'var(--primary)'},
-    {title: 'Aproved', id: 'Aproved', color: 'var(--secondary)'}
+    {title: 'Approved', id: 'Approved', color: 'var(--secondary)'}
 ]
 
 
@@ -49,7 +50,7 @@ export function Kanban({tasks}){
     const [fisrtList, setFirstList] = useState(tasks);
     const [tasksList, setTasksList] = useState([]);
     const [finalList, setFinalList] = useState([]);
-    const {checkRole} = useContextTeam();
+    const {checkRole, setTasks} = useContextTeam();
 
     const {error, api} = useSiteDefinitions();
 
@@ -274,17 +275,19 @@ export function Kanban({tasks}){
         //check if dragging isnt over
         if (!event.over || !currentDrag) return;
 
-        //check if user can change status from aproved to other
-        if (currentDrag.status === 'Aproved' && !checkRole('task:accept', true)){
+        //check if user can change status from approved to other
+        if (currentDrag.status === 'Approved' && !checkRole('task:accept', true)){
             return error.change("You don't have the permission to change the status of that task.");
         }
 
-        //check if user can change status from any to aproved
-        if (event.over.id === 'Aproved' && !checkRole('task:accept', true)){
+        //check if user can change status from any to approved
+        if (event.over.id === 'Approved' && !checkRole('task:accept', true)){
             return error.change("You don't have the permission aprove tasks.");
         }
 
-        setFirstList(prev => prev.map(task => {
+
+
+        setTasks(prev => prev.map(task => {
             if (task._id !== event.active.id) return task;
 
             return {
@@ -384,12 +387,16 @@ function CardDraggable({task, color, currentDrag}){
         >
 
 
-            {expired && task.status !== 'Aproved' ?
+            {expired && task.status !== 'Approved' ?
             <span className='expired'>
                 Expired
             </span> :
             null
             }
+
+            <span className='expired' style={{backgroundColor: 'var(--primary)'}}>
+                {Object.keys(task.priority)[0]}
+            </span>
 
             <span className='title-kanban-task' style={{color}}>
                 {task.name}
@@ -397,6 +404,30 @@ function CardDraggable({task, color, currentDrag}){
 
             <span className='description-kanban-task'>
                 {task.description}
+            </span>
+
+            <div className='tag-container-kanban'>
+                {task.tags.map(tag => (
+                    <span className='tag-card-kanban'>{tag}</span>
+                ))}
+            </div>
+
+
+            <div className='to-container-kanban'>   
+                {task.to.map(member => {
+                    return (
+                        <span className='to-card-kanban'>
+                            <i className='material-icons' style={{fontSize: '18px'}}>
+                                person
+                            </i>
+                            {member.username}
+                        </span>
+                    )
+                })}
+            </div>
+
+            <span className='remaining-time-kanban'>
+                {remainingTime(new Date(task.deadline).getTime() - new Date().getTime())}
             </span>
 
             {checkRole('task:create', true) ? <span className='update-icon-button' onMouseDown={clickUpdate}>

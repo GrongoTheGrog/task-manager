@@ -25,21 +25,62 @@
     display: flex;
     align-items: center;
     justify-content: 30px;
-    padding: 5px;
+    padding: 8px 5px;
     padding-left: 20px;
     text-decoration: none;
     color: var(--font-color);
-    transition: color 0.1s linear, background-color 0.1s linear;
+    transition: background-color 0.2s ease;
     outline: none;
-    border-radius: 20px;
+    border-radius: 5px;
     gap: 15px;
 }
 
-.link-left-nav:hover, .link-left-nav.active{
-    color: white;
-    background: linear-gradient(135deg, var(--primary), #8dbff8);
+.link-left-nav:hover{
+    background-color: var(--hover);
     
 }
+
+.link-left-nav.active{
+    background-color: var(--primary);
+}
+
+.tag-container-kanban{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag-card-kanban{
+    padding: 1px 8px;
+    background-color: var(--purple);
+    border-radius: 5px;
+    color: white;
+}
+
+.remaining-time-kanban{
+    padding: 1px 10px;
+    background-color: var(--accent);
+    width: fit-content;
+    border-radius: 3px;
+    margin-top: 4px;
+    color: white;
+}
+
+.to-container-kanban{
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.to-card-kanban{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    background-color: var(--secondary);
+    padding: 1px 8px;
+    border-radius: 1000px;
+}
+
 
 .nav-label-left-main{
     height: 30px;
@@ -50,7 +91,7 @@
     text-decoration: none;
     color: var(--font-color);
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 5px;
     margin-bottom: 10px;
     cursor: pointer;
 
@@ -58,14 +99,12 @@
 
 
 .nav-label-left-main:hover{
-    background: linear-gradient(135deg, var(--primary), #8dbff8);
-    color: white;
+    background-color: var(--hover);
 
 }
 
 .nav-label-left-main.active{
-    background: linear-gradient(135deg, var(--primary), #8dbff8);
-    color: white;
+    background-color: var(--primary);
 }
 
 

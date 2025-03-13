@@ -348,7 +348,7 @@ export function CreateTask({update}){
                                         'Todo',
                                         'In Progress',
                                         'Done',
-                                        'Aproved'
+                                        'Approved'
                                     ].map(status => {
                                         const current = status === currentStatus ? 
                                         status : '';
@@ -678,7 +678,7 @@ function TimePicker({change, timeProp}){
     const [picking, setPicking] = useState(false);
     const [time, setTime] = useState({
         ['hour']: new Date().getHours(),
-        ['minutes']: new Date().getMinutes()
+        ['minutes']: '00'
     });
 
     useEffect(() => {

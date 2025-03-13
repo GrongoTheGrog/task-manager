@@ -4,13 +4,13 @@ const io = require('../../server');
 const mongoose = require('mongoose');
 
 const leave = async (req, res) => {
-    const {id} = req.body;
-    if (!id) return res.status(400).json({"error": "Missing Id"})
+    const {id, userId} = req.body;
+    if (!id || !userId) return res.status(400).json({"error": "Missing Id"})
 
     const matchingTeam = await Team.findById(id).exec();
     if (!matchingTeam) return res.status(409).json({"error": "Couldnt find requested team."})
 
-    const user = await User.findOne({username: req.user}).populate('teams').exec();
+    const user = await User.findById(userId).populate('teams').exec();
 
     if (!user) {
         return res.status(404).json({ "error": "User not found" });

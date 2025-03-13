@@ -14,7 +14,9 @@ export function Calendar(){
     const [year, setYear] = useState(new Date().getFullYear());
     const [calendar, setCalendar] = useState(null);
     const today = new Date();
-    const [currentDay, setCurrentDay] = useState()
+    const [currentDay, setCurrentDay] = useState({
+        date: new Date()
+    });
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const daysComplete = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -52,7 +54,7 @@ export function Calendar(){
                 });
 
                 setCurrentDay(() => ({
-                    date: new Date,
+                    date: new Date(),
                     tasks: tasks[`${format(new Date(), formatingTime)}`] || []
                 }))
 
@@ -132,17 +134,24 @@ export function Calendar(){
                                 let clSpan = 'day-label-number';
                                 const date = new Date(day.year, day.month, day.dayNumber);
                                 const key = `${format(date, formatingTime)}`;
+                                const current = new Date(currentDay.date);
+                                const currentDate = current.getDate();
+                                const currentMonth = current.getMonth();
+                                const currentYear = current.getFullYear();
+
+                                const currentClass = currentDate === date.getDate() && currentMonth === date.getMonth() && date.getFullYear() === currentYear ? ' current' : '';
                                 
                                 const inDateTasks = tasks[key]
 
-                                if (year === today.getFullYear() && today.getDate() === day.dayNumber && month === today.getMonth()) {
+
+                                if (year === today.getFullYear() && today.getDate() === day.dayNumber && date.getMonth() === today.getMonth()) {
                                     clDiv += ' bright';
                                     clSpan += ' bright';
                                 }
 
 
                                 return (
-                                    <div className={`${clDiv} ${day.month !== month ? ' not-month' : ''}`} onClick={clickDay({
+                                    <div className={`${clDiv} ${day.month !== month ? ' not-month' : ''} ${currentClass}`} onClick={clickDay({
                                         date,
                                         tasks: inDateTasks || []
                                     })}>
