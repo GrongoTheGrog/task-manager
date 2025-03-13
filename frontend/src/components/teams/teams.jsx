@@ -9,6 +9,16 @@ import { remainingTime } from '../home/home';
 import { transformDay, transformMonth } from '../../utils/time';
 import { set } from 'date-fns';
 import { Kanban } from './kanban/kanban';
+import { he } from 'date-fns/locale';
+
+
+
+const statusListPossible = [
+    {title: 'Todo', id: 'Todo', color: 'var(--purple)'},
+    {title: 'In Progress', id: 'In Progress', color: 'var(--primary)'},
+    {title: 'Done', id: 'Done', color: 'var(--primary)'},
+    {title: 'Approved', id: 'Approved', color: 'var(--secondary)'}
+]
 
 
 const Provider = createContext();
@@ -44,6 +54,9 @@ export function Teams(){
     const navigator = useNavigate();
     const params = useParams()                          // {team: ...}
     
+
+
+
     //save permissions and roles    
     useEffect(() => {
         if (curTeam){
@@ -51,7 +64,22 @@ export function Teams(){
             const id = definitions.user.data._id;
             //search for user
             const member = curTeam.members.find(member => member.user._id === id);
-            
+
+
+            function getHighestRole(member){
+                let currentRole;
+        
+                member.role.forEach(role => {
+                    const level = possibleRoles[role].level;
+                    if (level > currentRole?.level || !currentRole){
+                        currentRole = {
+                            role,
+                            ...possibleRoles[role]
+                        }
+                    }
+                })
+                return currentRole;
+            }
             
 
             //create a variable for member roles and possible roles
@@ -69,8 +97,9 @@ export function Teams(){
                 })
             })
             
+
             //assign to states
-            setRoles(memberRoles);
+            setRoles(getHighestRole(member));
             setPermissions(permissions);
         }
     }, [curTeam])
@@ -114,33 +143,51 @@ export function Teams(){
             socket.emit('join-team', curTeam._id);
 
 
-            //listen to new tasks
+            //listen to editted tasks
+            const handleEdittedTask = (task) => {
+                console.log('task editted');
+                setTasks(prev => prev.map(taskMap => {
+                    if (taskMap._id !== task._id) return taskMap;
 
+                    return task;
+                }))
+            }
+
+            socket.on('edit-task', handleEdittedTask);
+
+            //listen to new tasks
             const handleNewTask = (task) => {
                 console.log('create task event');
                 setAddMember(task);
             }
 
             socket.on('create-task', handleNewTask);
-            console.log('create task listener')
 
-            return () => socket.off('create-task', handleNewTask);
+            return () => {
+                socket.off('create-task', handleNewTask);
+                socket.off('edit-task', handleEdittedTask);
+            }
         }
     }, [curTeam]);
     
     //listen to added member
     useEffect(() => {
+        const {socket} = definitions;
+
+        if (!socket?.data) return
+
         function handleAddedMember(member){
             setAddMember(member);
             console.log('new member accepted')
         }
 
-
+        definitions.socket.data.on('edited-member', handleAddedMember);
         definitions.socket.data.on('add-member', handleAddedMember);
         definitions.socket.data.on('leave-team', handleAddedMember);
         console.log('user events')
 
         return () => {
+            definitions.socket.data.off('edited-member', handleAddedMember);
             definitions.socket.data.off('add-member', handleAddedMember);
             definitions.socket.data.off('leave-team', handleAddedMember);
         }
@@ -173,8 +220,6 @@ export function Teams(){
             setCurTeam(team);
         }
     }, [window.location.pathname, teams])
-
-    console.log(deletedTask);
 
     //set the team quests
     useEffect(() => {
@@ -218,6 +263,8 @@ export function Teams(){
         setCreatedTeam,             //updates the state when creates team
         setDeletedTeam,             //updates the state when deletes team
         setDeletedTask,             //updates when deletes tasks
+        setTasks,
+        curTeam
     }
 
 
@@ -369,6 +416,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
     const year = new Date().getFullYear();              //yyyy
     const [deleting, setDeleting] = useState();    //just a state for rerender the component
     const definitions = useSiteDefinitions();           //get site definitions (context)
+    const [statusTask, setStatusTask] = useState({});
 
 
     //get check role
@@ -380,6 +428,25 @@ export function OneTeam({tasks, team, setDeletedTeam}){
         JSON.parse(localStorage.getItem('kanban')) :
         false
     );
+
+    //set status task
+    useEffect(() => {
+        if (tasks){
+            const object = {};
+            tasks.forEach(task => {
+                const status = task.status;
+                if (!object[status]){
+                    object[status] = [];
+                }
+
+                object[status].push(task);
+            });
+
+            setStatusTask(object);
+        }
+    }, [tasks])
+
+
 
 
     function clickDelete(){
@@ -397,7 +464,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
             todayTasks.push(task);
         };
 
-        if (new Date(task.deadline).getTime() - new Date().getTime() <= 0){
+        if (new Date(task.deadline).getTime() - new Date().getTime() <= 0 && task.status !== 'Approved'){
             overdueTasks.push(task);
         }
 
@@ -408,7 +475,7 @@ export function OneTeam({tasks, team, setDeletedTeam}){
         } 
     });
 
-    function sort(array, greater){
+    function sort(array, greater){  
         array.sort((a, b) => {
             const diffa = (new Date(a.deadline) - new Date()) / (1000 * 60 * 60 * 24);
             const diffb = (new Date(b.deadline) - new Date()) / (1000 * 60 * 60 * 24);
@@ -426,6 +493,8 @@ export function OneTeam({tasks, team, setDeletedTeam}){
     sort(overdueTasks, false);
     sort(upcomingTasks, true);
     sort(todayTasks, true);
+
+    console.log(tasks);
 
     useEffect(() => {
         localStorage.setItem('kanban', JSON.stringify(kanbanView));
@@ -510,34 +579,52 @@ export function OneTeam({tasks, team, setDeletedTeam}){
 
 
                         <div className='todays-info-team'>
-                            <span className='title'>Today</span>
+                            <span className='title'>Tasks</span>
 
                             <span style={{
                                 fontSize: '18px',
                                 width: '100%',
                                 marginTop: '24px'
                             }}>
-                                {todayTasks.length} tasks
+                                {tasks.length} tasks
                             </span>
 
 
                             <span style={{
                                 fontSize: '28px',
                                 width: '100%',
+                                color: 'var(--secondary)'
                             }}>
-                                {todayTasks.filter(task => task.status === 'Aproved').length / (todayTasks.length || 1) * 100}% aproved
+                                {(tasks.filter(task => task.status === 'Approved').length / (tasks.length || 1) * 100).toFixed(0)}% approved
                             </span>
 
 
                             <span style={{
                                 fontSize: '18px',
                                 width: '100%',
-                                color: 'var(--accent)'
+                                color: 'var(--accent)',
+                                marginTop: '2px'
                             }}>
-                                {todayTasks.filter(task => {
-                                    return new Date(task.deadline).getTime() - new Date().getTime() < 0;
-                                }).length / (todayTasks.length || 1) * 100}% overdue
+                                {(todayTasks.filter(task => {
+                                    return new Date(task.deadline).getTime() - new Date().getTime() > 0;
+                                }).length / (todayTasks.length || 1) * 100).toFixed(0)}% overdue
                             </span>
+
+                            <div className='tasks-status-container'>
+                                {statusListPossible.map(status => {
+                                    return (
+                                        <div className='status-card-team'>
+                                            <span className='status-label-team' style={{background: status.color}}>
+                                                {status.title}
+                                            </span>
+
+                                            <span className='status-data-team'>
+                                                {statusTask[status.title]?.length || 0} tasks
+                                            </span>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div> 
                     
 
@@ -757,7 +844,9 @@ function Members({team}){
                                 me={me} 
                                 role={key}
                                 key={index} 
-                                setLeaving={setLeaving}/>
+                                setLeaving={setLeaving}
+                                possibleRoles={possibleRoles}
+                                />
                         )
                     })}
 
@@ -790,7 +879,8 @@ function Members({team}){
     async function leaveTeam(){
         try{
             const leftTeam = await definitions.api.data.post('/leaveteam', {
-                id: team._id
+                id: team._id,
+                userId: definitions.user.data._id
             })
 
             setDeletedTeam(() => leftTeam.data);
@@ -827,7 +917,7 @@ function Members({team}){
 }
 
 
-function CardMember({member, me, setLeaving, role}){
+function CardMember({member, me, setLeaving, role, possibleRoles}){
 
     const [display, setDisplay] = useState(false);
     const [above, setAbove] = useState(false);
@@ -881,6 +971,7 @@ function CardMember({member, me, setLeaving, role}){
                     cl={cl} 
                     ref={toolbox}
                     role={role}
+                    possibleRoles={possibleRoles}
                     /> :
                 null}
         </div>
@@ -890,17 +981,20 @@ function CardMember({member, me, setLeaving, role}){
 
 
 //user management
-const UserToolBox = forwardRef(({member, cl, setLeaving, role}, ref) => {
+const UserToolBox = forwardRef(({member, cl, setLeaving, role, possibleRoles}, ref) => {
 
-    const {roles, checkRole} = useContextTeam();
-    const {user, error, blanket} = useSiteDefinitions();
+    const {roles, checkRole, curTeam} = useContextTeam();
+    const {user, error, blanket, api} = useSiteDefinitions();
     const me = member.user.username === user.data.username;
 
-    let memberRole;
+    console.log(curTeam._id)
+
+    const highestRole = possibleRoles[role];
 
 
 
-
+    const [changingRoles, setChangingRoles] = useState();
+    const [currentRoles, setCurrentRoles] = useState(member?.role || []);
 
     //prevent from taking click to document
     function clickToolbox(event){
@@ -908,24 +1002,123 @@ const UserToolBox = forwardRef(({member, cl, setLeaving, role}, ref) => {
     }
 
 
+    async function changeMember() {
+        if (!currentRoles.length) return error.change('Select at least one role.');
+
+        if (highestRole.level >= roles.level) return error.change("You do not have the permission to change that member's role.");
+        console.log(curTeam._id);
+
+        try{
+            await api.data.post('/changeRole', {
+                userId: member.user._id,
+                newRoles: currentRoles,
+                teamId: curTeam?._id
+            })
+
+            
+        }catch(err){
+            error.change(err?.response?.data.error || err.message);
+        }
+    }
+
+
+    async function removeMember(){
+        if (highestRole.level >= roles.level) return error.change('You do not have the permission to remove that member.');
+
+        try{
+            await api.data.post('/leaveteam', {
+                id: curTeam._id,
+                userId: member.user._id
+            })
+        }catch(err){
+            error.change(err?.response?.data.error || err.message);
+        }
+    } 
+
+    console.log(possibleRoles)
+
 
     return (
         <div className={'member-toolbox-container-outer ' + cl} ref={ref} onClick={clickToolbox}>
-            <span className='name'>
-                {member.user.username}
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                <span className='name'>
+                    {member.user.username}
+                </span>
+                <span className='role'>
+                    {role}
+                </span>
+            </div>
+
+
+            <span >
+                {member.user.email}
             </span>
-            <span className='role'>
-                {role}
-            </span>
+
+            {possibleRoles[role].level < roles.level ?
+                !changingRoles ?
+                <span className='leave-team' style={{backgroundColor: 'var(--primary)'}} onClick={() => setChangingRoles(true)}>
+                    Change Roles
+                </span> : 
+                <div className='changing-roles-members'>
+                    {Object.entries(possibleRoles).map(role => {
+                        const cl = currentRoles.includes(role[0]) ? ' active' : ''; 
+                        
+
+                        return (
+                            <div className='role-option'>
+                                <div 
+                                    className={'check-box-role-option' + cl}
+                                    onClick={() => setCurrentRoles(prev => {
+                                        if (prev.includes(role[0])){
+                                            return prev.filter(rolem => rolem !== role[0])
+                                        }else{
+                                            return [...prev, role[0]];
+                                        }
+                                    })}
+                                >
+                                    {currentRoles.includes(role[0]) ?
+                                    <i style={{color: 'white', aspectRatio: '1', fontSize: '16px'}} className='material-icons'>
+                                        check
+                                    </i> : null}
+                                </div>
+
+                                <span className='role-option-label'>
+                                    {role[0]}
+                                </span>
+                            </div>
+                        )
+                    })}
+
+                    <div className='buttons-member-change'>
+                        <button style={{backgroundColor: 'var(--accent)'}} onClick={() => setChangingRoles(false)}>
+                            Cancel
+                        </button>
+
+                        <button style={{backgroundColor: 'var(--secondary)'}} onClick={changeMember}>
+                            Save
+                        </button>
+                    </div>
+                </div> :
+                null
+            }
+
+            {
+            highestRole.level < roles.level ?
+            <button className='leave-team' onClick={removeMember}>
+                Remove Member
+            </button> :
+            null
+            }
 
             {me ?
             <button className='leave-team' onClick={() => {
                 setLeaving(() => true);
                 blanket.change(() => true);
             }}>
-                leave team
+                Leave Team
             </button> :
-            null
+            null 
+
             }
         </div>
     )

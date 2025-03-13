@@ -9,75 +9,15 @@
     gap: 80px;
     animation: loadTasks 0.5s ease;
     width: 60vw;
+    max-width: 1500px;
 }
 
-.tasks-title-tasks{
-    background: linear-gradient(135deg, var(--primary), #8dbff8);
-    background-clip: text;
-    color: transparent;
 
-    font-size: 40px;
-    align-self: center;
-    font-weight: bold;
-}
-
-.section-tasks-container{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 20vw;
-    min-width: 180px;
-    background-color: var(--neutral);
-    padding: 20px;
-    box-sizing: border-box;
-    border-radius: 20px;
-    height: fit-content;
-}
-
-.tasks-flex{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-.all-cards-task-container{
-    display: flex;
-    gap: 30px;
-    width: 100%;
-}
-
-.create-task-container{
-    background-color: var(--neutral2);
-    display: flex;
-    text-decoration: none;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    width: 100%;
-    transition: all 0.2s ease;
-}
-
-.create-task-container:hover{
-    filter: brightness(1.3);
-}
-
-.title-section{
-    font-size: 30px;
+.tasks-container-tasks > h1{
     color: var(--primary);
-    text-align: center;
-    text-decoration: none;
+    font-size: 45px;
 }
 
-.title-section:hover{
-    text-decoration: underline;
+.overview-outer-flex{
+    
 }
-
-.cont{
-    flex: 1;
-    display: flex;
-    gap: 30px;
-    flex-direction: column;
-    height: fit-content;
-}
-

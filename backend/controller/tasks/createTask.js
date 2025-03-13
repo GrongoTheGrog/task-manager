@@ -55,9 +55,7 @@ const createTask = async (req, res) => {
         priority
     });
 
-    console.log(io.rooms);
     io.to(team).emit("create-task", task);
-    console.log('task sent to team ' + team)
 
     res.json(task);
 }
