@@ -54,7 +54,7 @@ function RightHeaderUser(){
     useEffect(() => {
 
         //only if socket and api are truthy, since header isnt part of apps conditional rendering
-        if (api.data && socket){
+        if (api.data && socket && user.data){
             async function getRequests() {
                 try{
                     const requests = await api.data.get('/getreq');
@@ -67,7 +67,7 @@ function RightHeaderUser(){
 
             getRequests();
         }
-    }, [api, socket, deletedReq])
+    }, [api, socket, deletedReq, user.data])
 
     useEffect(() => {
         if (socket.data){

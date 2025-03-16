@@ -146,7 +146,8 @@ export function Tasks(){
                 }
 
                 {tasks?.length ? teams.map(team => {
-                    
+                    console.log(teamTasks);
+                    if (!teamTasks[team._id]) return null;
                     return (
                         <div className='overview-tasks-grid back'>
                             <span className='team'>
@@ -154,12 +155,12 @@ export function Tasks(){
                             </span>
 
                             {possibleStatus.map(status => (
-                            <span 
-                                className='label-overview' 
-                                style={{color: status.color}}
-                            >    
-                            {teamTasks[team._id][status.title]}
-                            </span>
+                                <span 
+                                    className='label-overview' 
+                                    style={{color: status.color}}
+                                >    
+                                {teamTasks[team._id][status.title]}
+                                </span>
                             ))}
 
                             <button 

@@ -1,66 +1,167 @@
-import { useEffect, useState } from 'react';
+import light from '../../assets/lightmode-car.png';
+import dark from '../../assets/darkmode-car.png';
 import './home.css';
+import { useEffect, useRef, useState } from 'react';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
-import { Link } from 'react-router-dom';
-import { format, subMilliseconds } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 export function Home(){
 
-    const [tasks, setTasks] = useState();
-    const [teams, setTeams] = useState();
-
-    const definitions = useSiteDefinitions();
-    const api = definitions.api.data;
+    const car = useRef();
+    const interval = useRef();
+    const {theme} = useSiteDefinitions()
+    const imageList = [0, 50, 100]
+    const [currentImage, setCurrentImage] = useState(0);
+    const navigator = useNavigate();
 
     useEffect(() => {
-        const getData = async () => {
-            try{
-                const tasks = await api.post('http://localhost:9000/gettasksauthor');
-                setTasks(tasks.data);
-                const teams = await api.get('http://localhost:9000/getteam');
-                setTeams(teams.data);  
-            }catch(err){
-                definitions.error.change(err.message)
-            }
-        };
-        getData();
-    }, []);
+        car.current.style.backgroundPosition = `${imageList[currentImage]}%`;
+        if (interval.current) clearInterval(interval.current);
 
-    console.log(teams)
+        interval.current = setInterval(() => {
+            let current = currentImage + 1;
+            if (current >= imageList.length) current = 0;
+            setCurrentImage(current);
+        }, 4500);
 
+        return () => clearInterval(interval.current);
+    }, [currentImage])
+
+
+    console.log(imageList[currentImage]);
     return(
         <section className='home-main-container'>
-            <span className='span-home-main-outer'>Feeling productive today?</span>
 
+            <div className='hero-section-outer-container'>
+                <div className='hero-section'>
+                    <span className='title'>
+                        Taskify
+                    </span>
+                    <span className='subtitle'>
+                        Organize, Collaborate, and Stay Productive.
+                    </span>
+                    <span className='description'>
+                        A full-stack task manager with real-time updates, team collaboration, and a drag-and-drop Kanban board.
+                    </span>
+                    <span className='description'>
+                        Stay organized with role-based access and a dynamic calendar—built with React, Node.js, and MongoDB.
+                    </span>
+                    <div className='buttons-hero-section'>
+                        <button onClick={() => navigator('/signIn')}>
+                            Get Started
+                        </button>
+                        <a href='https://github.com/GrongoTheGrog/task-manager' target='#'>
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div
+                    className='char-container'
+                    style={{backgroundImage: `url(${dark})`}}
+                    ref={car}
+                >
+                    <div className='dots-car'>
+                        {[0, 1, 2].map(n => (
+                            <div
+                                style={{
+                                    backgroundColor: (currentImage === n ? 'var(--neutral2)' : '')}}
+                                onClick={() => setCurrentImage(n)}
+                            ></div>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
-            <div className='home-cards-container'>
-                <div className='home-card home-card-tasks'>
-                    <span className='home-card-title home-card-title-tasks'>
-                        Your Tasks
+            <span className='extra-items-title'>
+                Core Features
+            </span>
+
+            <div className='extra-items-container'>
+                <div className='extra-item-home'>
+                    <span className='title'>
+                        <i className='material-icons'>
+                            update
+                        </i>
+                        Real-Time Updates 
                     </span>
 
-                    {tasks ? tasks.slice(0, 2).map((task, index) => {
-                        return <CardTask card={task} key={index}/>
-                        }) : <Loading />
-                    }
-
-                    <Link to='/tasks' className='link-card'>See more...</Link>
-                        
+                    <span className='description'>
+                        Updates are made with a complete WebSocket integration, using the Socket.IO package.
+                    </span>
                 </div>
 
-                <div className='home-card home-card-teams'>
-                    <span className='home-card-title home-card-title-tasks'>
-                        Your Teams
+                <div className='extra-item-home'>
+                    <span className='title'>
+                        <i className='material-icons'>
+                            pending_actions
+                        </i>
+                        Task Scheduling
                     </span>
 
-                    {teams ? teams.slice(0, 2).map((task, index) => {
-                        return <CardTeam card={task} key={index}/>
-                        }) : <Loading />
-                    }
-
-
-                    <Link to='/teams' className='link-card'>See more...</Link>
+                    <span className='description'>
+                        Tasks are scheduled based on it’s deadline, set by it’s author, and can be displayed either in the team or in the personal calendar.
+                    </span>
                 </div>
+
+                <div className='extra-item-home'>
+                    <span className='title'>
+                        <i className='material-icons'>
+                            groups
+                        </i>
+                        Role-Based Teams
+                    </span>
+
+                    <span className='description'>
+                        Taskify allows teams to collaborate efficiently with role-based access control. Each member is assigned a specific role, ensuring the right people have the right permissions.
+                    </span>
+                </div>
+            </div>
+
+
+            <span className='extra-items-title'>
+                Technologies
+            </span>
+
+
+            <div className='extra-items-container' style={{width: '50vw'}}>
+                <div className='extra-item-home'>
+                    <i class="fa-solid fa-desktop"></i>
+
+                    <span className='title'>
+                        Front End
+                    </span>
+
+                    <span className='description'>
+                        Taskify’s frontend is built with React, but also with several other libraries, such as Axios, Socket.IO and Dnd-kit.  
+                    </span>
+                </div>
+
+                <div className='extra-item-home'>
+                    <i class="fa-solid fa-server"></i>
+
+                    <span className='title'>
+                        Backend
+                    </span>
+
+                    <span className='description'>
+                        Built with Node.js, Express, and MongoDB for a scalable and efficient backend.                    
+                    </span>
+                </div>
+            </div>
+
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+
+            <div className='footer'>
+                <a href='https://github.com/GrongoTheGrog' target='#'>
+                    My github
+                    <i className='material-icons'>
+                        open_in_new
+                    </i>
+                </a>
             </div>
         </section>
     )
@@ -81,53 +182,6 @@ export function Loading(){
 }
 
 
-
-function CardTask({card}){
-
-    return(
-        <div className='home-inner-card' id={card._id}>
-            <div className='title-inner-card-task'>
-                <span style={{fontSize: '20px', fontWeight: 'bold', color: 'var(--primary)'}}>
-                    {card.name}
-                </span>
-
-                {card.team && <span style={{fontSize: '16px', fontWeight: 'bold'}}>
-                    {card.team.name}
-                </span>}
-            </div>
-
-            <span className='tasks-description-card'>
-                {card.description}
-            </span>
-
-            <div className='tags-container-tasks-home'>
-                {card.tags.map((tag, index) => {
-                    return <span className='tag-card-tasks-home' key={index}>{tag} </span>
-                })}
-            </div>
-
-            {card.deadline && <div className='dead-line-card-home'>
-                <strong>Deadline:</strong> {remainingTime(new Date(card.deadline).getTime() - new Date().getTime())}
-            </div>}
-        </div>
-    )
-}
-
-function CardTeam({card}){
-    return (
-        <div className='home-inner-card' id={card._id}>
-                <div className='title-inner-card-task'>
-                <span style={{fontSize: '20px', fontWeight: 'bold', color: 'var(--primary)'}}>
-                    {card.name}
-                </span>
-            </div>
-
-            <span className='tasks-description-card'>
-                {card.description}
-            </span>
-        </div>
-    )
-}
 
 export function remainingTime(time){
 

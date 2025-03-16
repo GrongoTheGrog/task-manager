@@ -27,7 +27,7 @@
 .overview-tasks-grid{
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 50px;
-    height: 35px;
+    height: 40px;
     gap: 10px;
     align-items: center;
 }
