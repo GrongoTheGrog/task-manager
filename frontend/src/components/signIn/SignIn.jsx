@@ -1,16 +1,10 @@
-import { use, useState } from 'react';
+import { useState } from 'react';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import './SignIn.css';
-import axios from 'axios';
-
-import whiteView from '../../assets/white-view.svg';
-import whiteViewOff from '../../assets/white-view-off.svg';
-import blackView from '../../assets/black-view.svg';
-import blackViewOff from '../../assets/black-view-off.svg';
 
 
 import { Link, useNavigate } from 'react-router-dom';
-import { vi } from 'date-fns/locale';
+
 
 
 export function SignIn(){

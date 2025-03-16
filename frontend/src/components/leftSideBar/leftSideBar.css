@@ -42,6 +42,7 @@
 
 .link-left-nav.active{
     background-color: var(--primary);
+    color: white;
 }
 
 .tag-container-kanban{
@@ -105,6 +106,7 @@
 
 .nav-label-left-main.active{
     background-color: var(--primary);
+    color: white;
 }
 
 

@@ -38,8 +38,7 @@ function App() {
           navigator(localStorage.getItem('lastVisitedPage') || '/')
         }catch(err){
           definitions.user.change(null);
-          definitions.error.change('Session expired.')
-          navigator('/logIn');
+          navigator('/');
         }
       };
       getUser();

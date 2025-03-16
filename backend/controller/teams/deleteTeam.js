@@ -1,6 +1,7 @@
 const Team = require('../../models/Team');
 const User = require('../../models/User');
 const Task = require('../../models/Task');
+const TeamRequest = require('../../models/TeamRequest');
 const mongoose = require('mongoose');
 
 const deleteTeam = async (req, res) => {
@@ -35,6 +36,10 @@ const deleteTeam = async (req, res) => {
     );
 
     await Task.deleteMany(
+        {team: teamId}
+    );
+
+    await TeamRequest.deleteMany(
         {team: teamId}
     );
 

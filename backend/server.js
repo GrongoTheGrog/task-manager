@@ -19,7 +19,6 @@ const verifyRoles = require('./middleware/verifyRoles');
 const SERVER_ROLES = require('./config/roles')
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
 
 //cors
 app.use(cors({

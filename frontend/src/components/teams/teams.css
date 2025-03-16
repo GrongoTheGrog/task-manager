@@ -342,6 +342,7 @@
 .status-label-team{
     padding: 2px 14px;
     border-radius: 3px;
+    color: white;
 }
 
 .status-data-team{
@@ -699,6 +700,7 @@
 .member-toolbox-container-outer > div > .role{
     font-size: 15px;
     background-color: var(--primary);
+    color: white;
     padding: 2px 8px;
     border-radius: 4px;
 }

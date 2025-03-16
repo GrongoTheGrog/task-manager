@@ -1,4 +1,6 @@
 :root{
+    position: relative;
+
     --font-color: #2D3436;
     --background: #FFFFFF;
     --primary: #4A90E2;
@@ -27,6 +29,8 @@ body {
     --light-blue: #00CED1; 
     --hover: #505257;
 }
+
+
 
 body{
     font-family: roboto;

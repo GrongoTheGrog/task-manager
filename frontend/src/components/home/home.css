@@ -3,30 +3,199 @@
     to {transform: translate(0, 0)}
 }
 
+
+
 .home-main-container{
     display: flex;
     flex-direction: column;
+    align-items: center;
+    animation: main-animation 1s ease;
+    max-width: 1500px;
+}
+
+.hero-section-outer-container{
+    display: flex;
     gap: 80px;
     animation: main-animation 1s ease;
+    margin-top: 15vh;
+    width: 70vw;
+    justify-content: center;
+}
+
+.char-container{
+    aspect-ratio: 1.38173302108;
+    border-radius: 5px;
+    background-size: cover;
+    position: relative;
+    transition: all 1s ease;
+    flex: 1;
+    height: fit-content;
+}
+
+.dots-car{
+    position: absolute;
+    width: 50px;
+    display: flex;
+    gap: 5px;
+    bottom: -20px;
+    right: 50%;
+    transform: translate(50%, 0);
+    align-items: end;
+}
+
+.dots-car > div{
+    flex: 1;
+    aspect-ratio: 1;
+    background-color: var(--neutral);
+    border-radius: 10000px;
+    height: fit-content;
+    cursor: pointer;
+    transition: all 0.2s ease, background-color 1s ease;
+}
+
+.dots-car > div:hover{
+    flex: 1.3;
+    background-color: var(--hover);
+}
+
+.hero-section{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.hero-section > .title{
+    color: var(--primary);
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.hero-section > .subtitle{
+    margin-top: 25px;
+    margin-left: 10px;
+    margin-bottom: 44px;
+    font-size: 25px;
+    width: 70%;
+    font-weight: bold;
+    line-height: 35px;
+
+}
+
+.hero-section > .description{
+    font-size: 18px;
+    margin-left: 10px;
+    margin-bottom: 25px;
+    width: 90%;
+    max-width: 550px;
+    line-height: 28px;
 }
 
 
-.span-home-main-outer{
-    background: linear-gradient(135deg, var(--primary), #a2c9f5);
-    background-clip: text;
-    color: transparent;
+.buttons-hero-section{
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+}
 
+.buttons-hero-section > button{
+    font-size: 16px;
     font-weight: bold;
-    font-size: 50px;
+    color: white;
+    background-color: var(--primary);
+    border: none;
+    padding: 8px 40px;
+    border-radius: 1000px;
+    cursor: pointer;
+}
+
+.buttons-hero-section > a{
+    width: 40px;
+    aspect-ratio: 1;
+    font-size: 28px;
+    background-color: var(--neutral);
+    display: flex;
+    color: var(--font-color);
+    border-radius: 3px;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    height: fit-content;
+    transition: all 0.2s ease;
+}
+
+.buttons-hero-section > a:hover{
+    background-color: var(--hover);
+}
+
+
+.extra-items-container{
+    display: flex;
+    gap: 12vw;
+    width: 80vw;
+    margin-top: 10vh;
+    justify-content: center;
+}
+
+.extra-items-title{
+    font-size: 40px;
+    margin-top: 18vh;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.extra-item-home{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    flex: 1;
+    align-items: center;
+}
+
+.extra-item-home > .title{
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
     text-align: center;
 }
 
-.home-cards-container{
-    width: 60vw;
-    min-width: 800px;
-    display: flex;
-    gap: 30px;
+.extra-item-home > .title > i {
+    font-size: 30px;
 }
+
+.extra-item-home > .description{
+    align-items: center;
+    line-height: 24px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.extra-item-home > i{
+    font-size: 50px;
+}
+
+.footer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--neutral2);
+}
+
+.footer > a{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--font-color);
+}
+
 
 .home-card{
     flex: 1;
@@ -125,14 +294,4 @@
 
 .link-card:hover{
     text-decoration: underline;
-}
-
-.dead-line-card-home{
-    margin-top: 8px;
-    font-size: 14px;
-    padding: 3px 5px;
-    background-color: var(--accent);
-    border-radius: 5px;
-    color: white;
-    width: fit-content;
 }
