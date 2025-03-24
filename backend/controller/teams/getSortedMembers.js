@@ -20,7 +20,7 @@ async function getSortedMembers(req, res){
         
         if (!team) res.status(404).json({error: 'Team not found'});
 
-        const user = await User.findOne({username: req.user}).exec();
+        const user = await User.findById(req.userId).exec();
 
         if (!user.teams.includes(teamId)) res.status(403).json({error: 'User is not on the requested team.'});
 

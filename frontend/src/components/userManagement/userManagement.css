@@ -1,0 +1,157 @@
+.user-outer-container{
+    display: flex;
+    margin-top: 50px;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.user-title{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 50px;   
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.user-title > i{
+    font-size: 55px;
+}
+
+.user-inner-container{
+    width: 30vw;
+    max-width: 700px;
+    min-width: 350px;
+    height: fit-content;
+    border-radius: 5px;
+    border: 2px solid var(--neutral);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-container-user{
+    width: 100%;
+    position: relative;
+    height: 32px;
+}
+
+.input-user{
+    width: 100%;
+    background-color: var(--neutral);
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    padding: 6px 20px;
+    box-sizing: border-box;
+    outline: none;
+    color: var(--font-color);
+    margin: 0;
+    height: 100%;
+    font-family: roboto;
+}
+
+.div-user{
+    width: 100%;
+    background-color: var(--neutral);
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    padding: 6px 20px;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.user-inner-container > span{
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary);
+}
+
+.user-inner-container > button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.link-change-password-user{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    text-decoration: none;
+    color: white;
+    background-color: var(--primary);
+    padding: 4px;
+    border-radius: 1000px;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.input-container-user > .buttons{
+    display: flex;
+    position: absolute;
+    border-radius: 3px;
+    right: 5px;
+    top: 50%;
+    transform: translate(0, -50%);
+    gap: 10px;
+}
+
+.input-container-user > .buttons > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-container-user:hover > .buttons > .edit-hover-user{
+    opacity: 1;
+}
+
+.edit-hover-user{
+    aspect-ratio: 1;
+    height: 24px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.send-hover-user{
+    aspect-ratio: 1;
+    height: 24px;
+    border-radius: 3px;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.edit-icons{
+    color: white;
+    font-size: 18px;
+}
+
+.logout-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    text-decoration: none;
+    color: white;
+    background-color: var(--accent);
+    padding: 4px;
+    border-radius: 1000px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    margin-top: 0;
+    cursor: pointer;
+}

@@ -8,7 +8,6 @@ router.post('/logout', async (req, res) => {
 
     const update = await User.findOneAndUpdate({refreshToken}, {refreshToken: null}, {returnDocument: 'after'});
 
-    console.log(update);
     res.json(update);
 })
 

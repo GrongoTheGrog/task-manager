@@ -94,14 +94,16 @@ export function SiteDefinitions({children}){
     ///SET THE WEBSOCKET 
     useEffect(() => {
         const token = localStorage.getItem('jwtAccess');
-
+        console.log(user);
         if (user && token) {
+
             const newSocket = io('http://localhost:9000', {
                 withCredentials: true,
                 extraHeaders: {
-                    id: user._id
+                    id: user?._id
                 }
             });
+
             setSocket(newSocket);
     
     
@@ -123,22 +125,24 @@ export function SiteDefinitions({children}){
         }
     }, [user, localStorage.getItem('jwtRefresh')]);
 
-    const [theme, setTheme] = useState(true);
+    const themeStorage = localStorage.getItem('theme');
+    console.log(themeStorage ? JSON.parse(themeStorage) : 'aaaaaaa');
+    const [theme, setTheme] = useState(themeStorage ? JSON.parse(themeStorage) : 'aaaaaaa');
 
-    const toggleTheme = () => {
+
+    useEffect(() => {
         const body = document.querySelector('body');
-        setTheme(prev => {
-            prev ?
-            body.classList.remove('theme') :
-            body.classList.add('theme');
 
-            return !prev;
-        })
+        localStorage.setItem('theme', JSON.stringify(theme));
 
-    }
+        theme ?
+        body.classList.remove('theme') :
+        body.classList.add('theme');
+
+    }, [theme])
 
     const definitions = {
-        theme: { data: theme, change: toggleTheme },
+        theme: { data: theme, change: setTheme },
         socket: { data: socket, change: setSocket },
         user: { data: user, change: changeUser},
         error: { data: error, change: changeError },
@@ -146,6 +150,8 @@ export function SiteDefinitions({children}){
         blanket: { data: blanket, change: setBlanket},
         enteringTeam: { data: enteringTeam, change: setEnteringTeam}
     }
+
+    console.log(socket);
 
     return (
         <DefinitionsProvider.Provider value={definitions}>

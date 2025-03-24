@@ -3,11 +3,10 @@ const User = require('../../models/User');
 
 const createTeam = async (req, res) => {
     const {name, description} = req.body;
-    console.log(req.user);
 
     if (!name) return res.status(400).json({"error": "Missing name."});
 
-    const matching = await User.findOne({username: req.user}).exec();
+    const matching = await User.findById(req.userId).exec();
     
     const team = new Team({
         name, 

@@ -1,9 +1,9 @@
 import { createContext, forwardRef, memo, use, useContext, useEffect, useRef, useState } from 'react';
 import './teams.css';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
-import { Loading } from '../home/home';
+import { Loading } from '../home/unloggedHome/home';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { remainingTime } from '../home/home';
+import { remainingTime } from '../home/unloggedHome/home';
 
 //utils
 import { transformDay, transformMonth } from '../../utils/time';

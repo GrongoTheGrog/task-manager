@@ -1,8 +1,8 @@
-import light from '../../assets/lightmode-car.png';
-import dark from '../../assets/darkmode-car.png';
+import light from '../../../assets/lightmode-car.png';
+import dark from '../../../assets/darkmode-car.png';
 import './home.css';
 import { useEffect, useRef, useState } from 'react';
-import { useSiteDefinitions } from '../../context/siteDefinitions';
+import { useSiteDefinitions } from '../../../context/siteDefinitions';
 import { useNavigate } from 'react-router-dom';
 
 export function Home(){
@@ -41,7 +41,7 @@ export function Home(){
                         Organize, Collaborate, and Stay Productive.
                     </span>
                     <span className='description'>
-                        A full-stack task manager with real-time updates, team collaboration, and a drag-and-drop Kanban board.
+                        A full-stack task manager app with real-time updates, team collaboration, and a drag-and-drop Kanban board.
                     </span>
                     <span className='description'>
                         Stay organized with role-based access and a dynamic calendar—built with React, Node.js, and MongoDB.
@@ -57,7 +57,7 @@ export function Home(){
                 </div>
                 <div
                     className='char-container'
-                    style={{backgroundImage: `url(${dark})`}}
+                    style={{backgroundImage: `url(${!theme.data ? dark : light})`}}
                     ref={car}
                 >
                     <div className='dots-car'>

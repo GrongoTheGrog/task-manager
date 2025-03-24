@@ -19,11 +19,13 @@ const verifyJWT = async (req, res, next) => {
         accessToken, 
         process.env.ACCESS_TOKEN_SECRET,
         (err, decoded) => {
+            if (err){
+                console.log(err);
+            }
             if (err) return res.status(401).json({"error": "Invalid access token, go get another one."});
-            
-            if (decoded.username !== matching.username) return res.status(401).json({"error": "Missing cookies."});
+            if (decoded.id !== matching._id.toString()) return res.status(401).json({"error": "Missing cookies."});
 
-            req.user = decoded.username;
+            req.userId = decoded.id;
             req.roles = decoded.roles;
             next()
 

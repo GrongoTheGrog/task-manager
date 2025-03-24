@@ -11,7 +11,7 @@ const createTeamRequest = async (req, res) => {
 
 
         //get the id of who sends the message
-        const id = await User.findOne({username: req.user}).select('_id');
+        const id = await User.findById(req.userId).select('_id');
         const from = id._id;
 
 

@@ -2,7 +2,7 @@ const Team = require('../../models/Team');
 const User = require('../../models/User');
 
 const getTeams = async (req, res) => {
-    const user = await User.findOne({username: req.user})
+    const user = await User.findById(req.userId)
         .select('teams')
         .populate({
             path: 'teams',

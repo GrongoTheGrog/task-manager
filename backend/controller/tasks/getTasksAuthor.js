@@ -4,9 +4,11 @@ const { default: mongoose } = require('mongoose');
 
 const getTasksAuthor = async (req, res) => {
 
-    if (!req?.user) return res.status(400).json({error: "Missing username on headers."});
+    if (!req?.userId) return res.status(400).json({error: "Missing username on headers."});
 
-    const user = await User.findOne({username: req.user}).exec();
+    console.log('\n' + req.useId + '\n');
+
+    const user = await User.findById(req.userId).exec();
 
     const tasks = await Task.find({team: { $in: user.teams}}).populate('team author to').exec();
     const noTeamQuests = await Task.find({author: user._id, team: null});

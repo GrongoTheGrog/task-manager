@@ -5,13 +5,12 @@
     left: 0;
     width: 170px;
     background-color: var(--neutral);
-    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 5px;
     padding: 10px;
     box-sizing: border-box;
-    transition: all 0.4s ease;
+    transition: transform 0.4s ease;
     transform: translate(-100%, 0);
 
 }
@@ -43,43 +42,6 @@
 .link-left-nav.active{
     background-color: var(--primary);
     color: white;
-}
-
-.tag-container-kanban{
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.tag-card-kanban{
-    padding: 1px 8px;
-    background-color: var(--purple);
-    border-radius: 5px;
-    color: white;
-}
-
-.remaining-time-kanban{
-    padding: 1px 10px;
-    background-color: var(--accent);
-    width: fit-content;
-    border-radius: 3px;
-    margin-top: 4px;
-    color: white;
-}
-
-.to-container-kanban{
-    display: flex;
-    gap: 8px;
-    width: 100%;
-}
-
-.to-card-kanban{
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    background-color: var(--secondary);
-    padding: 1px 8px;
-    border-radius: 1000px;
 }
 
 
@@ -122,4 +84,47 @@
 
 .icon-title-left-nav{
     font-size: 30px;
+}
+
+.theme-toggle{
+    flex: 1;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    width: 100%;
+    
+}
+
+.theme-toggle-card{
+    margin-bottom: 30px;
+    display: flex;
+    width: 75px;
+    justify-content: space-between;
+    padding: 9px;
+    border-radius: 1000px;
+    background-color: var(--neutral2);
+    position: relative;
+}
+
+.theme-toggle-card > i{
+    cursor: pointer;
+    z-index: 3;
+}
+
+.theme-toggle-card > .slider{
+    z-index: 2;
+    position: absolute;
+    width: 37%;
+    top: 50%;
+    transform: translate(0, -50%);
+    border-radius: 1000px;
+    left: 4px;
+    right: auto;
+    aspect-ratio: 1;
+    background-color: var(--neutral);
+    transition: left 0.3s ease, right 0.3s ease;
+}
+
+.theme-toggle-card > .slider.active{
+    left: calc(100% - 4px - 38%);
 }

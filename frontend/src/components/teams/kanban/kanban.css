@@ -205,3 +205,41 @@
 .description-kanban-task{
     word-break: break-word;
 }
+
+.tag-container-kanban{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag-card-kanban{
+    padding: 1px 8px;
+    background-color: var(--purple);
+    border-radius: 5px;
+    color: white;
+}
+
+.remaining-time-kanban{
+    padding: 1px 10px;
+    background-color: var(--accent);
+    width: fit-content;
+    border-radius: 3px;
+    margin-top: 4px;
+    color: white;
+}
+
+.to-container-kanban{
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.to-card-kanban{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    background-color: var(--secondary);
+    color: white;
+    padding: 1px 8px;
+    border-radius: 1000px;
+}

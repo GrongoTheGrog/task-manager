@@ -20,7 +20,7 @@ const deleteTeam = async (req, res) => {
     if (!teamData) return res.status(404).json({error: 'Unknown team id.'});
 
     const user = teamData.members.find(member => {
-        return member.user.username === req.user;
+        return member.user._id === req.userId;
     });
 
     if (!user) return res.status(403).json({error: 'User is not on the team.'});
