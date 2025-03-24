@@ -6,7 +6,7 @@
     "deploy": {
       "runtime": "V2",
       "numReplicas": 1,
-      "startCommand": "npm start",
+      "startCommand": "cd backend && npm start",
       "sleepApplication": false,
       "multiRegionConfig": {
         "us-west2": {
