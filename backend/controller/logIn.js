@@ -20,13 +20,13 @@ router.post('/login', async (req, res) => {
         const roles = matching.roles;
 
         const accessToken = jwt.sign(
-            {username, roles: roles},
+            {id: matching._id.toString(), roles: roles},
             process.env.ACCESS_TOKEN_SECRET,
             {expiresIn: '120s'}
         )
 
         const refreshToken = jwt.sign(
-            {username, roles: roles},
+            {id: matching._id.toString(), roles: roles},
             process.env.REFRESH_TOKEN_SECRET,
             {expiresIn: '30d'}
         )

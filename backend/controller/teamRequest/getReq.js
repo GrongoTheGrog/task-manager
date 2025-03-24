@@ -6,7 +6,7 @@ const User = require('../../models/User');
 
 async function getReq(req, res){
     try{
-        const user = await User.findOne({username: req.user}).exec();
+        const user = await User.findById(req.userId).exec();
         const teamRequests = await TeamRequest.find({to: user._id}).populate('team to from').exec();
 
         res.json(teamRequests);

@@ -8,7 +8,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { useNavigate } from 'react-router-dom';
 import { useSiteDefinitions } from '../../../context/siteDefinitions';
 import { useContextTeam } from '../teams';
-import { remainingTime } from '../../home/home';
+import { remainingTime } from '../../home/unloggedHome/home';
 
 const dateFilters = [
     {label: 'All', value: null},

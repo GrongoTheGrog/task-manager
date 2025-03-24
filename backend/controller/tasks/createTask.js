@@ -21,7 +21,7 @@ const createTask = async (req, res) => {
 
     if (!description || !name) return res.status(400).json({"error": "Description, name and team required"});
 
-    const userId = await User.findOne({username: req.user}).exec();
+    const userId = await User.findById(req.userId).exec();
 
     if (team){
         const teamData = await Team.findById(team).populate({
@@ -33,13 +33,13 @@ const createTask = async (req, res) => {
 
         if (!teamData) return res.status(404).json({error: 'Team not found.'});
 
-
+        console.log(teamData);
 
         const user = teamData.members.find((member) => {
-            return member.user.username === req.user;
+            return member.user._id.toString() === req.userId;
         });
 
-        if (!user) return res.status(403).json({error: 'User not on the selected team.'})
+        if (!user) return res.status(403).json({error: 'User is not on the selected team.'})
     }
 
 

@@ -43,7 +43,9 @@ app.use((req, res, next) => {
 io.on("connection", async (socket) => {
     const id = socket.handshake.headers['id'];
 
-    if (!id) {
+    console.log('id: ' + id);
+
+    if (id === 'null') {
         console.log('Missing user id.');
         return socket.disconnect(true);
     };
@@ -104,6 +106,12 @@ app.use(require('./controller/refresh'));
 //get user
 app.use(require('./controller/getUser'));
 
+//pass code requests 
+app.use(require('./controller/passwordCode/passCodeRouter'));
+
+//change password
+app.use('/changePassword', require('./controller/changePassword'));
+
 
 //verify jwt
 app.use(verifyJWT);
@@ -117,10 +125,13 @@ app.use(require('./controller/tasks/taskRouter'));
 //team requests
 app.use(require('./controller/teamRequest/teamRequestRouter'))
 
-
+//update user
+app.use('/updateUser', require('./controller/upadateUser'));
 
 //logout controller 
 app.use(require('./controller/logout'));
+
+
 
 //test api call
 app.get('/message', verifyRoles(SERVER_ROLES.User), (req, res) => {

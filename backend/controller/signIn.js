@@ -43,7 +43,7 @@ router.post('/edituser', upload.single('image'), verifyJWT, async (req, res) => 
         let hashPassword;
 
         if (password) {
-            hashPassword = bcrypt.hash(password, 10);
+            hashPassword = bcrypt.hash(password, 12);
         }
 
         if (req.file) {
@@ -51,7 +51,7 @@ router.post('/edituser', upload.single('image'), verifyJWT, async (req, res) => 
             profilePicture = profilePicture.secure_url;
         }
         
-        const user = await User.findOneAndUpdate({username: req.user}, {username, password, email, profilePicture}, {returnDocument: "after"}).exec();
+        const user = await User.findByIdAndUpdate(req.userId, {username, password, email, profilePicture}, {returnDocument: "after"}).exec();
 
         if (username) {
             const accessToken = jwt.sign(

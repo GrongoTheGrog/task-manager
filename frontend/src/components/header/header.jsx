@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import './header.css';
 import { ca } from 'date-fns/locale';
+import { Link } from 'react-router-dom';
 
 export function Header(){
 
@@ -104,9 +105,9 @@ function RightHeaderUser(){
 
     return (
         <div className='right-header'>
-            {user ?
+            {user.data ?
             <div className='notifications-container' onClick={() => setDisplay(prev => !prev)} ref={notificationsIcon}>
-                <i className='material-icons'>
+                <i className='material-icons' style={{fontSize: '26px'}}>
                     notifications
                 </i>
 
@@ -143,7 +144,13 @@ function RightHeaderUser(){
                 </div> :
             null}
 
-            <img src='https://res.cloudinary.com/dbrqsdkjz/image/upload/v1739389623/c3no819rkos5hm2ghv41.jpg' className='profile-pic-header'/>
+            {user.data ? <Link style={{cursor: 'pointer', fontWeight: 'bold', fontSize: '20px'}} className='link-user' to={'/user'}>
+                {user?.data?.username}
+
+                <i className='material-icons' style={{fontSize: '30px', cursor: 'pointer'}}>
+                    person
+                </i>
+            </Link> : null}
         </div>
     )
 }

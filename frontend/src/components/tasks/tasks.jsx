@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './tasks.css';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import { set } from 'date-fns';
-import { Loading } from '../home/home';
+import { Loading } from '../home/unloggedHome/home';
 import { useNavigate } from 'react-router-dom';
 
 

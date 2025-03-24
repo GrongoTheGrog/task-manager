@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import './calendar.css';
-import { Loading } from '../home/home';
+import { Loading } from '../home/unloggedHome/home';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import { format } from 'date-fns';
 

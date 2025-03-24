@@ -15,19 +15,23 @@ router.get('/refresh', async (req, res) => {
         jwtRefresh, 
         process.env.REFRESH_TOKEN_SECRET,
         (err, decoded) => {
-            if (err || decoded.username !== matching.username) return res.status(403).json({"error": "Invalid token."});
+            if (err || decoded.id !== matching._id.toString()) return res.status(403).json({"error": "Invalid token."});
 
             const accessToken = jwt.sign(
-                {username: decoded.username, roles: decoded.roles},
+                {id: matching._id.toString(), roles: decoded.roles},
                 process.env.ACCESS_TOKEN_SECRET,
                 {expiresIn: '120s'}
             )
 
-            User.findOne({username: decoded.username}).select('username teams email profilePicture')
-            .then(user => res.json({
-                user,
-                token: accessToken
-            }))
+
+            User.findById(decoded.id).select('username teams email profilePicture')
+            .then(user => {
+                console.log(user);
+                res.json({
+                    user,
+                    token: accessToken
+                })  
+            })
         }
     )
 })

@@ -8,7 +8,6 @@ import { useSiteDefinitions } from '../../context/siteDefinitions';
 export function LeftSideBar(){
 
     let {theme} = useSiteDefinitions();
-    theme = theme.data;
 
     const location = window.location.pathname;
 
@@ -58,6 +57,23 @@ export function LeftSideBar(){
     return (
         <div className='left-sidebar-container-main'>
             {components}
+
+
+            <div className='theme-toggle'>
+                <div className='theme-toggle-card'>
+                    <i className='material-icons' onClick={() => theme.change(false)}>
+                        dark_mode
+                    </i>
+
+                    <i className='material-icons' onClick={() => theme.change(true)}>
+                        light_mode  
+                    </i>
+
+                    <div className={'slider' + (theme.data ? ' active' : '')}>
+
+                    </div>
+                </div>
+            </div>
         </div>
         
     )

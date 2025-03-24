@@ -4,7 +4,7 @@ import { data, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { set, setDate } from 'date-fns';
 import { ca, da } from 'date-fns/locale';
-import { Loading } from '../home/home';
+import { Loading } from '../home/unloggedHome/home';
 import { Teams } from '../teams/teams';
 
 

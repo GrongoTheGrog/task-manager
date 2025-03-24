@@ -7,12 +7,14 @@ import { use, useEffect } from 'react';
 import { SignIn } from '../signIn/SignIn';
 import { LogIn } from '../logIn/LogIn';
 import { LeftSideBar } from '../leftSideBar/leftSideBar';
-import { Home } from '../home/home';
+import HomeComponent from '../home/homeCompontent';
 import { Teams } from '../teams/teams';
 import { Tasks } from '../tasks/tasks';
 import { Calendar } from '../calendar/calendar';
 import { CreateTask } from '../createTask/createTask';
 import { OneTeam } from '../teams/teams';
+import { ChangePassword } from '../userManagement/changePassword/changePassword';
+import UserManagement from '../userManagement/userManagement';
 
 function App() {
   const navigator = useNavigate();
@@ -46,7 +48,7 @@ function App() {
   }, [api.data])
 
 
-  const resultLoad = !api.data || !theme.data;
+  const resultLoad = !api.data 
 
   return (
     <>
@@ -69,7 +71,7 @@ function App() {
 
 
         <Routes>
-          <Route path='/' element={<Home />}/>
+          <Route path='/' element={<HomeComponent />}/>
           <Route path='/signIn' element={<SignIn />}/>
           <Route path='/logIn' element={<LogIn />}/>
           <Route path='/teams' element={<Teams />}>
@@ -79,6 +81,8 @@ function App() {
           <Route path='/calendar' element={<Calendar />}/>
           <Route path='/createTasks/:team' element={<CreateTask update={false}/>}/>
           <Route path='/updateTask/:team/:task' element={<CreateTask update={true}/>}/>
+          <Route path='/user' element={<UserManagement />}/>
+          <Route path='/changePassword' element={<ChangePassword />}/>
         </Routes>
       </main>
       }

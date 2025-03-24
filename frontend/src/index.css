@@ -15,7 +15,7 @@
     --hover: #bebebe;
 }
 
-body {
+body.theme{
     --font-color: #ECECEC;
     --background: #1A1A1A;
     --primary: #6BA4FF;
