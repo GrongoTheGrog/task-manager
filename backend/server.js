@@ -6,7 +6,7 @@ const WebSocket = require('ws')
 const {Server} = require("socket.io");
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: '*',
         methods: ["GET", "POST"],
         credentials: true 
         
@@ -22,7 +22,7 @@ const cookieParser = require('cookie-parser');
 
 //cors
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: '*',
     methods: ["GET", "POST"],
     credentials: true
 }))
@@ -91,7 +91,7 @@ connectDB();
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-    res.sendStatus(200);
+    res.status(200).send('DEPLOY.');
 })
 
 //sign in controller
@@ -141,7 +141,7 @@ app.get('/message', verifyRoles(SERVER_ROLES.User), (req, res) => {
 
 //check for DB connection, then listens
 mongoose.connection.once('open', () => {
-    server.listen(9000, () => {
+    server.listen(process.env.PORT || 9000, "0.0.0.0", () => {
         console.log('server connected on port 9000')
     })
 })
