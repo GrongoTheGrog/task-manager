@@ -45,7 +45,7 @@ export function SiteDefinitions({children}){
     useEffect(() => {
 
         const fetch = axios.create({
-            baseURL: 'http://localhost:9000',
+            baseURL: 'task-manager-backend-production12.up.railway.app',   //put your backend url
             withCredentials: true
         });
 
@@ -97,7 +97,7 @@ export function SiteDefinitions({children}){
         console.log(user);
         if (user && token) {
 
-            const newSocket = io('http://localhost:9000', {
+            const newSocket = io('task-manager-backend-production12.up.railway.app', {    //put your backend url
                 withCredentials: true,
                 extraHeaders: {
                     id: user?._id
