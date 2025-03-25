@@ -142,5 +142,5 @@ app.get('/message', verifyRoles(SERVER_ROLES.User), (req, res) => {
 mongoose.connection.once('open', () => {
     server.listen(process.env.PORT || 9000, "0.0.0.0", () => {
         console.log('server connected on port ' + process.env.PORT || 9000)
-    })
+    })  
 })
