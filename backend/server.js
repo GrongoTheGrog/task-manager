@@ -81,7 +81,6 @@ module.exports = io;
 
 
 const connectDB = require('./config/DBconn');
-const { access } = require('fs');
 const User = require('./models/User');
 
 
@@ -142,6 +141,6 @@ app.get('/message', verifyRoles(SERVER_ROLES.User), (req, res) => {
 //check for DB connection, then listens
 mongoose.connection.once('open', () => {
     server.listen(process.env.PORT || 9000, "0.0.0.0", () => {
-        console.log('server connected on port 9000')
+        console.log('server connected on port ' + process.env.PORT || 9000)
     })
 })
