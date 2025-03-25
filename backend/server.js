@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const {createServer} = require('http');
 const server = createServer(app);
-const WebSocket = require('ws')
 const {Server} = require("socket.io");
 const io = new Server(server, {
     cors: {
@@ -89,6 +88,9 @@ connectDB();
 
 app.use(express.urlencoded({ extended: true }))
 
+app.get('/message', (req, res) => {
+    res.status(200).send('DEPLOY.');
+})
 app.get('/', (req, res) => {
     res.status(200).send('DEPLOY.');
 })
