@@ -33,7 +33,7 @@ router.post('/login', async (req, res) => {
 
         const update = await User.findOneAndUpdate({username}, {refreshToken}).select('username teams email profilePicture').exec();
 
-        res.cookie('jwtRefresh', refreshToken, {maxAge: 15 * 24 * 60 * 60 * 1000, secure: true, httpOnly: false});
+        res.cookie('jwtRefresh', refreshToken, {maxAge: 15 * 24 * 60 * 60 * 1000, secure: true, httpOnly: true, sameSite: 'None'});
         
         res.json({
             accessToken,
