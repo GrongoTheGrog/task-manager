@@ -321,7 +321,7 @@ function TeamsNav({teams, create, curTeam}){
         if (!name || !description) return definitions.error.change('Both name and description required.');
 
         try{
-            const newTeam = await definitions.api.data.post('http://localhost:9000/createteam', 
+            const newTeam = await definitions.api.data.post('/createteam', 
                 {name, 
                 description}
             );
