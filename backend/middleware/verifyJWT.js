@@ -6,6 +6,8 @@ const verifyJWT = async (req, res, next) => {
 
     const cookies = req.cookies;
 
+    console.log(cookies);
+
     if (!cookies?.jwtRefresh || !auth) return res.status(400).json({"error": "Missing information."});
 
     const refreshToken = cookies.jwtRefresh;
