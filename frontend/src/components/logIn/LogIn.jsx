@@ -28,7 +28,7 @@ export function LogIn(){
         if (!password || !username || !email) return setError('All fields required.');
 
         try{
-            const response = await api.post('http://localhost:9000/logIn', {
+            const response = await api.post('/logIn', {
                 username: username,
                 password: password,
                 email: email
