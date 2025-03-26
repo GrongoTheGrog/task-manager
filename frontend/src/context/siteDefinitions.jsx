@@ -98,7 +98,7 @@ export function SiteDefinitions({children}){
         console.log(user);
         if (user && token) {
 
-            const newSocket = io('task-manager-backend-production12.up.railway.app', {    //put your backend url
+            const newSocket = io('https://task-manager-backend-production12.up.railway.app', {    //put your backend url
                 withCredentials: true,
                 extraHeaders: {
                     id: user?._id
