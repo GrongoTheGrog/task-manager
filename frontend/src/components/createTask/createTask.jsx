@@ -1,11 +1,8 @@
 import { useSiteDefinitions } from '../../context/siteDefinitions';
 import './createTask.css';
-import { data, useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom'; 
 import { useEffect, useRef, useState } from 'react';
-import { set, setDate } from 'date-fns';
-import { ca, da } from 'date-fns/locale';
 import { Loading } from '../home/unloggedHome/home';
-import { Teams } from '../teams/teams';
 
 
 export function CreateTask({update}){
@@ -95,12 +92,12 @@ export function CreateTask({update}){
     
         try{   
             if (update) {
-                const update = await definitions.api.data.post('/edittask', {
+                await definitions.api.data.post('/edittask', {
                     ...newTask,
                     id: taskData?._id
                 })
             }else{
-                const create = await definitions.api.data.post('/createtask', newTask);
+                await definitions.api.data.post('/createtask', newTask);
             }
             
     
@@ -116,7 +113,9 @@ export function CreateTask({update}){
 
         const queryMembers = members.filter(member => {
 
-            if (selectedMembers.find(memberFind => memberFind._id === member._id)) {
+            if (selectedMembers.find(memberFind => {
+                return memberFind._id === member._id
+            })) {
                 return;
             };
 
@@ -163,7 +162,7 @@ export function CreateTask({update}){
             }
             getData();
         }
-    }, [])
+    }, [definitions])
 
 
 
@@ -172,7 +171,7 @@ export function CreateTask({update}){
         if (team !== 'undefined'){
             const getData = async () => {
                 try{
-                    const response = await definitions.api.data.post('http://localhost:9000/getOneTeam', {
+                    const response = await definitions.api.data.post('/getOneTeam', {
                         id: team
                     });
 
@@ -186,7 +185,7 @@ export function CreateTask({update}){
             }
             getData();
         }
-    }, [])
+    }, [team])
 
     useEffect(() => {
 

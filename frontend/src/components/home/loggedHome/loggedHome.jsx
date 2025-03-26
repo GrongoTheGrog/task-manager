@@ -3,7 +3,6 @@ import { useSiteDefinitions } from '../../../context/siteDefinitions';
 import './loggedHome.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { te } from 'date-fns/locale';
 import {Loading} from '../unloggedHome/home'
 
 
@@ -124,7 +123,7 @@ export function LoggedHome(){
 }
 
 
-function TodaySection({teams, tasks, teamTasks, statusTasks, overdue}){
+function TodaySection({ tasks, statusTasks, overdue}){
 
     const [currentStatus, setCurrentStatus] = useState('Todo');
 
@@ -190,7 +189,7 @@ function TodaySection({teams, tasks, teamTasks, statusTasks, overdue}){
                 </div>
 
                 <div className='chart-bar'>
-                    {status.map((label, key) => {  
+                    {status.map((label) => {  
                         const r = ((statusTasks[label.title]?.length || 0) / tasks.length * 100).toFixed(0);
 
                         return (
