@@ -172,7 +172,7 @@ export function CreateTask({update}){
         if (team !== 'undefined'){
             const getData = async () => {
                 try{
-                    const response = await definitions.api.data.post('http://localhost:9000/getOneTeam', {
+                    const response = await definitions.api.data.post('/getOneTeam', {
                         id: team
                     });
 
