@@ -11,7 +11,8 @@ export function useSiteDefinitions(){
 
 export function SiteDefinitions({children}){
 
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null)
+    const userStorage = localStorage.getItem('user');
+    const [user, setUser] = useState(userStorage !== 'undefined' ? JSON.parse(userStorage) : null);
 
     const [socket, setSocket] = useState(null);
 
@@ -45,7 +46,7 @@ export function SiteDefinitions({children}){
     useEffect(() => {
 
         const fetch = axios.create({
-            baseURL: 'task-manager-backend-production12.up.railway.app',   //put your backend url
+            baseURL: 'https://task-manager-backend-production12.up.railway.app',   //put your backend url
             withCredentials: true
         });
 
@@ -126,8 +127,7 @@ export function SiteDefinitions({children}){
     }, [user, localStorage.getItem('jwtRefresh')]);
 
     const themeStorage = localStorage.getItem('theme');
-    console.log(themeStorage ? JSON.parse(themeStorage) : 'aaaaaaa');
-    const [theme, setTheme] = useState(themeStorage ? JSON.parse(themeStorage) : 'aaaaaaa');
+    const [theme, setTheme] = useState(themeStorage ? JSON.parse(themeStorage) : true);
 
 
     useEffect(() => {

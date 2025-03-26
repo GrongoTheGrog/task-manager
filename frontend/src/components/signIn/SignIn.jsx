@@ -33,7 +33,7 @@ export function SignIn(){
         
 
             try{
-                const response = await api.post('http://localhost:9000/signin', {
+                const response = await api.post('/signin', {
                     username: username,
                     password: password,
                     email: email

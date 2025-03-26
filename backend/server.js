@@ -21,7 +21,7 @@ const cookieParser = require('cookie-parser');
 
 //cors
 app.use(cors({
-    origin: '*',
+    origin: ['https://task-manager-backend-production12.up.railway.app', 'http://localhost:3000'],
     methods: ["GET", "POST"],
     credentials: true
 }))
