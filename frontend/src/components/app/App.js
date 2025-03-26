@@ -1,9 +1,8 @@
 import './App.css';
-import ReactDOM from 'react-dom/client';
 import { Header } from '../header/header';
-import { useNavigate, BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
-import { use, useEffect } from 'react';
+import {  useEffect } from 'react';
 import { SignIn } from '../signIn/SignIn';
 import { LogIn } from '../logIn/LogIn';
 import { LeftSideBar } from '../leftSideBar/leftSideBar';
@@ -15,17 +14,18 @@ import { CreateTask } from '../createTask/createTask';
 import { OneTeam } from '../teams/teams';
 import { ChangePassword } from '../userManagement/changePassword/changePassword';
 import UserManagement from '../userManagement/userManagement';
+import { useLocation } from 'react-router-dom';
 
 function App() {
   const navigator = useNavigate();
+  const location = useLocation();
 
   const definitions = useSiteDefinitions();
-  const {api, socket, theme} = definitions;
-  const user = definitions.user;
+  const {api} = definitions;
 
   useEffect(() => {
     localStorage.setItem("lastVisitedPage", window.location.pathname);
-  }, [window.location.pathname]);
+  }, [location.pathname]);
 
   
 
@@ -45,7 +45,7 @@ function App() {
       };
       getUser();
     }
-  }, [api.data])
+  }, [api.data, definitions.user, navigator]);
 
 
   const resultLoad = !api.data 

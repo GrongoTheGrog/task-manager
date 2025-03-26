@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './calendar.css';
 import { Loading } from '../home/unloggedHome/home';
 import { useSiteDefinitions } from '../../context/siteDefinitions';
@@ -66,7 +66,7 @@ export function Calendar(){
             }
         };
         getData()
-    }, [])
+    }, [definitions.api.data, definitions.error]);
 
 
     useEffect(() => {
@@ -77,8 +77,6 @@ export function Calendar(){
 
     function changeMonth(sum){
         return function () {
-
-            const calendarDOM = document.querySelector('.calendar-outer-container');
             let currentYear = year;
 
             setMonth(prev => {

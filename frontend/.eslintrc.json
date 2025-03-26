@@ -1,0 +1,19 @@
+{
+    "extends": [
+      "react-app",
+      "eslint:recommended"
+    ],
+    "rules": {
+      // Make 'no-unused-vars' less strict (just warn instead of error)
+      "no-unused-vars": ["warn"],
+  
+      // Make 'react-hooks/exhaustive-deps' less strict (turn off the rule)
+      "react-hooks/exhaustive-deps": "off",
+  
+      // Allow 'no-mixed-operators' warnings
+      "no-mixed-operators": "off",
+
+      "no-inner-declarations": "off",  // Disable this rule
+      "no-extra-semi": "off"           // Disable this rule
+    }
+  }

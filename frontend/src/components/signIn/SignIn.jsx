@@ -33,7 +33,7 @@ export function SignIn(){
         
 
             try{
-                const response = await api.post('/signin', {
+                await api.post('/signin', {
                     username: username,
                     password: password,
                     email: email
@@ -115,8 +115,6 @@ export function SignIn(){
 
 
 function Password({change, value, name}){
-
-    const definitions = useSiteDefinitions();
 
     const [view, setView] = useState(false);
 

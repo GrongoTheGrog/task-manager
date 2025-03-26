@@ -94,7 +94,7 @@ function Input({className, value, label}){
     }, [container]);
 
     async function send(e){
-        if (e?.key === 'Enter' || !e?.key && changing){
+        if ((e?.key === 'Enter' || !e?.key) && changing){
             const id = user.data._id;
             console.log('aa');
             if (!input) return error.change("Input can't be empty.")

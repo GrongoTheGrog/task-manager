@@ -7,9 +7,8 @@ import { remainingTime } from '../home/unloggedHome/home';
 
 //utils
 import { transformDay, transformMonth } from '../../utils/time';
-import { set } from 'date-fns';
 import { Kanban } from './kanban/kanban';
-import { he } from 'date-fns/locale';
+
 
 
 
@@ -293,14 +292,13 @@ export function Teams(){
 function TeamsNav({teams, create, curTeam}){
 
     const navigator = useNavigate();
-    const params = useParams();
 
 
     const [creating, setCreating] = useState();
     const definitions = useSiteDefinitions();
 
     //for clicking each team card and navigate
-    function click(value, path){
+    function click( path){
         return function() {
             //leave room in the websocket, so it doesnt trigger when in other room
             if (curTeam){
@@ -983,7 +981,7 @@ function CardMember({member, me, setLeaving, role, possibleRoles}){
 //user management
 const UserToolBox = forwardRef(({member, cl, setLeaving, role, possibleRoles}, ref) => {
 
-    const {roles, checkRole, curTeam} = useContextTeam();
+    const {roles, curTeam} = useContextTeam();
     const {user, error, blanket, api} = useSiteDefinitions();
     const me = member.user.username === user.data.username;
 
@@ -1034,9 +1032,6 @@ const UserToolBox = forwardRef(({member, cl, setLeaving, role, possibleRoles}, r
             error.change(err?.response?.data.error || err.message);
         }
     } 
-
-    console.log(possibleRoles)
-
 
     return (
         <div className={'member-toolbox-container-outer ' + cl} ref={ref} onClick={clickToolbox}>
