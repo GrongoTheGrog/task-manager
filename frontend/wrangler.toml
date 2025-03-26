@@ -1,4 +1,4 @@
 name = "my-worker"
 
 # Specify the Worker script file
-main = "/my-worker/src/index.js"  # Change this to match your actual script file path
+main = "my-worker/src/index.js"  # Change this to match your actual script file path
