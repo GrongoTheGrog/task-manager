@@ -1,5 +1,4 @@
 name = "my-worker"
-type = "javascript"  # Or "webpack" if using Webpack
 
 # Specify the Worker script file
 main = "/my-worker/src/index.js"  # Change this to match your actual script file path
