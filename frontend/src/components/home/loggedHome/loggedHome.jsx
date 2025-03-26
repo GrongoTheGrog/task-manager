@@ -26,37 +26,41 @@ export function LoggedHome(){
 
     useEffect(() => {
         async function getData(){
-            const tasks = await api.data.post('/gettasksauthor');
-            const teams = await api.data.get('/getteam');
+            try{
+                const tasks = await api.data.post('/gettasksauthor');
+                const teams = await api.data.get('/getteam');
+                
+                //consider no team tasks as a team
+                teams.data.splice(0, 0, {_id: 'none'});
 
-            //consider no team tasks as a team
-            teams.data.splice(0, 0, {_id: 'none'});
+                setTeams(teams.data);
+                const statusTask = {};
+                const teamsTask = {};
+                const overdue = [];
 
-            setTeams(teams.data);
-            const statusTask = {};
-            const teamsTask = {};
-            const overdue = [];
+                tasks.data.forEach(task => {
+                    //status task hash map
+                    if (!statusTask[task.status]) statusTask[task.status] = [];
+                    statusTask[task.status].push(task);
 
-            tasks.data.forEach(task => {
-                //status task hash map
-                if (!statusTask[task.status]) statusTask[task.status] = [];
-                statusTask[task.status].push(task);
+                    //teams task hash map
+                    if (!teamsTask[task?.team?._id || 'none']) teamsTask[task?.team?._id || 'none'] = [];
+                    teamsTask[task?.team?._id || 'none'].push(task);
 
-                //teams task hash map
-                if (!teamsTask[task?.team?._id || 'none']) teamsTask[task?.team?._id || 'none'] = [];
-                teamsTask[task?.team?._id || 'none'].push(task);
+                    //overdue
+                    const today = new Date();
+                    const deadline = new Date(task.deadline);
 
-                //overdue
-                const today = new Date();
-                const deadline = new Date(task.deadline);
+                    if (today.getTime() > deadline.getTime() && task.status !== 'Approved') overdue.push(task);
+                })
 
-                if (today.getTime() > deadline.getTime() && task.status !== 'Approved') overdue.push(task);
-            })
-
-            setTasks(tasks.data);
-            setStatusTasks(statusTask);
-            setTeamTasks(teamsTask);
-            setOverdue(overdue);
+                setTasks(tasks.data);
+                setStatusTasks(statusTask);
+                setTeamTasks(teamsTask);
+                setOverdue(overdue);
+            }catch(err){
+                error.change(err?.response?.data?.error || err.message);
+            }
         }
 
         getData();

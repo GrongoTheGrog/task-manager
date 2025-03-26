@@ -6,6 +6,7 @@ const {Server} = require("socket.io");
 const io = new Server(server, {
     cors: {
         origin: ['https://task-manager-backend-production12.up.railway.app', 'http://localhost:3000'],
+        allowedHeaders: ["Content-Type"],
         methods: ["GET", "POST"],
         credentials: true 
         
@@ -22,6 +23,7 @@ const cookieParser = require('cookie-parser');
 //cors
 app.use(cors({
     origin: ['https://task-manager-backend-production12.up.railway.app', 'http://localhost:3000'],
+    allowedHeaders: ["Content-Type"],
     methods: ["GET", "POST"],
     credentials: true
 }))

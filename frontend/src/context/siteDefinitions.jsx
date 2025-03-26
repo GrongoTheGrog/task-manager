@@ -81,7 +81,7 @@ export function SiteDefinitions({children}){
                     }catch(err) {
                         console.log('log in again');
                         changeUser(null);
-                        return Promise.reject(err)
+                        definitions.error.change(err?.response?.data.error || err.message);
                     }
                 }
                 return Promise.reject(error);
