@@ -38,7 +38,7 @@ export function LogIn(){
             definitions.user.change(response.data.user);
             navigator('/');
         }catch(err) {
-            return setError(err.message);
+            return setError(err?.response?.data.error || err.message);
         }
 
     }

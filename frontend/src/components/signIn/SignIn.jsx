@@ -42,7 +42,7 @@ export function SignIn(){
 
                 navigator('/logIn');
             }catch(err) {
-                return setError(err.message);
+                return setError(err?.response?.data.error || err.message);
             }
 
         }
