@@ -297,7 +297,7 @@ function TeamsNav({teams, create, curTeam}){
     const definitions = useSiteDefinitions();
 
     //for clicking each team card and navigate
-    function click( path){
+    function click(path){
         return function() {
             //leave room in the websocket, so it doesnt trigger when in other room
             if (curTeam){
@@ -322,7 +322,6 @@ function TeamsNav({teams, create, curTeam}){
                 {name, 
                 description}
             );
-
 
             create(() => newTeam.data);
             setCreating(() => false)
@@ -376,7 +375,7 @@ function TeamsNav({teams, create, curTeam}){
 
             )}
 
-            <div className={`card-teams-nav ${!curTeam && 'active'}`} onClick={click(null, '/teams/myOwn')}>
+            <div className={`card-teams-nav ${!curTeam && 'active'}`} onClick={click('/teams/myOwn')}>
                 <span>
                     My own tasks
                 </span>
@@ -388,7 +387,7 @@ function TeamsNav({teams, create, curTeam}){
 
 
                 return (
-                    <div className={'card-teams-nav' + cl} onClick={click(team, `/teams/${team._id}`)} key={index}>
+                    <div className={'card-teams-nav' + cl} onClick={click(`/teams/${team._id}`)} key={index}>
                         <span>{team.name}</span>
                     </div>
                 )
