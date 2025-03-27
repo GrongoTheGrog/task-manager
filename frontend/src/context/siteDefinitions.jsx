@@ -115,11 +115,12 @@ export function SiteDefinitions({children}){
                 console.log(error)
             });
 
-            return () => {
-                newSocket.disconnect();
-            };
-
         }else{
+            if (socket) socket?.disconnect();
+            setSocket(null);
+        }
+
+        return () => {
             if (socket) socket?.disconnect();
             setSocket(null);
         }

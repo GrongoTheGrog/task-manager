@@ -198,7 +198,7 @@ function TodaySection({ tasks, statusTasks, overdue}){
                                 </div>
 
                                 <span style={{color: label.color, fontSize: '14px'}}>
-                                    {r}%
+                                    {r || '0'}%
                                 </span>
 
                                 {currentStatus === label.title ? <div className='current' style={{backgroundColor: label.color}}>
