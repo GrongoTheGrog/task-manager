@@ -45,7 +45,7 @@ function App() {
       };
       getUser();
     }
-  }, [api.data, definitions.user, navigator]);
+  }, [api.data, definitions.user])
 
 
   const resultLoad = !api.data 
