@@ -65,7 +65,6 @@ export function LoggedHome(){
         getData();
     }, []);
 
-    console.log(teams)
     
 
     return teamTasks && statusTasks && overdue ? (

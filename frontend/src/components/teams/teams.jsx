@@ -144,7 +144,6 @@ export function Teams(){
 
             //listen to editted tasks
             const handleEdittedTask = (task) => {
-                console.log('task editted');
                 setTasks(prev => prev.map(taskMap => {
                     if (taskMap._id !== task._id) return taskMap;
 
@@ -491,8 +490,6 @@ export function OneTeam({tasks, team, setDeletedTeam}){
     sort(overdueTasks, false);
     sort(upcomingTasks, true);
     sort(todayTasks, true);
-
-    console.log(tasks);
 
     useEffect(() => {
         localStorage.setItem('kanban', JSON.stringify(kanbanView));
@@ -985,7 +982,6 @@ const UserToolBox = forwardRef(({member, cl, setLeaving, role, possibleRoles}, r
     const {user, error, blanket, api} = useSiteDefinitions();
     const me = member.user.username === user.data.username;
 
-    console.log(curTeam._id)
 
     const highestRole = possibleRoles[role];
 
@@ -1004,7 +1000,6 @@ const UserToolBox = forwardRef(({member, cl, setLeaving, role, possibleRoles}, r
         if (!currentRoles.length) return error.change('Select at least one role.');
 
         if (highestRole.level >= roles.level) return error.change("You do not have the permission to change that member's role.");
-        console.log(curTeam._id);
 
         try{
             await api.data.post('/changeRole', {

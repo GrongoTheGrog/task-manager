@@ -8,8 +8,6 @@ export default function UserManagement(){
     const {user, api, error} = useSiteDefinitions();
     const navigator = useNavigate();
 
-    console.log(user.data);
-
     async function logout(){
         try{
             await api.data.post('/logout');
@@ -96,7 +94,6 @@ function Input({className, value, label}){
     async function send(e){
         if ((e?.key === 'Enter' || !e?.key) && changing){
             const id = user.data._id;
-            console.log('aa');
             if (!input) return error.change("Input can't be empty.")
             try{
                 await api.data.post('/updateUser', {

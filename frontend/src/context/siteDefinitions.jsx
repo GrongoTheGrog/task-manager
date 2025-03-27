@@ -95,7 +95,6 @@ export function SiteDefinitions({children}){
     ///SET THE WEBSOCKET 
     useEffect(() => {
         const token = localStorage.getItem('jwtAccess');
-        console.log(user);
         if (user && token) {
 
             const newSocket = io('https://task-manager-backend-production12.up.railway.app', {    //put your backend url
@@ -150,8 +149,6 @@ export function SiteDefinitions({children}){
         blanket: { data: blanket, change: setBlanket},
         enteringTeam: { data: enteringTeam, change: setEnteringTeam}
     }
-
-    console.log(socket);
 
     return (
         <DefinitionsProvider.Provider value={definitions}>

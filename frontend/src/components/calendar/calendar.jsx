@@ -27,7 +27,6 @@ export function Calendar(){
 
     function clickDay(info){
         return function () {
-            console.log('click')
             setCurrentDay(() => info)
         }
     }
@@ -39,7 +38,6 @@ export function Calendar(){
                 
                 const tasks = {};
 
-                console.log(response.data)
 
                 response.data.forEach((task) => {
                     if (task?.deadline){
@@ -58,7 +56,6 @@ export function Calendar(){
                     tasks: tasks[`${format(new Date(), formatingTime)}`] || []
                 }))
 
-                console.log(tasks)
 
                 setTasks(() => tasks);
             }catch(err){

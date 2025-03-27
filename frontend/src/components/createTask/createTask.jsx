@@ -737,7 +737,6 @@ function TimePicker({change, timeProp}){
         }
     }
 
-    console.log(time['minutes']);
 
     return (
         <div className='time-container-picker' onClick={(e) => {

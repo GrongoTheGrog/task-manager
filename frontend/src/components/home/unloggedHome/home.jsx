@@ -27,8 +27,6 @@ export function Home(){
         return () => clearInterval(interval.current);
     }, [currentImage])
 
-
-    console.log(imageList[currentImage]);
     return(
         <section className='home-main-container'>
 

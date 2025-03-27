@@ -146,7 +146,6 @@ export function Tasks(){
                 }
 
                 {tasks?.length ? teams.map(team => {
-                    console.log(teamTasks);
                     if (!teamTasks[team._id]) return null;
                     return (
                         <div className='overview-tasks-grid back'>

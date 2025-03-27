@@ -158,12 +158,10 @@ function RightHeaderUser(){
 function RequestCard({req, setDeletedReq}){
     
     const {api, error, socket, enteringTeam} = useSiteDefinitions();
-    console.log(req);
 
     function solveReq(accept) {
 
         return async function(){
-            console.log('send')
             try{
                 const solveReq = await api.data.post('/solvereq', {
                     reqId: req._id,
