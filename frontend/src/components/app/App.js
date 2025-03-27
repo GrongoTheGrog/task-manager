@@ -22,6 +22,10 @@ function App() {
 
   const definitions = useSiteDefinitions();
   const {api} = definitions;
+  
+  useEffect(() => {
+    localStorage.setItem('lastVisitedPage', location.pathname);
+  }, [location.pathname])
 
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { act, useReducer } from 'react';
 import './changePassword.css';
 import { useSiteDefinitions } from '../../../context/siteDefinitions';
+import { useNavigate } from 'react-router-dom';
 
 function reducer(state, action){
     switch(action.type){
@@ -54,8 +55,10 @@ function reducer(state, action){
 
 export function ChangePassword(){
 
+    const navigator = useNavigate();
+
     const [state, dispatch] = useReducer(reducer, { 
-        pageStage: 2, 
+        pageStage: 0, 
         email: '',
         code: '',
         currentEmail: '0',
@@ -114,6 +117,7 @@ export function ChangePassword(){
             });
 
             dispatch({type: 'code-approved'});
+            navigator('/user');
         }catch(err){
             error.change(err?.response?.data.error || err.message)
         }
