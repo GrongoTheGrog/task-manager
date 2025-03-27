@@ -12,7 +12,7 @@
 .inner-container-create-task-page{
     display: flex;
     gap: 15px;
-    height: 65vh;
+    height: fit-content;
 }
 
 

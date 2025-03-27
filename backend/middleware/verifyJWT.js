@@ -8,7 +8,7 @@ const verifyJWT = async (req, res, next) => {
 
     console.log(cookies);
 
-    if (!cookies?.jwtRefresh || !auth) return res.status(400).json({"error": "Missing information."});
+    if (!cookies?.jwtRefresh || !auth) return res.status(400).json({"error": "session expired."});
 
     const refreshToken = cookies.jwtRefresh;
     const accessToken = auth.split(' ')[1];
