@@ -115,6 +115,11 @@ app.use(require('./controller/passwordCode/passCodeRouter'));
 //change password
 app.use('/changePassword', require('./controller/changePassword'));
 
+//logout controller 
+app.use(require('./controller/logout'));
+
+
+
 
 //verify jwt
 app.use(verifyJWT);
@@ -130,11 +135,6 @@ app.use(require('./controller/teamRequest/teamRequestRouter'))
 
 //update user
 app.use('/updateUser', require('./controller/upadateUser'));
-
-//logout controller 
-app.use(require('./controller/logout'));
-
-
 
 //test api call
 app.get('/message', verifyRoles(SERVER_ROLES.User), (req, res) => {
