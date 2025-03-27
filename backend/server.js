@@ -5,10 +5,10 @@ const server = createServer(app);
 const {Server} = require("socket.io");
 const io = new Server(server, {
     cors: {
-        origin: ['https://ddd61c18.taskify-b9l.pages.dev', 'http://localhost:3000', 'https://taskify-b9l.pages.dev'],
+    origin: ['https://ddd61c18.taskify-b9l.pages.dev', 'http://localhost:3000', 'https://taskify-b9l.pages.dev'],
     allowedHeaders: ["Content-Type", "authorization", "Authorization", "id"], 
-        methods: ["GET", "POST"],
-        credentials: true 
+    methods: ["GET", "POST"],
+    credentials: true 
         
     }
 });

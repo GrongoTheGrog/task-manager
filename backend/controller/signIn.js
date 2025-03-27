@@ -22,7 +22,7 @@ router.post('/signin', async (req, res) => {
         if (matching) return res.status(409).json({"error": "Username or email alredy used, choose another."});
 
         const user = User.create({
-            username, password: hashPassword, email
+            username, password: hashPassword, email, refreshToken: null
         })
 
         res.json(user);

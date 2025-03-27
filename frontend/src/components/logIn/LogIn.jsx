@@ -34,6 +34,8 @@ export function LogIn(){
                 email: email
             })
 
+            console.log(response);
+
             localStorage.setItem('jwtAccess', response.data.accessToken);
             definitions.user.change(response.data.user);
             navigator('/');
