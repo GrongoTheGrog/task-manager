@@ -35,7 +35,7 @@ export function Calendar(){
     useEffect(() => {
         const getData = async () => {
             try{
-                const response = await definitions.api.data.post('http://localhost:9000/gettasksauthor');
+                const response = await definitions.api.data.post('/gettasksauthor');
                 
                 const tasks = {};
 
