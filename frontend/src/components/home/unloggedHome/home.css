@@ -295,3 +295,25 @@
 .link-card:hover{
     text-decoration: underline;
 }
+
+
+
+
+@media (max-width: 768px) {
+    .dots-car{
+        display: none;
+    }
+
+    .char-container{
+        display: none;
+    }
+
+    .hero-section-outer-container{
+        margin-top: 7vh;
+    }
+
+    .extra-items-container{
+        display: flex;
+        flex-direction: column;
+    }
+}

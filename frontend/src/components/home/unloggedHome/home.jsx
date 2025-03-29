@@ -74,7 +74,7 @@ export function Home(){
                 Core Features
             </span>
 
-            <div className='extra-items-container'>
+            <div className='extra-items-container features'>
                 <div className='extra-item-home'>
                     <span className='title'>
                         <i className='material-icons'>
