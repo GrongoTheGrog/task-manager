@@ -27,6 +27,10 @@ main{
   transform: translate(0, 0);
 }
 
+i{
+  user-select: none;
+}
+
 
 .error-container > span{
   max-width: 500px;

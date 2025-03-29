@@ -65,3 +65,8 @@
 }
 
 
+@media (max-width: 768px) {
+    .dropdown-outer-container{
+        width: 100%;
+    }
+}

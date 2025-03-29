@@ -125,7 +125,7 @@ export function ChangePassword(){
 
     return(
         <div className='change-password-outer-container'>
-            <h2 className='user-title'>
+            <h2 className='user-title pass'>
                 <i className='material-icons'>
                     key
                 </i>
@@ -135,7 +135,7 @@ export function ChangePassword(){
 
             <div className='change-password-inner-container'>
                 {state.pageStage !== 2 ?
-                    <span>
+                    <span className='email-title'>
                         <i className='material-icons'>
                             mail
                         </i>
@@ -147,9 +147,16 @@ export function ChangePassword(){
                     </input>
 
                     <button className='send-code-button' onClick={sendCode}>
-                        {state.pageStage === 0 ? 'Send Code' : 'Resend Code'}
+                        {state.pageStage === 0 ? 'Send' : 'Resend'}
                     </button>
+
                 </div> : null}
+
+                {state.pageStage === 0 ? 
+                    <span className='description-password'>
+                        Type your email to receive a code
+                    </span>
+                : null}
 
                 {state.pageStage === 1 ? (
                     <div className='insert-code-outer-container'>

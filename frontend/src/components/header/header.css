@@ -15,6 +15,7 @@ header{
     justify-content: space-between;
 }
 
+
 .left-header{
     display: flex;
     padding: 0 30px;
@@ -188,4 +189,46 @@ header{
     align-items: center;
     gap: 10px;
     box-sizing: border-box;
+}
+
+
+.link-user > i{
+    font-size: 30px;
+}
+
+.notifications-container > i{
+    font-size: 26px;
+}
+
+@media (max-width: 768px) {
+    header { 
+        height: 50px;
+    }
+
+    .left-header > .menu{
+        width: 20px;
+        padding: 4px;
+    }
+
+    .left-header > .menu > i{
+        font-size: 22px;
+        width: fit-content;
+        aspect-ratio: 1;
+    }
+
+    .header-title{
+        font-size: 22px;
+    }
+
+    .toggle-button-team{
+        font-size: 22px;
+    }
+
+    .link-user > i{
+        font-size: 22px;
+    }
+
+    .notifications-container > i{
+        font-size: 22px;
+    }
 }

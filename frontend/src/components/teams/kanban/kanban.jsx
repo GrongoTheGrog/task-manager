@@ -224,12 +224,6 @@ export function Kanban({tasks}){
                         </button>
                     </div>
                     <div className='right-search-kanban'>
-                        <span>
-                            <i className='material-icons'>
-                                filter_alt
-                            </i>
-                            Filters:
-                        </span>
                         <Dropdown 
                             list={dateFilters} 
                             change={setDateFilter} 

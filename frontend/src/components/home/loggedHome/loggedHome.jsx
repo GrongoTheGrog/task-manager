@@ -216,7 +216,7 @@ function TodaySection({ tasks, statusTasks, overdue}){
 
                     return (
                         <div className='task-chart-card'>
-                            <span style={{fontSize: '15px'}}>
+                            <span style={{fontSize: '15px'}} className='ellipsis'>
                                 {task.name}
                             </span>
 

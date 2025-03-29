@@ -107,7 +107,7 @@ function RightHeaderUser(){
         <div className='right-header'>
             {user.data ?
             <div className='notifications-container' onClick={() => setDisplay(prev => !prev)} ref={notificationsIcon}>
-                <i className='material-icons' style={{fontSize: '26px'}}>
+                <i className='material-icons'>
                     notifications
                 </i>
 
@@ -147,7 +147,7 @@ function RightHeaderUser(){
             {user.data ? <Link style={{cursor: 'pointer', fontWeight: 'bold', fontSize: '20px'}} className='link-user' to={'/user'}>
                 {user?.data?.username}
 
-                <i className='material-icons' style={{fontSize: '30px', cursor: 'pointer'}}>
+                <i className='material-icons' style={{cursor: 'pointer'}}>
                     person
                 </i>
             </Link> : null}

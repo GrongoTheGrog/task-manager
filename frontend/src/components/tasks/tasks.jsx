@@ -70,7 +70,7 @@ export function Tasks(){
             </h1>
 
             <div className='overview-tasks-outer-flex'>
-                <div className='overview-tasks-grid'>
+                <div className='overview-tasks-grid header'>
                     <span className='title'>
                         Teams
                     </span>

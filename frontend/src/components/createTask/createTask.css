@@ -863,3 +863,34 @@ label{
 .option-time:hover{
     background-color: var(--neutral);
 }
+
+
+
+@media (max-width: 768px) {
+    .outer-container-create-task-page{
+        min-width: 0px
+    }
+
+    .inner-container-create-task-page{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .basic-info-outer-container{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .extra-info-container{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .button-add-tag{
+        height: 30px;
+    }
+
+    .input-creating-tag{
+        box-sizing: border-box;
+    }
+}

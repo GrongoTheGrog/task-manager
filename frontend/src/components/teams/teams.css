@@ -563,6 +563,7 @@
     flex-direction: column;
     gap: 25px;
     padding-bottom: 35px;
+    height: fit-content;
 }
 
 .role-container-members{
@@ -965,3 +966,74 @@
     padding: 4px;
     cursor: pointer;}
 
+
+
+
+
+
+    /*MOBILE SCALING*/
+
+
+@media (max-width: 768px) {
+
+    .teams-main-container{
+        display: flex;
+        flex-direction: column;
+        min-width: 0px;
+        width: 80vw;
+        padding: 0px;
+        gap: 100px;
+    }
+
+    .outer-mid-team-container{
+        width: 80vw;
+        
+        padding: 20px 10px;
+        box-sizing: border-box;
+        border: 2px solid var(--neutral);
+        border-radius: 10px;
+    }
+
+    .mid-team-main-information-container{
+        flex-direction: column;
+        gap: 50px;
+    }
+
+   
+    .outer-mid-team-container > span > .info > span{
+        font-size: 15px;
+        word-wrap: break-word;
+        width: fit-content;
+        margin-left: 10px;
+    }
+
+    .outer-mid-team-container > span{
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .outer-mid-team-container > span > .info{
+        font-size: 44px;
+    }
+
+
+    .outer-mid-team-container > span > .buttons{
+        width: 100%;
+        align-items: end;
+    }
+
+    .outer-mid-team-container > span > .buttons > .main{
+        display: flex;
+    }
+
+    .outer-mid-team-container > span > .buttons > .main > .link{
+        font-size: 14px;
+        padding: 8px 8px;
+    }
+
+    .outer-mid-team-container > span > .buttons > .main > .delete{
+        font-size: 14px;
+        padding: 8px 8px;
+    }
+}

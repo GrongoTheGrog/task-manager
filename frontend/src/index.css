@@ -41,9 +41,14 @@ body{
     transition: padding-left 0.4s ease;
 }
 
-
 body:has(.left-sidebar-container-main.active){
-    padding-left: 170px;
+    padding-left: 120px;
+}  
+
+@media (max-width: 768px) {
+    body:has(.left-sidebar-container-main.active){
+        padding-left: 0px;
+    }  
 }
 
 .scrollbar::-webkit-scrollbar{
@@ -74,6 +79,16 @@ body:has(.left-sidebar-container-main.active){
 
 .select-members-outer-container.scrollbar::-webkit-scrollbar{
     width: 10px;
+}
+
+.ellipsis{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
 }
 
 .select-members-outer-container.scrollbar::-webkit-scrollbar-thumb{

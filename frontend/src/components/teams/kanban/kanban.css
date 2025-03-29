@@ -243,3 +243,48 @@
     padding: 1px 8px;
     border-radius: 1000px;
 }
+
+
+
+
+@media (max-width: 768px) {
+    .main-kanban{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .column-no-tasks-kanban{
+        height: 80px;
+    }
+
+    .column-kanban-flex{
+        height: fit-content;
+        min-height: 0px;
+    }
+
+    .task-card-kanban{
+        touch-action: none;
+    }
+
+    .search-kanban{
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .right-search-kanban{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        height: fit-content;
+        box-sizing: border-box;
+    }
+
+    .search-kanban > .input{
+        display: flex;
+        width: 100%;
+    }
+
+    .search-kanban > .input > input{
+        width: 100%;
+    }
+}

@@ -93,3 +93,27 @@
     color: var(--font-color);
     font-size: 22px;
 }
+
+
+@media (max-width: 768px){
+    .tasks-container-tasks{
+        width: 90%;
+    }
+
+    .label-container-overview{
+        padding: 6px 14px;
+    }
+
+    .overview-tasks-grid{
+        grid-template-columns: 5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        gap: 3px
+    }
+
+    .overview-tasks-grid.header{
+        display: flex;
+        flex-wrap: wrap;
+        height: fit-content;
+        justify-content: center;
+        gap: 15px;
+    }
+}
